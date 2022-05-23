@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobHandlers.AzureQueueMessage", "src\JobHandlers.AzureQueueMessage\JobHandlers.AzureQueueMessage.csproj", "{29E8399C-F81E-463E-A81E-C8FE12AD3282}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QueueMessages.SampleApp", "samples\QueueMessages.SampleApp\QueueMessages.SampleApp.csproj", "{473F039E-4494-49D3-9235-A5FF55CECDA3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29E8399C-F81E-463E-A81E-C8FE12AD3282}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29E8399C-F81E-463E-A81E-C8FE12AD3282}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29E8399C-F81E-463E-A81E-C8FE12AD3282}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29E8399C-F81E-463E-A81E-C8FE12AD3282}.Release|Any CPU.Build.0 = Release|Any CPU
+		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA0A0709-82FA-48EB-8A62-8E857D9BB604}
+	EndGlobalSection
+EndGlobal
