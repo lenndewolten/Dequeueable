@@ -15,4 +15,8 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="JobHandlers.AzureQueueMessage.IntegrationTests" />
+	</ItemGroup>
+	
 </Project>

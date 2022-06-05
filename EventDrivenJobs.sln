@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobHandlers.AzureQueueMessage", "src\JobHandlers.AzureQueueMessage\JobHandlers.AzureQueueMessage.csproj", "{29E8399C-F81E-463E-A81E-C8FE12AD3282}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QueueMessages.SampleApp", "samples\QueueMessages.SampleApp\QueueMessages.SampleApp.csproj", "{473F039E-4494-49D3-9235-A5FF55CECDA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp.GuardiansOfTheGalaxy", "samples\QueueMessages.SampleApp\SampleApp.GuardiansOfTheGalaxy.csproj", "{473F039E-4494-49D3-9235-A5FF55CECDA3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobHandlers.AzureQueueMessage.IntegrationTests", "tests\QueueMessages.SampleApp.IntegrationTests\JobHandlers.AzureQueueMessage.IntegrationTests.csproj", "{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
