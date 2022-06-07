@@ -16,7 +16,7 @@ namespace JobHandlers.AzureQueueMessage.Services
 
         public async Task<QueueClient> Get(string? queueName, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(queueName))
+            if (string.IsNullOrEmpty(queueName))
             {
                 throw new InvalidOperationException("Invalid Queue Name. Make sure that it is defined in the app settings");
             }

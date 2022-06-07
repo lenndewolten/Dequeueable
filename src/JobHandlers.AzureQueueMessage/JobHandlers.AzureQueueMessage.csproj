@@ -17,6 +17,7 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="JobHandlers.AzureQueueMessage.IntegrationTests" />
+		<InternalsVisibleTo Include="JobHandlers.AzureQueueMessage.UnitTests" />
 	</ItemGroup>
 	
 </Project>

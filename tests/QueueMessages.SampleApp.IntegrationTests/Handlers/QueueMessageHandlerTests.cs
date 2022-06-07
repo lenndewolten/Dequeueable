@@ -71,6 +71,7 @@ namespace JobHandlers.AzureQueueMessage.IntegrationTests.Handlers
                 {
                     opt.ConnectionString = _connectionString;
                     opt.QueueName = _queueName;
+                    //opt.PoisenQueueSuffix = "testlennart";
                 });
             });
 
