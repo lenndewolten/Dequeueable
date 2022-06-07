@@ -4,6 +4,6 @@ namespace JobHandlers.AzureQueueMessage.Services.Retrievers
 {
     internal interface IQueueMessageRetriever
     {
-        Task<QueueMessage> Retrieve(CancellationToken cancellationToken);
+        Task<QueueMessage?> Retrieve(CancellationToken cancellationToken);
     }
 }

@@ -16,7 +16,7 @@ namespace JobHandlers.AzureQueueMessage.Services.Retrievers
             _storageAccountOptions = storageAccountOptionsAccessor.Value;
         }
 
-        public async Task<QueueMessage> Retrieve(CancellationToken cancellationToken)
+        public async Task<QueueMessage?> Retrieve(CancellationToken cancellationToken)
         {
             var queueClient = await _queueClientProvider.Get(_storageAccountOptions.QueueName, cancellationToken);
             var message = await queueClient.ReceiveMessageAsync(visibilityTimeout: _storageAccountOptions.VisibilityTimeout, cancellationToken: cancellationToken);

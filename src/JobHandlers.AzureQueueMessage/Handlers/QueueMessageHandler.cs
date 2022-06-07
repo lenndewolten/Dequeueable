@@ -12,14 +12,14 @@ namespace JobHandlers.AzureQueueMessage.Handlers
         private readonly IQueueMessageRetriever _queueMessageRetriever;
         private readonly IQueueMessageExecutor _executor;
         private readonly IQueueMessageDeleter _queueMessageDeleter;
-        private readonly QueueMessageExceptionHandler _queueMessageExceptionHandler;
+        private readonly IQueueMessageExceptionHandler _queueMessageExceptionHandler;
         private readonly ILogger<QueueMessageHandler> _logger;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
         public QueueMessageHandler(IQueueMessageRetriever queueMessageRetriever,
             IQueueMessageExecutor executor,
             IQueueMessageDeleter queueMessageDeleter,
-            QueueMessageExceptionHandler queueMessageExceptionHandler,
+            IQueueMessageExceptionHandler queueMessageExceptionHandler,
             ILogger<QueueMessageHandler> logger,
             IHostApplicationLifetime hostApplicationLifetime)
         {

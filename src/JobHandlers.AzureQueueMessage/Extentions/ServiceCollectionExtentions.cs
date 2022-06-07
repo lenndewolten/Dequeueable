@@ -22,8 +22,9 @@ namespace JobHandlers.AzureQueueMessage.Extentions
 
             services.AddHostedService<AzureQueueMessageHostService>();
             services.AddTransient<QueueMessageHandler>();
-            services.AddTransient<QueueMessageExceptionHandler>();
+            services.AddTransient<IQueueMessageExceptionHandler, QueueMessageExceptionHandler>();
             services.AddTransient<IQueueClientRetriever, QueueClientRetriever>();
+            services.AddSingleton<IQueueClientFactory, QueueClientFactory>();
             services.AddTransient<IQueueMessageRetriever, QueueMessageRetriever>();
             services.AddTransient<IQueueMessageUpdater, QueueMessageUpdater>();
             services.AddTransient<IQueueMessageDeleter, QueueMessageDeleter>();

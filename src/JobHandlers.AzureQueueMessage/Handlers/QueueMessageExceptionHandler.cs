@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace JobHandlers.AzureQueueMessage.Handlers
 {
-    internal sealed class QueueMessageExceptionHandler
+    internal sealed class QueueMessageExceptionHandler : IQueueMessageExceptionHandler
     {
         private readonly int _maxDequeueCount;
         private readonly IQueueMessageUpdater _queueMessageUpdater;

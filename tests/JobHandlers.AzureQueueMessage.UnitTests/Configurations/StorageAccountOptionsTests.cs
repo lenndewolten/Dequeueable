@@ -67,9 +67,12 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
             var expected = string.Empty;
 
             // Act
-            Action act = () => new StorageAccountOptions
+            Action act = () =>
             {
-                PoisenQueueSuffix = expected,
+                var options = new StorageAccountOptions
+                {
+                    PoisenQueueSuffix = expected,
+                };
             };
 
             // Assert
@@ -100,13 +103,160 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
             var expected = string.Empty;
 
             // Act
-            Action act = () => new StorageAccountOptions
+            Action act = () =>
             {
-                QueueName = expected,
+                var options = new StorageAccountOptions
+                {
+                    QueueName = expected,
+                };
             };
 
             // Assert
             act.Should().ThrowExactly<ArgumentException>();
+        }
+
+        [Fact]
+        public void Given_the_ConnectionString_when_it_is_set_with_a_valid_value_then_it_set_correctly()
+        {
+            // Arrange
+            var expected = "test";
+            var sut = new StorageAccountOptions
+            {
+                ConnectionString = expected,
+            };
+
+            // Act
+            var actual = sut.ConnectionString;
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Given_the_ConnectionString_when_it_is_set_with_an_invalid_value_then_an_ArgumentException_is_thrown()
+        {
+            // Arrange
+            var expected = string.Empty;
+
+            // Act
+            Action act = () =>
+            {
+                var options = new StorageAccountOptions
+                {
+                    ConnectionString = expected,
+                };
+            };
+
+            // Assert
+            act.Should().ThrowExactly<ArgumentException>();
+        }
+
+        [Fact]
+        public void Given_the_AccountName_when_it_is_set_with_a_valid_value_then_it_set_correctly()
+        {
+            // Arrange
+            var expected = "test";
+            var sut = new StorageAccountOptions
+            {
+                AccountName = expected,
+            };
+
+            // Act
+            var actual = sut.AccountName;
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Given_the_AccountName_when_it_is_set_with_an_invalid_value_then_an_ArgumentException_is_thrown()
+        {
+            // Arrange
+            var expected = string.Empty;
+
+            // Act
+            Action act = () =>
+            {
+                var options = new StorageAccountOptions
+                {
+                    AccountName = expected,
+                };
+            };
+
+            // Assert
+            act.Should().ThrowExactly<ArgumentException>();
+        }
+
+        [Fact]
+        public void Given_the_MaxDequeueCount_when_it_is_set_to_zero_then_it_set_correctly()
+        {
+            // Arrange
+            var expected = 0;
+            var sut = new StorageAccountOptions
+            {
+                MaxDequeueCount = expected,
+            };
+
+            // Act
+            var actual = sut.MaxDequeueCount;
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Given_the_MaxDequeueCount_when_it_to_twenty_then_it_set_correctly()
+        {
+            // Arrange
+            var expected = 20;
+            var sut = new StorageAccountOptions
+            {
+                MaxDequeueCount = expected,
+            };
+
+            // Act
+            var actual = sut.MaxDequeueCount;
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Given_the_MaxDequeueCount_when_it_is_set_to_minus_one_then_an_ArgumentException_is_thrown()
+        {
+            // Arrange
+            var expected = -1;
+
+            // Act
+            Action act = () =>
+            {
+                var options = new StorageAccountOptions
+                {
+                    MaxDequeueCount = expected,
+                };
+            };
+
+            // Assert
+            act.Should().ThrowExactly<ArgumentOutOfRangeException>();
+        }
+
+        [Fact]
+        public void Given_the_MaxDequeueCount_when_it_is_set_to_twentyone_then_an_ArgumentException_is_thrown()
+        {
+            // Arrange
+            var expected = 21;
+
+            // Act
+            Action act = () =>
+            {
+                var options = new StorageAccountOptions
+                {
+                    MaxDequeueCount = expected,
+                };
+            };
+
+            // Assert
+            act.Should().ThrowExactly<ArgumentOutOfRangeException>();
         }
     }
 }
