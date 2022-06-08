@@ -1,5 +1,4 @@
 ﻿using Azure.Core;
-using Azure.Identity;
 using Azure.Storage.Queues;
 
 namespace JobHandlers.AzureQueueMessage.Services.Retrievers
@@ -16,10 +15,9 @@ namespace JobHandlers.AzureQueueMessage.Services.Retrievers
             return new QueueClient(connectionString, queueName, _queueClientOptions);
         }
 
-        public QueueClient Create(string accountName, string queueName, TokenCredential tokenCredential)
+        public QueueClient Create(Uri uri, TokenCredential tokenCredential)
         {
-            var uri = QueueClientUriProvider.CreateQueueClientUri(accountName, queueName);
-            return new QueueClient(uri, new DefaultAzureCredential(), _queueClientOptions);
+            return new QueueClient(uri, tokenCredential, _queueClientOptions);
         }
     }
 }

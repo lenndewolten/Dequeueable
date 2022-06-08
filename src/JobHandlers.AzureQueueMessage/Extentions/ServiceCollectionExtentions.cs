@@ -1,6 +1,7 @@
 ﻿using JobHandlers.AzureQueueMessage.Configurations;
 using JobHandlers.AzureQueueMessage.Handlers;
 using JobHandlers.AzureQueueMessage.Services;
+using JobHandlers.AzureQueueMessage.Services.Builders;
 using JobHandlers.AzureQueueMessage.Services.Deleters;
 using JobHandlers.AzureQueueMessage.Services.Retrievers;
 using JobHandlers.AzureQueueMessage.Services.Updaters;
@@ -28,6 +29,7 @@ namespace JobHandlers.AzureQueueMessage.Extentions
             services.AddTransient<IQueueMessageRetriever, QueueMessageRetriever>();
             services.AddTransient<IQueueMessageUpdater, QueueMessageUpdater>();
             services.AddTransient<IQueueMessageDeleter, QueueMessageDeleter>();
+            services.AddTransient<IStorageAccountUriBuilder, StorageAccountUriBuilder>();
 
             services.TryAddSingleton<QueueClientProvider>();
             services.TryAddTransient<IQueueMessageExecutor, TExecutor>();

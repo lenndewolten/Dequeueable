@@ -6,6 +6,6 @@ namespace JobHandlers.AzureQueueMessage.Services.Retrievers
     internal interface IQueueClientFactory
     {
         QueueClient Create(string connectionString, string queueName);
-        QueueClient Create(string accountName, string queueName, TokenCredential tokenCredential);
+        QueueClient Create(Uri uri, TokenCredential tokenCredential);
     }
 }

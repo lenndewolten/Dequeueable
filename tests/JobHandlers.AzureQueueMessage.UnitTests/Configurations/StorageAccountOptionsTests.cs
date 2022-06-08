@@ -188,6 +188,42 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
         }
 
         [Fact]
+        public void Given_the_StorageAccountUriFormat_when_it_is_set_with_a_valid_value_then_it_set_correctly()
+        {
+            // Arrange
+            var expected = "test";
+            var sut = new StorageAccountOptions
+            {
+                StorageAccountUriFormat = expected,
+            };
+
+            // Act
+            var actual = sut.StorageAccountUriFormat;
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Given_the_StorageAccountUriFormat_when_it_is_set_with_an_invalid_value_then_an_ArgumentException_is_thrown()
+        {
+            // Arrange
+            var expected = string.Empty;
+
+            // Act
+            Action act = () =>
+            {
+                var options = new StorageAccountOptions
+                {
+                    StorageAccountUriFormat = expected,
+                };
+            };
+
+            // Assert
+            act.Should().ThrowExactly<ArgumentException>();
+        }
+
+        [Fact]
         public void Given_the_MaxDequeueCount_when_it_is_set_to_zero_then_it_set_correctly()
         {
             // Arrange

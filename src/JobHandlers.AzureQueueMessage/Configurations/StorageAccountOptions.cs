@@ -1,4 +1,6 @@
-﻿namespace JobHandlers.AzureQueueMessage.Configurations
+﻿using Azure.Core;
+
+namespace JobHandlers.AzureQueueMessage.Configurations
 {
     public class StorageAccountOptions
     {
@@ -7,6 +9,7 @@
         private int _maxDequeueCount = 5;
         private string? _connectionString;
         private string? _accountName;
+        private string _storageAccountUriFormat = "https://{accountName}.queue.core.windows.net/{queueName}";
 
         internal string PoisenQueueName => string.IsNullOrWhiteSpace(QueueName) ? _poisenQueueSuffix : $"{QueueName}-{_poisenQueueSuffix}";
 
@@ -66,6 +69,20 @@
             }
         }
 
+        public string StorageAccountUriFormat
+        {
+            get { return _storageAccountUriFormat; }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException($"'{nameof(StorageAccountUriFormat)}' cannot be null or whitespace.", nameof(StorageAccountUriFormat));
+                }
+
+                _storageAccountUriFormat = value;
+            }
+        }
+
         public int MaxDequeueCount
         {
             get { return _maxDequeueCount; }
@@ -86,5 +103,7 @@
         public TimeSpan VisibilityTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
         public const string StorageAccount = nameof(StorageAccount);
+
+        public TokenCredential? AuthenticationScheme { get; set; }
     }
 }
