@@ -1,4 +1,5 @@
 using Azure.Identity;
+using Azure.Storage.Queues;
 using FluentAssertions;
 using JobHandlers.AzureQueueMessage.Configurations;
 using JobHandlers.AzureQueueMessage.Services.Builders;
@@ -24,11 +25,13 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
             };
             var loggerMock = new Mock<ILogger<QueueClientRetriever>>();
             var optionsMock = new Mock<IOptions<StorageAccountOptions>>(MockBehavior.Strict);
-            var factoryMock = new Mock<IQueueClientFactory>();
+            var factoryMock = new Mock<IQueueClientFactory>(MockBehavior.Strict);
             var storageAccountUriBuilderMock = new Mock<IStorageAccountUriBuilder>(MockBehavior.Strict);
 
             optionsMock.SetupGet(o => o.Value).Returns(options);
-            factoryMock.Setup(f => f.Create(options.ConnectionString, queueName)).Verifiable();
+            factoryMock.Setup(f => f.Create(options.ConnectionString, queueName))
+                .Returns(new Mock<QueueClient>().Object)
+                .Verifiable();
 
             var sut = new QueueClientRetriever(factoryMock.Object, optionsMock.Object, loggerMock.Object, storageAccountUriBuilderMock.Object);
 
@@ -58,7 +61,7 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
             };
             var loggerMock = new Mock<ILogger<QueueClientRetriever>>();
             var optionsMock = new Mock<IOptions<StorageAccountOptions>>(MockBehavior.Strict);
-            var factoryMock = new Mock<IQueueClientFactory>();
+            var factoryMock = new Mock<IQueueClientFactory>(MockBehavior.Strict);
             var storageAccountUriBuilderMock = new Mock<IStorageAccountUriBuilder>(MockBehavior.Strict);
 
             optionsMock.SetupGet(o => o.Value).Returns(options);
@@ -66,7 +69,9 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
                 .Returns(new Uri("https://localhost"))
                 .Verifiable()
                 ;
-            factoryMock.Setup(f => f.Create(It.IsAny<Uri>(), options.AuthenticationScheme)).Verifiable();
+            factoryMock.Setup(f => f.Create(It.IsAny<Uri>(), options.AuthenticationScheme))
+                .Returns(new Mock<QueueClient>().Object)
+                .Verifiable();
 
             var sut = new QueueClientRetriever(factoryMock.Object, optionsMock.Object, loggerMock.Object, storageAccountUriBuilderMock.Object);
 
@@ -85,7 +90,6 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
                 It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)),
             Times.Once);
         }
-
 
         [Fact]
         public void Given_a_QueueClientRetriever_when_Retrieve_is_called_without_an_AuthScheme_or_ConnectionString_as_an_option_then_an_InvalidOperationException_is_thrown()
