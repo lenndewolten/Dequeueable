@@ -47,6 +47,10 @@ namespace JobHandlers.AzureQueueMessage.Handlers
 
                 _logger.LogInformation("Finished executing message with id: '{MessageId}'", message.MessageId);
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception occurred while executing queue host services");
+            }
             finally
             {
                 if (!stoppingToken.IsCancellationRequested)
@@ -62,9 +66,9 @@ namespace JobHandlers.AzureQueueMessage.Handlers
             {
                 await _executor.Execute(message, stoppingToken);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, "Processing message '{MessageId}' failed", message.MessageId);
+                _logger.LogError("Processing message '{MessageId}' failed", message.MessageId);
                 await _queueMessageExceptionHandler.Handle(message, stoppingToken);
                 throw;
             }

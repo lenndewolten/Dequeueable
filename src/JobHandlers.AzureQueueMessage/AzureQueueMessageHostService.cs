@@ -1,51 +1,32 @@
 ﻿using JobHandlers.AzureQueueMessage.Handlers;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace JobHandlers.AzureQueueMessage
 {
-    internal sealed class AzureQueueMessageHostService : IHostedService, IDisposable
+    internal sealed class AzureQueueMessageHostService : BackgroundService
     {
         private readonly QueueMessageHandler _queueMessageHandler;
-        private readonly CancellationTokenSource _stoppingCts = new();
-        private Task? _executingTask;
+        private readonly ILogger<AzureQueueMessageHostService> _logger;
 
-        public AzureQueueMessageHostService(QueueMessageHandler queueMessageHandler)
+        public AzureQueueMessageHostService(QueueMessageHandler queueMessageHandler,
+            ILogger<AzureQueueMessageHostService> logger)
         {
             _queueMessageHandler = queueMessageHandler;
+            _logger = logger;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _executingTask = _queueMessageHandler.HandleAsync(_stoppingCts.Token);
+            _logger.LogInformation("Azure Queue Message service started");
 
-            if (_executingTask.IsCompleted)
-            {
-                return _executingTask;
-            }
-
-            return Task.CompletedTask;
+            await _queueMessageHandler.HandleAsync(stoppingToken);
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        public override Task StopAsync(CancellationToken cancellationToken)
         {
-            if (_executingTask is null)
-            {
-                return;
-            }
-
-            try
-            {
-                _stoppingCts.Cancel();
-            }
-            finally
-            {
-                await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
-            }
-        }
-
-        public void Dispose()
-        {
-            _stoppingCts.Cancel();
+            _logger.LogInformation("Azure Queue Message service stopping");
+            return base.StopAsync(cancellationToken);
         }
     }
 }
