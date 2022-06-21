@@ -4,10 +4,10 @@ A custom implementation for Azure Functions on kubernetes. The aim of this proje
 The Azure Functions Host is not optimized to run in a container and/or on kubernetes. This project is an **opinionated** optimization on the Azure Function:
 - Build as a Console App
 - Being able to use optimized alpine/dotnet images
-- No default listerens, have the freedom to use Keda or any other (timed) trigger to retrieve the message
+- Have the freedom to use Keda or any other (timed) trigger to retrieve the message
 
 ## How it works
-When the (scaled) job is triggered, by Keda or any other trigger, the container will retrieve the queue message and calls the ExecuteAsync.
+When the (scaled) job is triggered by Keda or any other trigger, the container will retrieve the queue message and call the executer.
 
 After execution the message will be deleted from the queue. If an exception occurres, the message will be dequeued again. If the max dequeue count is reached, the message will be moved to the poisen queue.
 
@@ -64,7 +64,7 @@ QueueName | The queue to retrieve the events from | | Yes |
 ConnectionString | The connection string used to authenticate to the queue | | Yes, when not using Identiy |
 AccountName | The storage account name, used for identity flow | | Only when using Identity |
 StorageAccountUriFormat | The uri formnat to the queue storage. Used for identity flow. Use ` {accountName}` and `{queueName}` for variable substitution | https://{accountName}.queue.core.windows.net/{queueName} | No
-MaxDequeueCount | Max dequeue count the message can have before moving to the poisen queue  | 5 | No |
+MaxDequeueCount | Max dequeue count before moving to the poisen queue  | 5 | No |
 VisibilityTimeout | The timeout after the queue message is visible again for other services | 30 seconds | No |
 AuthenticationScheme | Token credential used to authenticate via AD, Any token credential provider can be used that inherits the abstract class `Azure.Core.TokenCredential` | | Yes, if you want to use Identity|
 
