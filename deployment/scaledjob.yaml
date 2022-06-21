@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: queuejob-consumer
 data:
+  # Only for testing! Use a secret deployment to protect the secrets
   StorageAccount__ConnectionString: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://storage-azurite-service.default:10000/devstoreaccount1;QueueEndpoint=http://storage-azurite-service.default:10001/devstoreaccount1;TableEndpoint=http://storage-azurite-service.default:10002/devstoreaccount1;
   StorageAccount__QueueName: "test-queue"
 ---
