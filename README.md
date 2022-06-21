@@ -63,7 +63,7 @@ PoisenQueueSuffix | Suffix that will be used after the QueueName, eg queuename-s
 QueueName | The queue to retrieve the events from | | Yes |
 ConnectionString | The connection string used to authenticate to the queue | | Yes, when not using Identiy |
 AccountName | The storage account name, used for identity flow | | Only when using Identity |
-StorageAccountUriFormat | The uri formnat to the queue storage. Used for identity flow. Use ` {accountName}` and `{queueName}` for variable substitution | https://{accountName}.queue.core.windows.net/{queueName} | No
+StorageAccountUriFormat | The uri format to the queue storage. Used for identity flow. Use ` {accountName}` and `{queueName}` for variable substitution | https://{accountName}.queue.core.windows.net/{queueName} | No
 MaxDequeueCount | Max dequeue count the message can have before moving to the poisen queue  | 5 | No |
 VisibilityTimeout | The timeout after the queue message is visible again for other services | 30 seconds | No |
 AuthenticationScheme | Token credential used to authenticate via AD, Any token credential provider can be used that inherits the abstract class `Azure.Core.TokenCredential` | | Yes, if you want to use Identity|
