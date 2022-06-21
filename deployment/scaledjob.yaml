@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: queuejob-consumer
+data:
+  # Only for testing! Use a secret deployment to protect the secrets
+  StorageAccount__ConnectionString: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://storage-azurite-service.default:10000/devstoreaccount1;QueueEndpoint=http://storage-azurite-service.default:10001/devstoreaccount1;TableEndpoint=http://storage-azurite-service.default:10002/devstoreaccount1;
+  StorageAccount__QueueName: "test-queue"
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: queuejob-consumer
+  namespace: default
+spec:
+  jobTargetRef:
+    template:
+      spec:
+        containers:
+        - name: queuejob-executor
+          image: lenndewolten/queue-event-job-executer:v1 
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: queuejob-consumer
+        restartPolicy: Never
+    backoffLimit: 4  
+  pollingInterval: 10             
+  maxReplicaCount: 30             
+  triggers:
+  - type: azure-queue
+    metadata:
+      queueName: test-queue
+      queueLength: '1'
+      connectionFromEnv: StorageAccount__ConnectionString
+      accountName: devstoreaccount1
+
+

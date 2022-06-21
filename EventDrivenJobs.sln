@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobHandlers.AzureQueueMessage", "src\JobHandlers.AzureQueueMessage\JobHandlers.AzureQueueMessage.csproj", "{29E8399C-F81E-463E-A81E-C8FE12AD3282}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp.GuardiansOfTheGalaxy", "samples\QueueMessages.SampleApp\SampleApp.GuardiansOfTheGalaxy.csproj", "{473F039E-4494-49D3-9235-A5FF55CECDA3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobHandlers.AzureQueueMessage.IntegrationTests", "tests\QueueMessages.SampleApp.IntegrationTests\JobHandlers.AzureQueueMessage.IntegrationTests.csproj", "{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobHandlers.AzureQueueMessage.UnitTests", "tests\JobHandlers.AzureQueueMessage.UnitTests\JobHandlers.AzureQueueMessage.UnitTests.csproj", "{0EB2C822-AF2B-4C31-8AA3-DADD79339626}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29E8399C-F81E-463E-A81E-C8FE12AD3282}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29E8399C-F81E-463E-A81E-C8FE12AD3282}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29E8399C-F81E-463E-A81E-C8FE12AD3282}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29E8399C-F81E-463E-A81E-C8FE12AD3282}.Release|Any CPU.Build.0 = Release|Any CPU
+		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{473F039E-4494-49D3-9235-A5FF55CECDA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C0E8D73-0CB9-4DC2-A42D-F113097C13AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EB2C822-AF2B-4C31-8AA3-DADD79339626}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EB2C822-AF2B-4C31-8AA3-DADD79339626}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EB2C822-AF2B-4C31-8AA3-DADD79339626}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EB2C822-AF2B-4C31-8AA3-DADD79339626}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA0A0709-82FA-48EB-8A62-8E857D9BB604}
+	EndGlobalSection
+EndGlobal
