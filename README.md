@@ -241,3 +241,4 @@ info: JobHandlers.AzureQueueMessage.AzureQueueMessageHostService[0]
 
 ## Feature requests
 - Handling more than one event
+- Packaging
