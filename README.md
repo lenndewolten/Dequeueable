@@ -4,7 +4,7 @@ A custom implementation for Azure Functions on kubernetes. The aim of this proje
 The Azure Functions Host is not optimized to run in a container and/or on kubernetes. This project is an **opinionated** optimization on the Azure Function:
 - Build as a Console App
 - Being able to use optimized alpine/dotnet images
-- Only use Keda as queue listeners
+- No default listerens, have the freedom to use Keda or any other (timed) trigger to retrieve the message
 
 ## How it works
 When the (scaled) job is triggered, by Keda or any other trigger, the container will retrieve the queue message and calls the ExecuteAsync.
