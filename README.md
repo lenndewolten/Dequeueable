@@ -205,6 +205,39 @@ spec:
       accountName: devstoreaccount1
 ```
 
+kubectl:
+
+```
+NAME                                          READY   STATUS      RESTARTS   AGE
+queuejob-consumer-86hk2-2gx4x                 0/1     Completed   0          11s
+queuejob-consumer-p4fjj-hbvjr                 0/1     Completed   0          11s
+storage-azurite-deployment-67f6f9b87b-wfgmh   1/1     Running     0          4m26s
+```
+```
+kubectl logs pods/queuejob-consumer-p4fjj-hbvjr
+info: JobHandlers.AzureQueueMessage.AzureQueueMessageHostService[0]
+      Azure Queue Message service started
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /app
+info: SampleApp.GuardiansOfTheGalaxy.Executors.CreateGuardianEventExecutor[0]
+      Event '6bfd2f25-a3ea-4b86-99d9-1a2246a50560' retrieved, creating guardian
+info: SampleApp.GuardiansOfTheGalaxy.Executors.CreateGuardianEventExecutor[0]
+      Guardian Created!
+       Name: Groot,
+       Weapon: Rocket's Ultimate Blaster,
+       Damage: 131.44057544725425
+info: JobHandlers.AzureQueueMessage.Handlers.QueueMessageHandler[0]
+      Finished executing message with id: '6bfd2f25-a3ea-4b86-99d9-1a2246a50560'
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: JobHandlers.AzureQueueMessage.AzureQueueMessageHostService[0]
+      Azure Queue Message service stopping
+```
+
 
 ## Feature requests
 - Handling more than one event
