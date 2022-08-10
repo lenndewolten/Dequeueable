@@ -1,4 +1,4 @@
-# k8s-event-scaled-jobs
+# event-scaled-kubernetes-jobs
 A custom implementation for Azure Functions on kubernetes. The aim of this project is to handle (durable) events more efficiently. 
 
 The Azure Functions Host is not optimized to run in a container and/or on kubernetes. This project is an **opinionated** optimization on the Azure Function:
