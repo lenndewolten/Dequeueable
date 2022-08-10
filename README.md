@@ -9,7 +9,7 @@ The Azure Functions Host is not optimized to run in a container and/or on kubern
 ## How it works
 When the (scaled) job is triggered by Keda or any other trigger, the container will retrieve the queue message and call the executer.
 
-After execution the message will be deleted from the queue. If an exception occurres, the message will be dequeued again. If the max dequeue count is reached, the message will be moved to the poisen queue.
+After execution the message will be deleted from the queue. If an exception occurres, the message will be dequeued again. If the max dequeue count is reached, the message will be moved to the poison queue.
 
 When the host is done handling the event, a SIGTERM event is triggered to shutdown the container/pod.
 
@@ -59,12 +59,12 @@ await Host.CreateDefaultBuilder(args)
 ###  settings
 Setting | Description | Default | Required
 --- | --- | --- | --- |
-PoisenQueueSuffix | Suffix that will be used after the QueueName, eg queuename-suffix | poisen | No |
+PoisonQueueSuffix | Suffix that will be used after the QueueName, eg queuename-suffix | poison | No |
 QueueName | The queue to retrieve the events from | | Yes |
 ConnectionString | The connection string used to authenticate to the queue | | Yes, when not using Identiy |
 AccountName | The storage account name, used for identity flow | | Only when using Identity |
 StorageAccountUriFormat | The uri format to the queue storage. Used for identity flow. Use ` {accountName}` and `{queueName}` for variable substitution | https://{accountName}.queue.core.windows.net/{queueName} | No
-MaxDequeueCount | Max dequeue count before moving to the poisen queue  | 5 | No |
+MaxDequeueCount | Max dequeue count before moving to the poison queue  | 5 | No |
 VisibilityTimeout | The timeout after the queue message is visible again for other services | 30 seconds | No |
 AuthenticationScheme | Token credential used to authenticate via AD, Any token credential provider can be used that inherits the abstract class `Azure.Core.TokenCredential` | | Yes, if you want to use Identity|
 

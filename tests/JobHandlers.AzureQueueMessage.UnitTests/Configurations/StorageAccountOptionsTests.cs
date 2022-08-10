@@ -8,60 +8,60 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
     public class StorageAccountOptionsTests
     {
         [Fact]
-        public void Given_the_PoisenQueueName_when_no_queue_name_is_provided_then_the_correct_value_is_returned()
+        public void Given_the_PoisonQueueName_when_no_queue_name_is_provided_then_the_correct_value_is_returned()
         {
             // Arrange
-            var expected = "test-poisen";
+            var expected = "test-poison";
             var sut = new StorageAccountOptions
             {
-                PoisenQueueSuffix = expected
+                PoisonQueueSuffix = expected
             };
 
             // Act
-            var actual = sut.PoisenQueueName;
+            var actual = sut.PoisonQueueName;
 
             // Assert
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void Given_the_PoisenQueueName_when_a_queue_name_is_provided_then_the_correct_value_is_returned()
+        public void Given_the_PoisonQueueName_when_a_queue_name_is_provided_then_the_correct_value_is_returned()
         {
             // Arrange
             var queueName = "test-queue";
-            var suffix = "poisen";
+            var suffix = "poison";
             var sut = new StorageAccountOptions
             {
-                PoisenQueueSuffix = suffix,
+                PoisonQueueSuffix = suffix,
                 QueueName = queueName
             };
 
             // Act
-            var actual = sut.PoisenQueueName;
+            var actual = sut.PoisonQueueName;
 
             // Assert
             actual.Should().Be($"{queueName}-{suffix}");
         }
 
         [Fact]
-        public void Given_the_PoisenQueueSuffix_when_it_is_set_with_a_valid_value_then_it_set_correctly()
+        public void Given_the_PoisonQueueSuffix_when_it_is_set_with_a_valid_value_then_it_set_correctly()
         {
             // Arrange
             var expected = "test";
             var sut = new StorageAccountOptions
             {
-                PoisenQueueSuffix = expected,
+                PoisonQueueSuffix = expected,
             };
 
             // Act
-            var actual = sut.PoisenQueueSuffix;
+            var actual = sut.PoisonQueueSuffix;
 
             // Assert
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void Given_the_PoisenQueueSuffix_when_it_is_set_with_an_invalid_value_then_an_ArgumentException_is_thrown()
+        public void Given_the_PoisonQueueSuffix_when_it_is_set_with_an_invalid_value_then_an_ArgumentException_is_thrown()
         {
             // Arrange
             var expected = string.Empty;
@@ -71,7 +71,7 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
             {
                 var options = new StorageAccountOptions
                 {
-                    PoisenQueueSuffix = expected,
+                    PoisonQueueSuffix = expected,
                 };
             };
 

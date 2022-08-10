@@ -21,7 +21,7 @@ namespace JobHandlers.AzureQueueMessage.Handlers
         {
             if (queueMessage.DequeueCount >= _maxDequeueCount)
             {
-                return _queueMessageUpdater.MoveToPoisenQueue(queueMessage, cancellationToken);
+                return _queueMessageUpdater.MoveToPoisonQueue(queueMessage, cancellationToken);
             }
 
             return _queueMessageUpdater.Enqueue(queueMessage, cancellationToken);

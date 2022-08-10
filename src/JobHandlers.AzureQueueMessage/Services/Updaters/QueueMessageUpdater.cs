@@ -27,11 +27,11 @@ namespace JobHandlers.AzureQueueMessage.Services.Updaters
             await queueClient.UpdateMessageAsync(queueMessage.MessageId, queueMessage.PopReceipt, queueMessage.Body, TimeSpan.Zero, cancellationToken);
         }
 
-        public async Task MoveToPoisenQueue(QueueMessage queueMessage, CancellationToken cancellationToken)
+        public async Task MoveToPoisonQueue(QueueMessage queueMessage, CancellationToken cancellationToken)
         {
-            var poisenQueueClient = await _queueClientProvider.Get(_storageAccountOptions.PoisenQueueName, cancellationToken);
+            var poisonQueueClient = await _queueClientProvider.Get(_storageAccountOptions.PoisonQueueName, cancellationToken);
 
-            await poisenQueueClient.SendMessageAsync(queueMessage.Body, cancellationToken: cancellationToken);
+            await poisonQueueClient.SendMessageAsync(queueMessage.Body, cancellationToken: cancellationToken);
             await _queueMessageDeleter.Delete(queueMessage, CancellationToken.None);
         }
     }

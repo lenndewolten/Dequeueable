@@ -4,26 +4,26 @@ namespace JobHandlers.AzureQueueMessage.Configurations
 {
     public class StorageAccountOptions
     {
-        private string _poisenQueueSuffix = "poisen";
+        private string _poisonQueueSuffix = "poison";
         private string _queueName = string.Empty;
         private int _maxDequeueCount = 5;
         private string? _connectionString;
         private string? _accountName;
         private string _storageAccountUriFormat = "https://{accountName}.queue.core.windows.net/{queueName}";
 
-        internal string PoisenQueueName => string.IsNullOrWhiteSpace(QueueName) ? _poisenQueueSuffix : $"{QueueName}-{_poisenQueueSuffix}";
+        internal string PoisonQueueName => string.IsNullOrWhiteSpace(QueueName) ? _poisonQueueSuffix : $"{QueueName}-{_poisonQueueSuffix}";
 
-        public string PoisenQueueSuffix
+        public string PoisonQueueSuffix
         {
-            get { return _poisenQueueSuffix; }
+            get { return _poisonQueueSuffix; }
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException($"'{nameof(PoisenQueueSuffix)}' cannot be null or whitespace.", nameof(PoisenQueueSuffix));
+                    throw new ArgumentException($"'{nameof(PoisonQueueSuffix)}' cannot be null or whitespace.", nameof(PoisonQueueSuffix));
                 }
 
-                _poisenQueueSuffix = value;
+                _poisonQueueSuffix = value;
             }
         }
 

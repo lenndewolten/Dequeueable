@@ -71,7 +71,7 @@ namespace JobHandlers.AzureQueueMessage.IntegrationTests.Handlers
                 {
                     opt.ConnectionString = _connectionString;
                     opt.QueueName = _queueName;
-                    //opt.PoisenQueueSuffix = "testlennart";
+                    //opt.PoisonQueueSuffix = "testlennart";
                 });
             });
 
@@ -121,7 +121,7 @@ namespace JobHandlers.AzureQueueMessage.IntegrationTests.Handlers
         }
 
         [Fact]
-        public async Task Given_a_QueueMessageHandler_with_max_dequeue_count_1_when_HandleAsync_is_called_and_a_message_is_retrieved_with_dequeue_count_1_and_an_exception_occurred_then_the_message_is_moved_to_the_poisen_queue()
+        public async Task Given_a_QueueMessageHandler_with_max_dequeue_count_1_when_HandleAsync_is_called_and_a_message_is_retrieved_with_dequeue_count_1_and_an_exception_occurred_then_the_message_is_moved_to_the_poison_queue()
         {
             // Arrange
             var factory = new ApplicationFactory();
@@ -149,8 +149,8 @@ namespace JobHandlers.AzureQueueMessage.IntegrationTests.Handlers
 
             // Assert
             await act.Should().ThrowAsync<Exception>();
-            var poisenQueueClient = new QueueClient(_connectionString, $"{_queueName}-poisen", new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 });
-            var peekedMessage = await poisenQueueClient.PeekMessageAsync();
+            var poisonQueueClient = new QueueClient(_connectionString, $"{_queueName}-poison", new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 });
+            var peekedMessage = await poisonQueueClient.PeekMessageAsync();
             peekedMessage.Value.Body.ToString().Should().Be(_message);
         }
     }

@@ -37,14 +37,14 @@ namespace JobHandlers.AzureQueueMessage.UnitTests
         }
 
         [Fact]
-        public async Task Given_a_QueueMessageExceptionHandler_with_MaxDequeueCount_of_four_when_Handle_is_called_with_a_QueueMessage_with_DequeueCount_of_four_then_it_is_moved_to_the_poisen_queue_correctly()
+        public async Task Given_a_QueueMessageExceptionHandler_with_MaxDequeueCount_of_four_when_Handle_is_called_with_a_QueueMessage_with_DequeueCount_of_four_then_it_is_moved_to_the_poison_queue_correctly()
         {
             // Arrange
             var maxDequeueCount = 4;
             var queueMessage = new QueueMesssageTestDataBuilder().WithDequeueCount(maxDequeueCount).Build();
 
             var queueMessageUpdaterMock = new Mock<IQueueMessageUpdater>(MockBehavior.Strict);
-            queueMessageUpdaterMock.Setup(u => u.MoveToPoisenQueue(queueMessage, It.IsAny<CancellationToken>()))
+            queueMessageUpdaterMock.Setup(u => u.MoveToPoisonQueue(queueMessage, It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask)
                 .Verifiable();
 
