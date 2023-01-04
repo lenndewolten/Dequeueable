@@ -10,4 +10,4 @@ This project is inspired by the Azure Function Host. This project is an **opinio
 - [Functions - Queue listeners](lib/WebJobs.Azure.QueueStorage.Function/README.md)
 Highly scalable queue listener that will be invoked automatically when new messages are detected on the Azure Queue.
 - [Jobs - Scalable jobs](lib/WebJobs.Azure.QueueStorage.Job/README.md)
-Framework that depends on external queue triggers, eg; KEDA. When the host is started, new messages on the Azure Queue are being retrieved and executed. After execution the host will automatically be shutdown.
+Framework that depends on external queue triggers, eg; KEDA. When the host is started, new messages on the Azure Queue are being retrieved and executed. After execution the host will shutodwn automatically.
