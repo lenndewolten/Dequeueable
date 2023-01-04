@@ -18,7 +18,7 @@ namespace WebJobs.Azure.QueueStorage.Function.IntegrationTests.TestDataBuilders
         }
     }
 
-    [Singleton(scope: "Id", containerName: ContainerName, minimumIntervalSeconds: 1)]
+    [Singleton(scope: "Id", containerName: ContainerName, minimumIntervalInSeconds: 1)]
     public class SingletonFunction : IAzureQueueFunction
     {
         public const string ContainerName = "scopedtestcontainer";

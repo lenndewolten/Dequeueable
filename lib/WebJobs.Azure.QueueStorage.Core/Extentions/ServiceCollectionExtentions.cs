@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using WebJobs.Azure.QueueStorage.Core.Attributes;
 using WebJobs.Azure.QueueStorage.Core.Factories;
 using WebJobs.Azure.QueueStorage.Core.Services.Queues;
@@ -37,10 +36,9 @@ namespace WebJobs.Azure.QueueStorage.Core.Extentions
             {
                 var singletonManager = provider.GetRequiredService<ISingletonLockManager>();
                 var executor = provider.GetRequiredService<QueueMessageExecutor>();
-                var logger = provider.GetRequiredService<ILogger<SingletonQueueMessageExecutor>>();
                 var attribute = provider.GetRequiredService<SingletonAttribute>();
 
-                return new SingletonQueueMessageExecutor(singletonManager, executor, logger, attribute);
+                return new SingletonQueueMessageExecutor(singletonManager, executor, attribute);
             });
 
             return services;

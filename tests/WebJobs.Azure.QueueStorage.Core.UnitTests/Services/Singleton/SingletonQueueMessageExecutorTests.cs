@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using WebJobs.Azure.QueueStorage.Core.Services.Queues;
 using WebJobs.Azure.QueueStorage.Core.Services.Singleton;
@@ -16,11 +15,10 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Singleton
             var message = new MessageTestDataBuilder().Build();
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<SingletonQueueMessageExecutor>>(MockBehavior.Strict);
 
             var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(null!).Build();
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, loggerMock.Object, singletonAttribute); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonAttribute); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -37,11 +35,10 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Singleton
             var message = new MessageTestDataBuilder().WithBody("{\"KeyDoesNotExist\": \"nothing here\"}").Build();
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<SingletonQueueMessageExecutor>>(MockBehavior.Strict);
 
             var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(scope).Build();
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, loggerMock.Object, singletonAttribute); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonAttribute); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -58,11 +55,10 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Singleton
             var message = new MessageTestDataBuilder().WithBody("this is no jason!").Build();
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<SingletonQueueMessageExecutor>>(MockBehavior.Strict);
 
             var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(scope).Build();
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, loggerMock.Object, singletonAttribute); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonAttribute); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -79,11 +75,10 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Singleton
             var message = new MessageTestDataBuilder().WithBody("{\"MyProperty\": \"\"}").Build();
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<SingletonQueueMessageExecutor>>(MockBehavior.Strict);
 
             var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(scope).Build();
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, loggerMock.Object, singletonAttribute); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonAttribute); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -102,15 +97,14 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Singleton
             var message = new MessageTestDataBuilder().WithBody($"{{\"{propertyName}\": \"{scope}\"}}").Build();
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<SingletonQueueMessageExecutor>>(MockBehavior.Strict);
 
-            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(propertyName).WithMinimumInterval(TimeSpan.Zero).Build();
+            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(propertyName).WithMinimumInterval(0).Build();
             singletonLockManagerMock.Setup(s => s.AquireLockAsync(scope, It.IsAny<CancellationToken>())).ReturnsAsync(leaseId);
             singletonLockManagerMock.Setup(s => s.ReleaseLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             singletonLockManagerMock.Setup(s => s.RenewLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).ThrowsAsync(new Exception("Renew fails!"));
             queueMessageExecutorMock.Setup(s => s.ExecuteAsync(message, It.IsAny<CancellationToken>())).Returns(Task.Delay(TimeSpan.FromSeconds(10)));
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, loggerMock.Object, singletonAttribute); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonAttribute); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -129,15 +123,14 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Singleton
             var message = new MessageTestDataBuilder().WithBody($"{{\"{propertyName}\": \"{scope}\"}}").Build();
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<SingletonQueueMessageExecutor>>(MockBehavior.Strict);
 
-            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(propertyName).WithMinimumInterval(TimeSpan.FromSeconds(60)).Build();
+            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(propertyName).WithMinimumInterval(60).Build();
             singletonLockManagerMock.Setup(s => s.AquireLockAsync(scope, It.IsAny<CancellationToken>())).ReturnsAsync(leaseId);
             singletonLockManagerMock.Setup(s => s.ReleaseLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             singletonLockManagerMock.Setup(s => s.RenewLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).ReturnsAsync(DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(60)));
             queueMessageExecutorMock.Setup(s => s.ExecuteAsync(message, It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, loggerMock.Object, singletonAttribute);
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonAttribute);
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -156,15 +149,14 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Singleton
             var message = new MessageTestDataBuilder().WithBody($"{{\"{propertyName}\": \"{scope}\"}}").Build();
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<SingletonQueueMessageExecutor>>(MockBehavior.Strict);
 
-            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(propertyName).WithMinimumInterval(TimeSpan.FromSeconds(60)).Build();
+            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithScope(propertyName).WithMinimumInterval(60).Build();
             singletonLockManagerMock.Setup(s => s.AquireLockAsync(scope, It.IsAny<CancellationToken>())).ReturnsAsync(leaseId);
             singletonLockManagerMock.Setup(s => s.ReleaseLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             singletonLockManagerMock.Setup(s => s.RenewLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).ReturnsAsync(DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(60)));
             queueMessageExecutorMock.Setup(s => s.ExecuteAsync(message, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, loggerMock.Object, singletonAttribute);
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonAttribute);
 
             // Act
             await sut.ExecuteAsync(message, CancellationToken.None);

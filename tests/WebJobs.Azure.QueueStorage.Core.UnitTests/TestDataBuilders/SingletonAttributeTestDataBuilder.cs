@@ -4,8 +4,8 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.TestDataBuilders
 {
     public class SingletonAttributeTestDataBuilder
     {
-        private TimeSpan _minimumInterval = TimeSpan.Zero;
-        private TimeSpan _maximumInterval = TimeSpan.Zero.Add(TimeSpan.FromMilliseconds(1));
+        private int _minimumInterval = 0;
+        private int _maximumInterval = 1;
         private string _scope = "id";
         private int _maxRetries;
 
@@ -13,18 +13,18 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.TestDataBuilders
         {
             return new SingletonAttribute(_scope)
             {
-                MinimumInterval = _minimumInterval,
-                MaximumInterval = _maximumInterval,
+                MinimumPollingIntervalInSeconds = _minimumInterval,
+                MaximumPollingIntervalInSeconds = _maximumInterval,
                 MaxRetries = _maxRetries
             };
         }
 
-        public SingletonAttributeTestDataBuilder WithMinimumInterval(TimeSpan minimumInterval)
+        public SingletonAttributeTestDataBuilder WithMinimumInterval(int minimumInterval)
         {
             _minimumInterval = minimumInterval;
             return this;
         }
-        public SingletonAttributeTestDataBuilder WithMaximumInterval(TimeSpan maximumInterval)
+        public SingletonAttributeTestDataBuilder WithMaximumInterval(int maximumInterval)
         {
             _maximumInterval = maximumInterval;
             return this;

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using WebJobs.Azure.QueueStorage.Core.Attributes;
+﻿using WebJobs.Azure.QueueStorage.Core.Attributes;
 using WebJobs.Azure.QueueStorage.Core.Extentions;
 using WebJobs.Azure.QueueStorage.Core.Models;
 using WebJobs.Azure.QueueStorage.Core.Services.Queues;
@@ -11,17 +10,14 @@ namespace WebJobs.Azure.QueueStorage.Core.Services.Singleton
     {
         private readonly ISingletonLockManager _singletonLockManager;
         private readonly IQueueMessageExecutor _queueMessageExecutor;
-        private readonly ILogger<SingletonQueueMessageExecutor> _logger;
         private readonly SingletonAttribute _singletonAttribute;
 
         public SingletonQueueMessageExecutor(ISingletonLockManager singletonLockManager,
             IQueueMessageExecutor queueMessageExecutor,
-            ILogger<SingletonQueueMessageExecutor> logger,
             SingletonAttribute singletonAttribute)
         {
             _singletonLockManager = singletonLockManager;
             _queueMessageExecutor = queueMessageExecutor;
-            _logger = logger;
             _singletonAttribute = singletonAttribute;
         }
 
@@ -61,7 +57,7 @@ namespace WebJobs.Azure.QueueStorage.Core.Services.Singleton
             try
             {
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                using var timer = new LeaseTimeoutTimer(_singletonLockManager, new LinearDelayStrategy(_singletonAttribute.MinimumInterval));
+                using var timer = new LeaseTimeoutTimer(_singletonLockManager, new LinearDelayStrategy(TimeSpan.FromSeconds(_singletonAttribute.MinimumPollingIntervalInSeconds)));
 
                 timer.Start(leaseId, lockName, onFaultedAction: () =>
                 {

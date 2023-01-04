@@ -68,7 +68,7 @@ namespace WebJobs.Azure.QueueStorage.Core.Services.Singleton
                     return leaseId;
                 }
 
-                await Task.Delay(singleton.MinimumInterval, cancellationToken);
+                await Task.Delay(singleton.MinimumPollingIntervalInSeconds, cancellationToken);
             }
 
             throw new SingletonException($"Unable to acquire lock, max retries of '{singleton.MaxRetries}' reached");

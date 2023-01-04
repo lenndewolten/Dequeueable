@@ -99,10 +99,10 @@ namespace WebJobs.Azure.QueueStorage.Function.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_MaximumPollingIntervalInMilliseconds_of_2_seconds_when_set_lower_than_MinimumPollingInterval_then_an_ArgumentOutOfRangeException_is_thrown()
+        public void Given_a_MaximumPollingIntervalInMilliseconds_of_zero_seconds_when_set_then_an_ArgumentOutOfRangeException_is_thrown()
         {
             // Arrange
-            var expected = 2;
+            var expected = 0;
             // Act
             Action act = () =>
             {
@@ -113,7 +113,7 @@ namespace WebJobs.Azure.QueueStorage.Function.UnitTests.Configurations
             };
 
             // Assert
-            act.Should().ThrowExactly<ArgumentException>();
+            act.Should().ThrowExactly<ArgumentOutOfRangeException>();
         }
 
         [Fact]

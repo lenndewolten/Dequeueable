@@ -157,12 +157,12 @@ Nested properties are also supported. Given a queue message with the following b
 When the scope is set to `[Singleton("My:Nested:Property")]` on the function. Only a single message containing `500` will be executed at an given time.
 
 ### Singleton Options
-You can specify the following singleton options via the singleton attribute `[Singleton(scope: "Id", containerName: ContainerName, minimumIntervalSeconds: 1)]`:
+You can specify the following singleton options via the singleton attribute `[Singleton(scope: "Id", containerName: ContainerName, minimumIntervalInSeconds: 1)]`:
 
 Setting | Description | Default | Required
 --- | --- | --- | --- |
-MinimumInterval | The minimum polling interval to check if a new lease can be acquired.  | 10 seconds | No |
-MaximumInterval | The maximum polling interval to check if a new lease can be acquired.  | 2 minutes | No |
+MinimumIntervalInSeconds | The minimum polling interval to check if a new lease can be acquired.  | 10 | No |
+MaximumIntervalInSeconds | The maximum polling interval to check if a new lease can be acquired.  | 120 | No |
 MaxRetries | The max retries to acquire a lease. | 3 | No |
 ContainerName | The container name for the lock files. | webjobshost | No |
 BlobUriFormat | The uri format to the bkib storage. Used for identity flow. Use ` {accountName}`, `{containerName}` and `{blobName}` for variable substitution. | "https://{accountName}.blob.core.windows.net/{containerName}/{blobName}" | No

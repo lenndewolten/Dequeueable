@@ -59,7 +59,7 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Singleton
             var blobClientProviderMock = new Mock<IBlobClientProvider>(MockBehavior.Strict);
             var distributedLockManagerFactoryMock = new Mock<IDistributedLockManagerFactory>(MockBehavior.Strict);
             var distributedLockManagerMock = new Mock<IDistributedLockManager>(MockBehavior.Strict);
-            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithMaxRetries(1).WithMinimumInterval(TimeSpan.Zero).Build();
+            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithMaxRetries(1).WithMinimumInterval(0).Build();
             var blobClientFake = new Mock<BlobClient>();
 
             blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
@@ -96,7 +96,7 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Singleton
             var blobClientProviderMock = new Mock<IBlobClientProvider>(MockBehavior.Strict);
             var distributedLockManagerFactoryMock = new Mock<IDistributedLockManagerFactory>(MockBehavior.Strict);
             var distributedLockManagerMock = new Mock<IDistributedLockManager>(MockBehavior.Strict);
-            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithMaxRetries(1).WithMinimumInterval(TimeSpan.Zero).Build();
+            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithMaxRetries(1).WithMinimumInterval(0).Build();
             var blobClientFake = new Mock<BlobClient>();
 
             blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
