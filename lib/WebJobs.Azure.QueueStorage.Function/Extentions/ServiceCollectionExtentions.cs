@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebJobs.Azure.QueueStorage.Function.Configurations;
 using Microsoft.Extensions.Options;
+using WebJobs.Azure.QueueStorage.Core.Attributes;
 using WebJobs.Azure.QueueStorage.Core.Configurations;
 using WebJobs.Azure.QueueStorage.Core.Extentions;
-using WebJobs.Azure.QueueStorage.Core.Attributes;
+using WebJobs.Azure.QueueStorage.Function.Configurations;
 using WebJobs.Azure.QueueStorage.Function.Services;
 
 namespace WebJobs.Azure.QueueStorage.Function.Extentions
@@ -36,8 +36,6 @@ namespace WebJobs.Azure.QueueStorage.Function.Extentions
                 var opt = provider.GetRequiredService<IOptions<FunctionOptions>>();
                 return opt.Value;
             });
-
-            services.PostConfigure<FunctionOptions>(storageAccountOptions => storageAccountOptions.NewBatchThreshold = 0);
 
             return services;
         }

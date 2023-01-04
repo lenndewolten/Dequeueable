@@ -64,7 +64,6 @@ namespace WebJobs.Azure.QueueStorage.Core.Services.Queues
             {
                 await _queueMessageExecutor.ExecuteAsync(message, cts.Token);
                 timer.Stop();
-                _logger.LogInformation("Executed message with id '{MessageId}' (Succeeded)", message.MessageId);
                 taskCompletionSource.TrySetResult();
             }
             catch (Exception ex)

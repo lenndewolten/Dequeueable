@@ -7,6 +7,26 @@
 ```
 docker build -t <yourtagname> -f samples/WebJobs.Azure.QueueStorage.Job.SampleConsoleApp/deployment/Dockerfile .
 ```
+Image stats:
+```
+docker images -f reference=lenndewolten/webjobs
+> REPOSITORY             TAG       IMAGE ID       CREATED          SIZE
+> lenndewolten/webjobs   v1        fe54c3e50dcf   45 minutes ago   80.7MB
+```
+
+```
+docker scan lenndewolten/webjobs:v1
+
+> Testing lenndewolten/webjobs:v1...
+> 
+> Package manager:   apk
+> Project name:      docker-image|lenndewolten/webjobs
+> Docker image:      lenndewolten/webjobs:v1
+> Platform:          linux/amd64
+> Base image:        alpine:3.16.3
+> 
+> ✔ Tested 23 dependencies for known vulnerabilities, no vulnerable paths found.
+```
 
 
 ## Kubernetes
@@ -16,7 +36,7 @@ This sample is using [KEDA](https://keda.sh/) to automatically schedule the jobs
 
 ```
 kubectl apply -f azurite.yaml
-kubectl apply -f azurite.yaml
+kubectl apply -f scaledjob.yaml
 ```
 
 #### **Connect to azurite**
@@ -34,9 +54,9 @@ kubectl cluster-info
 ```
  kubectl get svc
 
-NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                           AGE
-kubernetes                ClusterIP   10.96.0.1       <none>        443/TCP                                           209d
-storage-azurite-service   NodePort    10.104.26.110   <none>        10000:32318/TCP,10001:30528/TCP,10002:30802/TCP   208d
+> NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT> (S)                                           AGE
+> kubernetes                ClusterIP   10.96.0.1       <none>        443/> TCP                                           209d
+> storage-azurite-service   NodePort    10.104.26.110   <none>        10000:32318/TCP,10001:30528/TCP,> 10002:30802/TCP   208d
 ```
 
 ####  **Construct connection string**
