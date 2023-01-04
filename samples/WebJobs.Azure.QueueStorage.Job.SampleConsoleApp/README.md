@@ -10,18 +10,18 @@ docker build -t <yourtagname> -f samples/WebJobs.Azure.QueueStorage.Job.SampleCo
 Image stats:
 ```
 docker images -f reference=lenndewolten/webjobs
-> REPOSITORY             TAG       IMAGE ID       CREATED          SIZE
-> lenndewolten/webjobs   v1        fe54c3e50dcf   45 minutes ago   80.7MB
+> REPOSITORY             TAG                    IMAGE ID       CREATED          SIZE
+> lenndewolten/webjobs   samplejob-v1           fe54c3e50dcf   45 minutes ago   80.7MB
 ```
 
 ```
-docker scan lenndewolten/webjobs:v1
+docker scan lenndewolten/webjobs:samplejob-v1  
 
-> Testing lenndewolten/webjobs:v1...
+> Testing lenndewolten/webjobs:samplejob-v1...
 > 
 > Package manager:   apk
 > Project name:      docker-image|lenndewolten/webjobs
-> Docker image:      lenndewolten/webjobs:v1
+> Docker image:      lenndewolten/webjobs:samplejob-v1
 > Platform:          linux/amd64
 > Base image:        alpine:3.16.3
 > 
