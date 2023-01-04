@@ -14,7 +14,7 @@ namespace WebJobs.Azure.QueueStorage.Function.Extentions
         public static IServiceCollection AddAzureQueueStorageFunction<TFunction>(this IServiceCollection services, Action<FunctionOptions>? options = null)
             where TFunction : class, IAzureQueueFunction
         {
-            services.AddOptions<FunctionOptions>().BindConfiguration(HostOptions.StorageAccount);
+            services.AddOptions<FunctionOptions>().BindConfiguration(HostOptions.WebHost);
 
             if (options is not null)
             {

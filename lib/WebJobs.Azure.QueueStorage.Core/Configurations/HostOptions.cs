@@ -5,7 +5,7 @@ namespace WebJobs.Azure.QueueStorage.Core.Configurations
 {
     public class HostOptions : IHostOptions
     {
-        public static string StorageAccount => nameof(StorageAccount);
+        public static string WebHost => nameof(WebHost);
         private TimeSpan _visibilityTimeout = TimeSpan.FromSeconds(300);
         private long _maxDequeueCount = 5;
         private int _batchSize = 16;

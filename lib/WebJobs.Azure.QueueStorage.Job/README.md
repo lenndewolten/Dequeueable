@@ -3,14 +3,14 @@
 
 ## Getting started
 Scaffold a new project, you can either use a console or web app.
-1. Add a class that implements the `IAzureQueueFunction`.
-2. After adding the service, add `AddAzureQueueStorageFunction<YourFunction>` in the DI container of your app.
+1. Add a class that implements the `IAzureQueueJob`.
+2. After adding the service, add `AddAzureQueueStorageJob<YourJob>` in the DI container of your app.
 
 ```csharp
 await Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        services.AddAzureQueueStorageFunction<TestFunction>();
+        services.AddAzureQueueStorageJob<TestJob>();
     })
     .RunConsoleAsync();
 ```
@@ -20,10 +20,10 @@ You can configure the host via the `appsettings.json` or via the `IOptions` patt
 
 **Appsettings**
 
-Use the `StorageAccount` section to configure the settings:
+Use the `WebHost` section to configure the settings:
 
 ```json
-"StorageAccount": {
+"WebHost": {
     "ConnectionString": "UseDevelopmentStorage=true",
     "QueueName": "queue-name"
   }
@@ -35,7 +35,7 @@ Use the `StorageAccount` section to configure the settings:
 await Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        services.AddAzureQueueStorageFunction<TestFunction>(options =>
+        services.AddAzureQueueStorageJob<TestJob>(options =>
         {
             options.AuthenticationScheme = new DefaultAzureCredential();
             options.VisibilityTimeout = TimeSpan.FromMinutes(10);
@@ -46,7 +46,7 @@ await Host.CreateDefaultBuilder(args)
 ```
 
 ###  Settings
-The library uses the `IOptions<StorageAccountOptions>` pattern to inject the configured app settings.
+The library uses the `IOptions<JobHostOptions>` pattern to inject the configured app settings.
 
 Setting | Description | Default | Required
 --- | --- | --- | --- |
@@ -57,12 +57,8 @@ AccountName | The storage account name, used for identity flow. | | Only when us
 QueueUriFormat | The uri format to the queue storage. Used for identity flow. Use ` {accountName}` and `{queueName}` for variable substitution. | https://{accountName}.queue.core.windows.net/{queueName} | No
 AuthenticationScheme | Token credential used to authenticate via AD, Any token credential provider can be used that inherits the abstract class `Azure.Core.TokenCredential`. | | Yes, if you want to use Identity |
 BatchSize | The maximum number of messages processed in parallel. This setting is ignored when using the *global* singleton function. | 16 | No |
-NewBatchThreshold | The threshold at which a new batch of messages will be fetched. This setting is ignored when using the *global* singleton function. | BatchSize / 2 | No |
 MaxDequeueCount | Max dequeue count before moving to the poison queue.  | 5 | No |
 VisibilityTimeout | The timeout after the queue message is visible again for other services.| 300 seconds | No |
-MinimumPollingInterval | The minimum polling interval to check the queue for new messages.  | 5 milliseconds | No |
-MaximumPollingInterval | The maximum polling interval to check the queue for new messages.  | 30 seconds | No |
-DeltaBackOff | The delta used to randomized the polling interval. | MinimumPollingInterval | No |
 QueueClientOptions | Provides the client configuration options for connecting to Azure Queue Storage. | `new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 }` | No |
 
 ## Authentication
@@ -71,14 +67,14 @@ QueueClientOptions | Provides the client configuration options for connecting to
 You can authenticate to the storage account & queue by setting the ConnectionString:
 
 ```json
-"StorageAccount": {
+"WebHost": {
     "ConnectionString": "UseDevelopmentStorage=true",
     ...
   }
 ```
 
 ```csharp
-    services.AddAzureQueueStorageFunction<TestFunction>(options =>
+    services.AddAzureQueueStorageJob<TestJob>(options =>
     {
         // ...
         options.ConnectionString = "UseDevelopmentStorage=true";
@@ -93,7 +89,7 @@ Authenticating via Azure Identity is also possible and the recommended option. M
 Set the `AuthenticationScheme` and the `AccountName` options to authenticate via azure AD:
 
 ```csharp
-    services.AddAzureQueueStorageFunction<TestFunction>(options =>
+    services.AddAzureQueueStorageJob<TestJob>(options =>
     {
         options.AuthenticationScheme = new DefaultAzureCredential();
         options.AccountName = "thestorageaccountName";
@@ -122,15 +118,15 @@ internal class MyCustomQueueProvider : IQueueClientProvider
 ```
 
 ## Singleton
-A singleton attribute can be applied the function to ensure that only a single  instance of the function is executed at any given time. It uses the blob lease and therefore **distributed** lock is guaranteed. The blob is always leased for 60 seconds. The lease will be released if no longer required. It will be automatically renewed if executing the message(s) takes longer.
+A singleton attribute can be applied the job to ensure that only a single  instance of the job is executed at any given time. It uses the blob lease and therefore **distributed** lock is guaranteed. The blob is always leased for 60 seconds. The lease will be released if no longer required. It will be automatically renewed if executing the message(s) takes longer.
 
 NOTE: The blob files will not be automatically deleted. If needed, consider specifying data lifecycle rules for the blob container: https://learn.microsoft.com/en-us/azure/storage/blobs/lifecycle-management-overview
 
-Set the `Singleton("<scope>"` attribute above the function:
+Set the `Singleton("<scope>"` attribute above the job:
 
 ```csharp
     [Singleton("Id")]
-    internal class SampleSingletonFunction : IAzureQueueFunction
+    internal class SampleSingletonJob : IAzureQueueJob
     {
         //...
     }
@@ -145,7 +141,7 @@ Given a queue message with the following body:
     // ...
 }
 ```
-When the scope is set to `[Singleton("Id")]` on the function. Only a single message containing id "d89c209a-6b81-4266-a768-8cde6f613753" will be executed at an given time.
+When the scope is set to `[Singleton("Id")]` on the job. Only a single message containing id "d89c209a-6b81-4266-a768-8cde6f613753" will be executed at an given time.
 
 Nested properties are also supported. Given a queue message with the following body:
 ```json

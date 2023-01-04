@@ -14,7 +14,7 @@ namespace WebJobs.Azure.QueueStorage.Job.Extentions
         public static IServiceCollection AddAzureQueueStorageJob<TJob>(this IServiceCollection services, Action<JobHostOptions>? options = null)
             where TJob : class, IAzureQueueJob
         {
-            services.AddOptions<JobHostOptions>().BindConfiguration(HostOptions.StorageAccount);
+            services.AddOptions<JobHostOptions>().BindConfiguration(HostOptions.WebHost);
 
             if (options is not null)
             {

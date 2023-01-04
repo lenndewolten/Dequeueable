@@ -20,10 +20,10 @@ You can configure the host via the `appsettings.json` or via the `IOptions` patt
 
 **Appsettings**
 
-Use the `StorageAccount` section to configure the settings:
+Use the `WebHost` section to configure the settings:
 
 ```json
-"StorageAccount": {
+"WebHost": {
     "ConnectionString": "UseDevelopmentStorage=true",
     "QueueName": "queue-name"
   }
@@ -46,7 +46,7 @@ await Host.CreateDefaultBuilder(args)
 ```
 
 ###  Settings
-The library uses the `IOptions<StorageAccountOptions>` pattern to inject the configured app settings.
+The library uses the `IOptions<FunctionOptions>` pattern to inject the configured app settings.
 
 Setting | Description | Default | Required
 --- | --- | --- | --- |
@@ -71,7 +71,7 @@ QueueClientOptions | Provides the client configuration options for connecting to
 You can authenticate to the storage account & queue by setting the ConnectionString:
 
 ```json
-"StorageAccount": {
+"WebHost": {
     "ConnectionString": "UseDevelopmentStorage=true",
     ...
   }
