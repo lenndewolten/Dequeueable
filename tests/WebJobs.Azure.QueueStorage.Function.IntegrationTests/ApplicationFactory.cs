@@ -12,16 +12,16 @@ namespace WebJobs.Azure.QueueStorage.Function.IntegrationTests
     {
         public readonly IHostBuilder HostBuilder;
 
-        private readonly Action<FunctionOptions> _options = options =>
+        private readonly Action<FunctionHostOptions> _options = options =>
         {
             options.NewBatchThreshold = 0;
-            options.MinimumPollingInterval = TimeSpan.Zero;
-            options.MaximumPollingInterval = TimeSpan.FromMilliseconds(50);
+            options.MinimumPollingIntervalInMilliseconds = 0;
+            options.MaximumPollingIntervalInMilliseconds = 50;
         };
 
-        public ApplicationFactory(string connectionString, string queueName, Action<FunctionOptions>? overrideOptions = null)
+        public ApplicationFactory(string connectionString, string queueName, Action<FunctionHostOptions>? overrideOptions = null)
         {
-            Action<FunctionOptions> options = opt =>
+            Action<FunctionHostOptions> options = opt =>
             {
                 opt.ConnectionString = connectionString;
                 opt.QueueName = queueName;

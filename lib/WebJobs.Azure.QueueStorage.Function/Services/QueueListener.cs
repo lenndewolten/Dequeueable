@@ -16,19 +16,21 @@ namespace WebJobs.Azure.QueueStorage.Function.Services
         private readonly IQueueMessageManager _messagesManager;
         private readonly IQueueMessageHandler _queueMessageHandler;
         private readonly ILogger<QueueListener> _logger;
-        private readonly FunctionOptions _options;
+        private readonly FunctionHostOptions _options;
 
         public QueueListener(
             IQueueMessageManager messagesManager,
             IQueueMessageHandler queueMessageHandler,
-            IOptions<FunctionOptions> options,
+            IOptions<FunctionHostOptions> options,
             ILogger<QueueListener> logger)
         {
             _messagesManager = messagesManager;
             _queueMessageHandler = queueMessageHandler;
             _logger = logger;
             _options = options.Value;
-            _delayStrategy = new RandomizedExponentialDelayStrategy(_options.MinimumPollingInterval, _options.MaximumPollingInterval, _options.DeltaBackOff);
+            _delayStrategy = new RandomizedExponentialDelayStrategy(TimeSpan.FromMilliseconds(_options.MinimumPollingIntervalInMilliseconds),
+                TimeSpan.FromMilliseconds(_options.MaximumPollingIntervalInMilliseconds),
+                _options.DeltaBackOff);
         }
 
         public async Task ListenAsync(CancellationToken cancellationToken)

@@ -11,10 +11,10 @@ namespace WebJobs.Azure.QueueStorage.Function.Extentions
 {
     public static class ServiceCollectionExtentions
     {
-        public static IServiceCollection AddAzureQueueStorageFunction<TFunction>(this IServiceCollection services, Action<FunctionOptions>? options = null)
+        public static IServiceCollection AddAzureQueueStorageFunction<TFunction>(this IServiceCollection services, Action<FunctionHostOptions>? options = null)
             where TFunction : class, IAzureQueueFunction
         {
-            services.AddOptions<FunctionOptions>().BindConfiguration(HostOptions.WebHost);
+            services.AddOptions<FunctionHostOptions>().BindConfiguration(HostOptions.WebHost);
 
             if (options is not null)
             {
@@ -33,7 +33,7 @@ namespace WebJobs.Azure.QueueStorage.Function.Extentions
 
             services.AddSingleton<IHostOptions>(provider =>
             {
-                var opt = provider.GetRequiredService<IOptions<FunctionOptions>>();
+                var opt = provider.GetRequiredService<IOptions<FunctionHostOptions>>();
                 return opt.Value;
             });
 
@@ -43,7 +43,7 @@ namespace WebJobs.Azure.QueueStorage.Function.Extentions
         private static IServiceCollection RegisterSingletonServices(this IServiceCollection services, SingletonAttribute singletonAttribute)
         {
             services.AddAzureQueueStorageSingletonServices(singletonAttribute);
-            services.PostConfigure<FunctionOptions>(storageAccountOptions => storageAccountOptions.NewBatchThreshold = 0);
+            services.PostConfigure<FunctionHostOptions>(storageAccountOptions => storageAccountOptions.NewBatchThreshold = 0);
             return services;
         }
     }

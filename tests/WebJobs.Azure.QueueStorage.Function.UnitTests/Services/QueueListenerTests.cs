@@ -19,8 +19,8 @@ namespace WebJobs.Azure.QueueStorage.Function.UnitTests.Services
             // Arrange
             var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageHandlerMock = new Mock<IQueueMessageHandler>(MockBehavior.Strict);
-            var options = new FunctionOptions { MinimumPollingInterval = TimeSpan.Zero, MaximumPollingInterval = TimeSpan.FromMilliseconds(1), QueueName = "TestQueue" };
-            var optionsMock = new Mock<IOptions<FunctionOptions>>(MockBehavior.Strict);
+            var options = new FunctionHostOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueName = "TestQueue" };
+            var optionsMock = new Mock<IOptions<FunctionHostOptions>>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger<QueueListener>>(MockBehavior.Strict);
 
             queueMessageManagerMock.Setup(m => m.RetrieveMessagesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Array.Empty<Message>());
@@ -50,8 +50,8 @@ namespace WebJobs.Azure.QueueStorage.Function.UnitTests.Services
             var messages = new[] { new MessageTestDataBuilder().WithmessageId("1").Build(), new MessageTestDataBuilder().WithmessageId("2").Build() };
             var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageHandlerMock = new Mock<IQueueMessageHandler>(MockBehavior.Strict);
-            var options = new FunctionOptions { MinimumPollingInterval = TimeSpan.Zero, MaximumPollingInterval = TimeSpan.FromMilliseconds(1), QueueName = "TestQueue" };
-            var optionsMock = new Mock<IOptions<FunctionOptions>>(MockBehavior.Strict);
+            var options = new FunctionHostOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueName = "TestQueue" };
+            var optionsMock = new Mock<IOptions<FunctionHostOptions>>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger<QueueListener>>(MockBehavior.Strict);
 
             queueMessageManagerMock.Setup(m => m.RetrieveMessagesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(messages);
@@ -75,8 +75,8 @@ namespace WebJobs.Azure.QueueStorage.Function.UnitTests.Services
             var exception = new Exception("Test");
             var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageHandlerMock = new Mock<IQueueMessageHandler>(MockBehavior.Strict);
-            var options = new FunctionOptions { MinimumPollingInterval = TimeSpan.Zero, MaximumPollingInterval = TimeSpan.FromMilliseconds(1), QueueName = "TestQueue" };
-            var optionsMock = new Mock<IOptions<FunctionOptions>>(MockBehavior.Strict);
+            var options = new FunctionHostOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueName = "TestQueue" };
+            var optionsMock = new Mock<IOptions<FunctionHostOptions>>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger<QueueListener>>(MockBehavior.Strict);
 
             optionsMock.SetupGet(o => o.Value).Returns(options);

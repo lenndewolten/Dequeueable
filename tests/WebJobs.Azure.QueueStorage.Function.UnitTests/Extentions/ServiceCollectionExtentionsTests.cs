@@ -40,7 +40,7 @@ namespace WebJobs.Azure.QueueStorage.Function.UnitTests.Extentions
                 .ConfigureServices(services =>
                 {
                     services.AddAzureQueueStorageFunction<TestFunction>();
-                    services.PostConfigure<FunctionOptions>(options =>
+                    services.PostConfigure<FunctionHostOptions>(options =>
                     {
                         options.ConnectionString = "test";
                         options.QueueName = "testqueue";
@@ -65,7 +65,7 @@ namespace WebJobs.Azure.QueueStorage.Function.UnitTests.Extentions
                 .ConfigureServices(services =>
                 {
                     services.AddAzureQueueStorageFunction<TestSingeltonFunction>(options => options.NewBatchThreshold = 6);
-                    services.PostConfigure<FunctionOptions>(options =>
+                    services.PostConfigure<FunctionHostOptions>(options =>
                     {
                         options.ConnectionString = "test";
                         options.QueueName = "testqueue";
@@ -82,7 +82,7 @@ namespace WebJobs.Azure.QueueStorage.Function.UnitTests.Extentions
             services.GetServices<IHostedService>().Any(s => s.GetType() == typeof(FunctionHost)).Should().BeTrue();
             services.GetServices<IQueueMessageExecutor>().Should().HaveCount(2);
             services.GetRequiredService<IQueueListener>().Should().BeOfType(typeof(QueueListener));
-            services.GetRequiredService<IOptions<FunctionOptions>>().Value.NewBatchThreshold.Should().Be(0);
+            services.GetRequiredService<IOptions<FunctionHostOptions>>().Value.NewBatchThreshold.Should().Be(0);
         }
     }
 }

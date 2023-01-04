@@ -58,7 +58,7 @@ QueueUriFormat | The uri format to the queue storage. Used for identity flow. Us
 AuthenticationScheme | Token credential used to authenticate via AD, Any token credential provider can be used that inherits the abstract class `Azure.Core.TokenCredential`. | | Yes, if you want to use Identity |
 BatchSize | The maximum number of messages processed in parallel. This setting is ignored when using the *global* singleton function. | 16 | No |
 MaxDequeueCount | Max dequeue count before moving to the poison queue.  | 5 | No |
-VisibilityTimeout | The timeout after the queue message is visible again for other services.| 300 seconds | No |
+VisibilityTimeoutInSeconds | The timeout after the queue message is visible again for other services.| 300 | No |
 QueueClientOptions | Provides the client configuration options for connecting to Azure Queue Storage. | `new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 }` | No |
 
 ## Authentication

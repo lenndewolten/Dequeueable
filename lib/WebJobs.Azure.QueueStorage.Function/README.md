@@ -59,9 +59,9 @@ AuthenticationScheme | Token credential used to authenticate via AD, Any token c
 BatchSize | The maximum number of messages processed in parallel. This setting is ignored when using the *global* singleton function. | 16 | No |
 NewBatchThreshold | The threshold at which a new batch of messages will be fetched. This setting is ignored when using the *global* singleton function. | BatchSize / 2 | No |
 MaxDequeueCount | Max dequeue count before moving to the poison queue.  | 5 | No |
-VisibilityTimeout | The timeout after the queue message is visible again for other services.| 300 seconds | No |
-MinimumPollingInterval | The minimum polling interval to check the queue for new messages.  | 5 milliseconds | No |
-MaximumPollingInterval | The maximum polling interval to check the queue for new messages.  | 30 seconds | No |
+VisibilityTimeoutInSeconds | The timeout after the queue message is visible again for other services.| 300 | No |
+MinimumPollingIntervalInMilliseconds | The minimum polling interval to check the queue for new messages.  | 5  | No |
+MaximumPollingIntervalInMilliseconds | The maximum polling interval to check the queue for new messages.  | 10000 | No |
 DeltaBackOff | The delta used to randomized the polling interval. | MinimumPollingInterval | No |
 QueueClientOptions | Provides the client configuration options for connecting to Azure Queue Storage. | `new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 }` | No |
 
