@@ -188,3 +188,7 @@ The visibility timeout of the queue messages is automatically updated. It will b
 
 ### Lease timeout
 The lease timeout of the blob lease is automatically updated. It will be updated when the half lease is reached. When renewing the timeout fails, the host cannot guarantee the lock. Therefore the CancelationToken is set to Cancelled. It is up to you how to handle this scenario!
+
+
+## Sample
+- [Console app](samples/WebJobs.Azure.QueueStorage.Job.SampleConsoleApp/README.md)
