@@ -1,6 +1,5 @@
 # WebJobs.Azure.QueueStorage.Function.SampleConsoleApp
 
-
 ## Docker
 
 ### Build
