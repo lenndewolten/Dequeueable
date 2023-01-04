@@ -191,4 +191,4 @@ The lease timeout of the blob lease is automatically updated. It will be updated
 
 
 ## Sample
-- [Console app](samples/WebJobs.Azure.QueueStorage.Job.SampleConsoleApp/README.md)
+- [Console app](../../samples/WebJobs.Azure.QueueStorage.Job.SampleConsoleApp/README.md)
