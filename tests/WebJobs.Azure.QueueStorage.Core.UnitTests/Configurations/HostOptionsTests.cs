@@ -114,34 +114,34 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_the_VisibilityTimeout_when_it_to_twenty_then_it_set_correctly()
+        public void Given_the_VisibilityTimeoutInSeconds_when_it_to_twenty_then_it_set_correctly()
         {
             // Arrange
-            var expected = TimeSpan.FromSeconds(10);
+            var expected = 10;
             var sut = new HostOptions
             {
-                VisibilityTimeout = expected,
+                VisibilityTimeoutInSeconds = expected,
             };
 
             // Act
-            var actual = sut.VisibilityTimeout;
+            var actual = sut.VisibilityTimeoutInSeconds;
 
             // Assert
             actual.Should().Be(expected);
         }
 
         [Fact]
-        public void Given_the_VisibilityTimeout_when_it_is_set_to_minus_one_then_an_ArgumentException_is_thrown()
+        public void Given_the_VisibilityTimeoutInSeconds_when_it_is_set_to_minus_one_then_an_ArgumentException_is_thrown()
         {
             // Arrange
-            var expected = TimeSpan.Zero;
+            var expected = 0;
 
             // Act
             Action act = () =>
             {
                 var options = new HostOptions
                 {
-                    VisibilityTimeout = expected,
+                    VisibilityTimeoutInSeconds = expected,
                 };
             };
 

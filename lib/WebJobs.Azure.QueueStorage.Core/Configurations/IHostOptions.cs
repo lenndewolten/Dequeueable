@@ -15,6 +15,6 @@ namespace WebJobs.Azure.QueueStorage.Core.Configurations
         QueueClientOptions? QueueClientOptions { get; set; }
         string QueueName { get; set; }
         string QueueUriFormat { get; set; }
-        TimeSpan VisibilityTimeout { get; set; }
+        long VisibilityTimeoutInSeconds { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Queues
 
             var responseFake = new Mock<Response<QueueMessage[]>>();
             responseFake.SetupGet(r => r.Value).Returns(queueMessages);
-            queueClientFake.Setup(c => c.ReceiveMessagesAsync(options.BatchSize, options.VisibilityTimeout, It.IsAny<CancellationToken>())).ReturnsAsync(responseFake.Object);
+            queueClientFake.Setup(c => c.ReceiveMessagesAsync(options.BatchSize, TimeSpan.FromSeconds(options.VisibilityTimeoutInSeconds), It.IsAny<CancellationToken>())).ReturnsAsync(responseFake.Object);
             queueClientProviderMock.Setup(c => c.GetQueue()).Returns(queueClientFake.Object);
             queueClientProviderMock.Setup(c => c.GetPoisonQueue()).Returns(queueClientFake.Object);
 
@@ -48,7 +48,7 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Queues
             succeededResponseFake.SetupGet(r => r.Value).Returns(queueMessages);
 
             var requestFailedException = new RequestFailedException(404, "");
-            queueClientFake.SetupSequence(c => c.ReceiveMessagesAsync(options.BatchSize, options.VisibilityTimeout, It.IsAny<CancellationToken>()))
+            queueClientFake.SetupSequence(c => c.ReceiveMessagesAsync(options.BatchSize, TimeSpan.FromSeconds(options.VisibilityTimeoutInSeconds), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(requestFailedException)
                 .ReturnsAsync(succeededResponseFake.Object);
 
@@ -78,7 +78,7 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Queues
             succeededresponseFake.SetupGet(r => r.Value).Returns(queueMessages);
 
             var requestFailedException = new RequestFailedException(404, "");
-            queueClientFake.Setup(c => c.ReceiveMessagesAsync(options.BatchSize, options.VisibilityTimeout, It.IsAny<CancellationToken>()))
+            queueClientFake.Setup(c => c.ReceiveMessagesAsync(options.BatchSize, TimeSpan.FromSeconds(options.VisibilityTimeoutInSeconds), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(requestFailedException);
 
             queueClientFake.Setup(c => c.CreateAsync(It.IsAny<IDictionary<string, string>>(), It.IsAny<CancellationToken>())).ThrowsAsync(new RequestFailedException(409, "some conflict"));
@@ -106,7 +106,7 @@ namespace WebJobs.Azure.QueueStorage.Core.UnitTests.Services.Queues
             var updateReceiptFake = new Mock<UpdateReceipt>();
 
             responseFake.SetupGet(r => r.Value).Returns(updateReceiptFake.Object);
-            queueClientFake.Setup(c => c.UpdateMessageAsync(message.MessageId, message.PopReceipt, (string?)null, options.VisibilityTimeout, It.IsAny<CancellationToken>())).ReturnsAsync(responseFake.Object);
+            queueClientFake.Setup(c => c.UpdateMessageAsync(message.MessageId, message.PopReceipt, (string?)null, TimeSpan.FromSeconds(options.VisibilityTimeoutInSeconds), It.IsAny<CancellationToken>())).ReturnsAsync(responseFake.Object);
             queueClientProviderMock.Setup(c => c.GetQueue()).Returns(queueClientFake.Object);
             queueClientProviderMock.Setup(c => c.GetPoisonQueue()).Returns(queueClientFake.Object);
 

@@ -1,5 +1,5 @@
-﻿using Azure.Storage.Queues;
-using Azure;
+﻿using Azure;
+using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
 using WebJobs.Azure.QueueStorage.Core.Configurations;
 using WebJobs.Azure.QueueStorage.Core.Models;
@@ -23,20 +23,20 @@ namespace WebJobs.Azure.QueueStorage.Core.Services.Queues
         {
             try
             {
-                var response = await _queueClient.ReceiveMessagesAsync(maxMessages: _options.BatchSize, visibilityTimeout: _options.VisibilityTimeout, cancellationToken);
+                var response = await _queueClient.ReceiveMessagesAsync(maxMessages: _options.BatchSize, visibilityTimeout: TimeSpan.FromSeconds(_options.VisibilityTimeoutInSeconds), cancellationToken);
                 return response.Value.Select(m => new Message(m.MessageId, m.PopReceipt, m.DequeueCount, m.NextVisibleOn, m.Body));
             }
             catch (RequestFailedException exception) when (exception.Status == 404)
             {
                 await CreateQueue(_queueClient, cancellationToken);
-                var response = await _queueClient.ReceiveMessagesAsync(maxMessages: _options.BatchSize, visibilityTimeout: _options.VisibilityTimeout, cancellationToken);
+                var response = await _queueClient.ReceiveMessagesAsync(maxMessages: _options.BatchSize, visibilityTimeout: TimeSpan.FromSeconds(_options.VisibilityTimeoutInSeconds), cancellationToken);
                 return response.Value.Select(m => new Message(m.MessageId, m.PopReceipt, m.DequeueCount, m.NextVisibleOn, m.Body));
             }
         }
 
         public async Task<DateTimeOffset?> UpdateVisibilityTimeOutAsync(Message queueMessage, CancellationToken cancellationToken)
         {
-            var updateReceipt = (await _queueClient.UpdateMessageAsync(queueMessage.MessageId, queueMessage.PopReceipt, visibilityTimeout: _options.VisibilityTimeout, cancellationToken: cancellationToken)).Value;
+            var updateReceipt = (await _queueClient.UpdateMessageAsync(queueMessage.MessageId, queueMessage.PopReceipt, visibilityTimeout: TimeSpan.FromSeconds(_options.VisibilityTimeoutInSeconds), cancellationToken: cancellationToken)).Value;
             queueMessage.PopReceipt = updateReceipt.PopReceipt;
 
             return updateReceipt.NextVisibleOn;

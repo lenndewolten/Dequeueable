@@ -6,7 +6,7 @@ namespace WebJobs.Azure.QueueStorage.Core.Configurations
     public class HostOptions : IHostOptions
     {
         public static string WebHost => nameof(WebHost);
-        private TimeSpan _visibilityTimeout = TimeSpan.FromSeconds(300);
+        private long _visibilityTimeoutInSeconds = 300;
         private long _maxDequeueCount = 5;
         private int _batchSize = 16;
         private string _poisonQueueSuffix = "poison";
@@ -65,17 +65,17 @@ namespace WebJobs.Azure.QueueStorage.Core.Configurations
             }
         }
 
-        public TimeSpan VisibilityTimeout
+        public long VisibilityTimeoutInSeconds
         {
-            get => _visibilityTimeout;
+            get => _visibilityTimeoutInSeconds;
             set
             {
-                if (value.Ticks < 1)
+                if (value < 1)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(VisibilityTimeout), $"'{nameof(VisibilityTimeout)}' must not be negative or zero.");
+                    throw new ArgumentOutOfRangeException(nameof(VisibilityTimeoutInSeconds), $"'{nameof(VisibilityTimeoutInSeconds)}' must not be negative or zero.");
                 }
 
-                _visibilityTimeout = value;
+                _visibilityTimeoutInSeconds = value;
             }
         }
     }
