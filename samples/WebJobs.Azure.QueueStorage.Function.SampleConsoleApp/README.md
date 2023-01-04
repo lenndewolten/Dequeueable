@@ -9,6 +9,7 @@ docker build -t <yourtagname> -f samples/WebJobs.Azure.QueueStorage.Function.Sam
 Image stats:
 ```
 docker images -f reference=lenndewolten/webjobs
+
 > REPOSITORY             TAG                      IMAGE ID       CREATED          SIZE
 > lenndewolten/webjobs   samplefunction-v1        f4b9bae68e71   14 seconds ago   82.5MB
 ```

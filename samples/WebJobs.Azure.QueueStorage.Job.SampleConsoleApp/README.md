@@ -10,6 +10,7 @@ docker build -t <yourtagname> -f samples/WebJobs.Azure.QueueStorage.Job.SampleCo
 Image stats:
 ```
 docker images -f reference=lenndewolten/webjobs
+
 > REPOSITORY             TAG                    IMAGE ID       CREATED          SIZE
 > lenndewolten/webjobs   samplejob-v1           fe54c3e50dcf   45 minutes ago   80.7MB
 ```

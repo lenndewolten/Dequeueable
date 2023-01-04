@@ -187,7 +187,7 @@ internal class MyCustomBlobClientProvider : IBlobClientProvider
 
 ## Timeouts
 
-### Visibility Timeout Queue Message
+### Visibility timeout Queue Message
 The visibility timeout of the queue messages is automatically updated. It will be updated when the half `VisibilityTimeout` option is reached. Choose this setting wisely to prevent talkative hosts. When renewing the timeout fails, the host cannot guarantee if the message is executed only once. Therefore the CancelationToken is set to Cancelled. It is up to you how to handle this scenario!
 
 ### Lease timeout
