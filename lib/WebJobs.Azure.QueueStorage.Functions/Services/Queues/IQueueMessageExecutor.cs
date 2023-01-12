@@ -2,7 +2,7 @@
 
 namespace WebJobs.Azure.QueueStorage.Functions.Services.Queues
 {
-    public interface IQueueMessageExecutor
+    internal interface IQueueMessageExecutor
     {
         Task ExecuteAsync(Message message, CancellationToken cancellationToken);
     }

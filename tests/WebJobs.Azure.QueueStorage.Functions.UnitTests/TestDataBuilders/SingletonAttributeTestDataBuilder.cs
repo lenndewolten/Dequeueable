@@ -11,12 +11,7 @@ namespace WebJobs.Azure.QueueStorage.Functions.UnitTests.TestDataBuilders
 
         public SingletonAttribute Build()
         {
-            return new SingletonAttribute(_scope)
-            {
-                MinimumPollingIntervalInSeconds = _minimumInterval,
-                MaximumPollingIntervalInSeconds = _maximumInterval,
-                MaxRetries = _maxRetries
-            };
+            return new SingletonAttribute(_scope, maximumIntervalInSeconds: _maximumInterval, minimumIntervalInSeconds: _minimumInterval, maxRetries: _maxRetries);
         }
 
         public SingletonAttributeTestDataBuilder WithMinimumInterval(int minimumInterval)

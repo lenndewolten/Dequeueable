@@ -1,19 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<PackageId>lenndewolten.samplelib</PackageId>
+		<PackageId>lenndewolten.Webjobs.Azure.Queue.Storage.Functions</PackageId>
 		<Version>1.0.1</Version>
 		<Authors>Lennart ten Wolde</Authors>
 		<PackageTags>Microsoft Azure Storage Blobs;Microsoft;Azure;Blobs;Blob;Microsoft Azure Storage Queues;Queues;Queue;Events;Event</PackageTags>
+		<Title>Webjobs Azure Queue Storage Functions</Title>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Description>
 			This client library enables working with the Microsoft Azure Storage Blob service for storing binary and text data.
 			Microsoft Azure Storage quickstarts and tutorials - https://learn.microsoft.com/azure/storage/
 		</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageReadmeFile>./README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/lenndewolten/webjobs</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
 		<ProjectUrl>https://github.com/lenndewolten/webjobs</ProjectUrl>
 		<PackageProjectUrl>https://github.com/lenndewolten/webjobs</PackageProjectUrl>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
@@ -25,4 +28,9 @@
 		<InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
+	
+
+ <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>

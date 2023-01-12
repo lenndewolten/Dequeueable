@@ -10,6 +10,7 @@ await Host.CreateDefaultBuilder(args)
         //// Uncomment for identity flow
         //options.AuthenticationScheme = new DefaultAzureCredential();
         //options.AccountName = "storageaccountname";
+        options.a
     });
 })
 .RunConsoleAsync();

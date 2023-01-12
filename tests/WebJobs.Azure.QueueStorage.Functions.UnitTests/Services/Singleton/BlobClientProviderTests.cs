@@ -94,10 +94,7 @@ namespace WebJobs.Azure.QueueStorage.Functions.UnitTests.Services.Singleton
                 AccountName = "testaccount"
             };
 
-            var attribute = new SingletonAttribute("id")
-            {
-                BlobUriFormat = "https://{blobName}.privateazure.com"
-            };
+            var attribute = new SingletonAttribute("id", blobUriFormat: "https://{blobName}.privateazure.com");
             var loggerMock = new Mock<ILogger<BlobClientProvider>>();
             var factoryMock = new Mock<IBlobClientFactory>(MockBehavior.Strict);
 

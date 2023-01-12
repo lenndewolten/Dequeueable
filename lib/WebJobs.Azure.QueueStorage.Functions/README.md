@@ -56,7 +56,7 @@ PoisonQueueSuffix | Suffix that will be used after the QueueName, eg queuename-s
 AccountName | The storage account name, used for identity flow. | | Only when using Identity |
 QueueUriFormat | The uri format to the queue storage. Used for identity flow. Use ` {accountName}` and `{queueName}` for variable substitution. | https://{accountName}.queue.core.windows.net/{queueName} | No
 AuthenticationScheme | Token credential used to authenticate via AD, Any token credential provider can be used that inherits the abstract class `Azure.Core.TokenCredential`. | | Yes, if you want to use Identity |
-BatchSize | The maximum number of messages processed in parallel. This setting is ignored when using the *global* singleton function. | 16 | No |
+BatchSize | The maximum number of messages processed in parallel. | 16 | No |
 MaxDequeueCount | Max dequeue count before moving to the poison queue.  | 5 | No |
 VisibilityTimeoutInSeconds | The timeout after the queue message is visible again for other services.| 300 | No |
 QueueClientOptions | Provides the client configuration options for connecting to Azure Queue Storage. | `new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 }` | No |
@@ -165,7 +165,7 @@ MinimumIntervalInSeconds | The minimum polling interval to check if a new lease 
 MaximumIntervalInSeconds | The maximum polling interval to check if a new lease can be acquired.  | 120 | No |
 MaxRetries | The max retries to acquire a lease. | 3 | No |
 ContainerName | The container name for the lock files. | webjobshost | No |
-BlobUriFormat | The uri format to the bkib storage. Used for identity flow. Use ` {accountName}`, `{containerName}` and `{blobName}` for variable substitution. | "https://{accountName}.blob.core.windows.net/{containerName}/{blobName}" | No
+BlobUriFormat | The uri format to the blob storage. Used for identity flow. Use ` {accountName}`, `{containerName}` and `{blobName}` for variable substitution. | "https://{accountName}.blob.core.windows.net/{containerName}/{blobName}" | No
 
 ### Custom BlobClientProvider
 There are plenty ways to construct the BlobClient, and not all are by default supported. You can override the default implementations to retrieve the blob client for the lease by implementing the `IBlobClientProvider`. You still should register your custom provider in your DI container, specific registration order is not needed: 

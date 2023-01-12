@@ -2,7 +2,7 @@
 
 namespace WebJobs.Azure.QueueStorage.Functions.Services.Timers
 {
-    public sealed class LeaseTimeoutTimer : IDisposable
+    internal sealed class LeaseTimeoutTimer : IDisposable
     {
         private readonly CancellationTokenSource _cts;
         private readonly ISingletonLockManager _singletonLockManager;

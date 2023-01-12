@@ -1,6 +1,6 @@
 ﻿namespace WebJobs.Azure.QueueStorage.Functions.Services.Timers
 {
-    public sealed class RandomizedExponentialDelayStrategy : IDelayStrategy
+    internal sealed class RandomizedExponentialDelayStrategy : IDelayStrategy
     {
         private const int _randomizationFactor = 20;
         private TimeSpan _minimumInterval;

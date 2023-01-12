@@ -1,6 +1,6 @@
 ﻿namespace WebJobs.Azure.QueueStorage.Functions.Services.Timers
 {
-    public sealed class LinearDelayStrategy : IDelayStrategy
+    internal sealed class LinearDelayStrategy : IDelayStrategy
     {
         public TimeSpan MinimalRenewalDelay { get; set; }
         internal int Divisor { get; set; } = 2;
