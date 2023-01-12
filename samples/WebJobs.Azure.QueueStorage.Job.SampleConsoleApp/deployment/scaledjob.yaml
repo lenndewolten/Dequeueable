@@ -17,20 +17,20 @@ spec:
     template:
       spec:
         containers:
-        - name: queuejob-executor
-          image: lenndewolten/webjobs:samplejob-v1
-          imagePullPolicy: Always
-          envFrom:
-            - configMapRef:
-                name: queuejob-config
+          - name: queuejob-executor
+            image: lenndewolten/webjobs:samplejobfunction-v1
+            imagePullPolicy: Always
+            envFrom:
+              - configMapRef:
+                  name: queuejob-config
         restartPolicy: Never
-    backoffLimit: 4  
-  pollingInterval: 10             
-  maxReplicaCount: 30             
+    backoffLimit: 4
+  pollingInterval: 10
+  maxReplicaCount: 30
   triggers:
-  - type: azure-queue
-    metadata:
-      queueName: testqueue
-      queueLength: '16'
-      connectionFromEnv: WebHost__ConnectionString
-      accountName: devstoreaccount1
+    - type: azure-queue
+      metadata:
+        queueName: testqueue
+        queueLength: "16"
+        connectionFromEnv: WebHost__ConnectionString
+        accountName: devstoreaccount1
