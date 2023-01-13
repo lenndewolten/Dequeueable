@@ -8,7 +8,7 @@ namespace WebJobs.Azure.QueueStorage.Functions
     public interface IAzureQueueFunction
     {
         /// <summary>
-        /// The method that will be called when a message is found on the queue
+        /// The method that will be invoked when a message is found on the queue
         /// </summary>
         /// <param name="message">
         ///  The Queue Message on the queue
