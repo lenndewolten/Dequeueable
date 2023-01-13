@@ -1,6 +1,6 @@
 ﻿namespace WebJobs.Azure.QueueStorage.Functions.Services.Singleton
 {
-    public class SingletonException : Exception
+    internal class SingletonException : Exception
     {
         public SingletonException(string message) : base(message)
         {

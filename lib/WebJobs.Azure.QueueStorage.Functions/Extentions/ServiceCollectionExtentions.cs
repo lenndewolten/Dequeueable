@@ -10,8 +10,20 @@ using WebJobs.Azure.QueueStorage.Functions.Services.Singleton;
 
 namespace WebJobs.Azure.QueueStorage.Functions.Extentions
 {
+    /// <summary>
+    /// Extension methods for adding configuration related of the Queue services to the DI container via <see cref="IServiceCollection"/>.
+    /// </summary>
     public static class ServiceCollectionExtentions
     {
+        /// <summary>
+        /// Adds the Azure Queue services and the function of the type specified in <typeparamref name="TFunction"/> to the
+        /// specified <see cref="IServiceCollection"/>. 
+        /// The application will run as a job, from start to finish, and will automatically shutdown when the messages are executed.
+        /// </summary>
+        /// <typeparam name="TFunction">The type implementing the <see cref="IAzureQueueFunction"/></typeparam>
+        /// <param name="services">The <see cref="IServiceCollection"/> to register with.</param>
+        /// <param name="options">Optional action of type <see cref="HostOptions"/> to configure the app settings on the host.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddAzureQueueStorageJob<TFunction>(this IServiceCollection services, Action<HostOptions>? options = null)
             where TFunction : class, IAzureQueueFunction
         {
@@ -35,6 +47,15 @@ namespace WebJobs.Azure.QueueStorage.Functions.Extentions
             return services;
         }
 
+        /// <summary>
+        /// Adds the Azure Queue services and the function of the type specified in <typeparamref name="TFunction"/> to the
+        /// specified <see cref="IServiceCollection"/>. 
+        /// The application will run a Queue Listener as a BackGroundService />.
+        /// </summary>
+        /// <typeparam name="TFunction">The type implementing the <see cref="IAzureQueueFunction"/></typeparam>
+        /// <param name="services">The <see cref="IServiceCollection"/> to register with.</param>
+        /// <param name="options">Optional action of type <see cref="ListenerOptions"/> to configure the app settings on the host.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddAzureQueueStorageListener<TFunction>(this IServiceCollection services, Action<ListenerOptions>? options = null)
             where TFunction : class, IAzureQueueFunction
         {

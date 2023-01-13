@@ -4,7 +4,7 @@ using Azure.Storage.Queues;
 namespace WebJobs.Azure.QueueStorage.Functions.Configurations
 {
     /// <summary>
-    /// Use the HostOptions to configure the settings of the host
+    /// HostOptions to configure the settings of the host
     /// </summary>
     public class HostOptions : IHostOptions
     {

@@ -1,10 +1,9 @@
 ﻿using System.Reflection;
-using WebJobs.Azure.QueueStorage.Functions;
 using WebJobs.Azure.QueueStorage.Functions.Attributes;
 
 namespace WebJobs.Azure.QueueStorage.Functions.Extentions
 {
-    public static class AzureQueueFunctionExtentions
+    internal static class AzureQueueFunctionExtentions
     {
         public static SingletonAttribute? GetSingletonAttribute(this IAzureQueueFunction function)
         {
