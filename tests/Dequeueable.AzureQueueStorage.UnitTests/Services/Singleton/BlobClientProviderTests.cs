@@ -6,7 +6,6 @@ using Azure.Storage.Blobs;
 using Dequeueable.AzureQueueStorage.Services.Singleton;
 using Dequeueable.AzureQueueStorage.Factories;
 using Dequeueable.AzureQueueStorage.Configurations;
-using Dequeueable.AzureQueueStorage.Attributes;
 
 namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
 {

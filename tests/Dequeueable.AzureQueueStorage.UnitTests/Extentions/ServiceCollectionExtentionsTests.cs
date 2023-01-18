@@ -1,10 +1,10 @@
-﻿using Dequeueable.AzureQueueStorage.Attributes;
-using Dequeueable.AzureQueueStorage.Configurations;
+﻿using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Extentions;
 using Dequeueable.AzureQueueStorage.Factories;
 using Dequeueable.AzureQueueStorage.Models;
 using Dequeueable.AzureQueueStorage.Services.Hosts;
 using Dequeueable.AzureQueueStorage.Services.Queues;
+using Dequeueable.AzureQueueStorage.Services.Singleton;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -54,7 +54,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Extentions
             var hostServices = host.Services.GetServices<IHostedService>();
 
             // Assert
-            hostServices.Any(s => s.GetType() == typeof(ListenerHost)).Should().BeTrue();
+            hostServices.Any(s => s.GetType() == typeof(QueueListenerHost)).Should().BeTrue();
         }
 
         [Fact]
@@ -79,9 +79,9 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Extentions
             var services = host.Services;
 
             // Assert
-            services.GetServices<IHostedService>().Any(s => s.GetType() == typeof(ListenerHost)).Should().BeTrue();
+            services.GetServices<IHostedService>().Any(s => s.GetType() == typeof(QueueListenerHost)).Should().BeTrue();
             services.GetServices<IQueueMessageExecutor>().Should().HaveCount(2);
-            services.GetRequiredService<IHostHandler>().Should().BeOfType(typeof(ListenerHostHandler));
+            services.GetRequiredService<IHostHandler>().Should().BeOfType(typeof(QueueListener));
             services.GetRequiredService<IOptions<ListenerOptions>>().Value.NewBatchThreshold.Should().Be(0);
         }
 
@@ -107,7 +107,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Extentions
             var hostServices = host.Services.GetServices<IHostedService>();
 
             // Assert
-            hostServices.Any(s => s.GetType() == typeof(JobHost)).Should().BeTrue();
+            hostServices.Any(s => s.GetType() == typeof(JobHostService)).Should().BeTrue();
         }
 
         [Fact]
@@ -131,9 +131,9 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Extentions
             var services = host.Services;
 
             // Assert
-            services.GetServices<IHostedService>().Any(s => s.GetType() == typeof(JobHost)).Should().BeTrue();
+            services.GetServices<IHostedService>().Any(s => s.GetType() == typeof(JobHostService)).Should().BeTrue();
             services.GetServices<IQueueMessageExecutor>().Should().HaveCount(2);
-            services.GetRequiredService<IHostHandler>().Should().BeOfType(typeof(JobHostHandler));
+            services.GetRequiredService<IHostHandler>().Should().BeOfType(typeof(JobExecutor));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Dequeueable.AzureQueueStorage.Attributes;
+﻿using Dequeueable.AzureQueueStorage.Services.Singleton;
 using System.Reflection;
 
 namespace Dequeueable.AzureQueueStorage.Extentions

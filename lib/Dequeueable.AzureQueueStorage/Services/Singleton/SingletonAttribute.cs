@@ -1,4 +1,4 @@
-﻿namespace Dequeueable.AzureQueueStorage.Attributes
+﻿namespace Dequeueable.AzureQueueStorage.Services.Singleton
 {
     /// <summary>
     /// This attribute can be applied to a job functions to ensure that only a single

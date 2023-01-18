@@ -1,5 +1,4 @@
 ﻿using Azure.Storage.Blobs;
-using Dequeueable.AzureQueueStorage.Attributes;
 using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Factories;
 using Microsoft.Extensions.Logging;

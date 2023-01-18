@@ -1,7 +1,7 @@
-﻿using Dequeueable.AzureQueueStorage.Attributes;
+﻿using Dequeueable.AzureQueueStorage.Services.Singleton;
 using FluentAssertions;
 
-namespace Dequeueable.AzureQueueStorage.UnitTests.Attributes
+namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
 {
     public class SingletonAttributeTests
     {

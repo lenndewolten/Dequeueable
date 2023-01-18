@@ -11,7 +11,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
         /// <summary>
         /// Constant string used to bind the appsettings.*.json
         /// </summary>
-        public static string WebHost => nameof(WebHost);
+        public static string Dequeueable => nameof(Dequeueable);
         private long _visibilityTimeoutInSeconds = 300;
         private long _maxDequeueCount = 5;
         private int _batchSize = 16;

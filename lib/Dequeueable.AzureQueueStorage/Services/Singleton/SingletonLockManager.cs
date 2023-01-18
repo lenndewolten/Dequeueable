@@ -1,5 +1,4 @@
-﻿using Dequeueable.AzureQueueStorage.Attributes;
-using Dequeueable.AzureQueueStorage.Factories;
+﻿using Dequeueable.AzureQueueStorage.Factories;
 using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AzureQueueStorage.Services.Singleton

@@ -8,11 +8,10 @@ namespace Dequeueable.AzureQueueStorage
     public interface IAzureQueueFunction
     {
         /// <summary>
-        /// The method that will be invoked when a message is found on the queue
+        /// Interface that binds the class that will be invoked when a message is retrieved from the queue
         /// </summary>
         /// <param name="message">
         ///  The Queue Message on the queue
-        /// 
         /// </param>
         /// <param name="cancellationToken">
         /// <see cref="CancellationToken"/> to propagate

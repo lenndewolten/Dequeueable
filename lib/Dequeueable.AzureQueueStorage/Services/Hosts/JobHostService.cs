@@ -3,15 +3,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
-    internal sealed class JobHost : BackgroundService
+    internal sealed class JobHostService : BackgroundService
     {
-        private readonly ILogger<JobHost> _logger;
-        private readonly IHostHandler _queueMessagesHandler;
+        private readonly ILogger<JobHostService> _logger;
+        private readonly IHostHandler _hostHandler;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-        public JobHost(IHostHandler queueMessagesHandler, IHostApplicationLifetime hostApplicationLifetime, ILogger<JobHost> logger)
+        public JobHostService(IHostHandler hostHandler, IHostApplicationLifetime hostApplicationLifetime, ILogger<JobHostService> logger)
         {
-            _queueMessagesHandler = queueMessagesHandler;
+            _hostHandler = hostHandler;
             _hostApplicationLifetime = hostApplicationLifetime;
             _logger = logger;
         }
@@ -20,7 +20,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
         {
             try
             {
-                await _queueMessagesHandler.HandleAsync(stoppingToken);
+                await _hostHandler.HandleAsync(stoppingToken);
             }
             catch (Exception ex)
             {

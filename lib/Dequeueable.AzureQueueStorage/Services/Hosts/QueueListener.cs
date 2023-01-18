@@ -1,24 +1,36 @@
-﻿using Dequeueable.AzureQueueStorage.Models;
+﻿using Dequeueable.AzureQueueStorage.Configurations;
+using Dequeueable.AzureQueueStorage.Models;
 using Dequeueable.AzureQueueStorage.Services.Queues;
+using Dequeueable.AzureQueueStorage.Services.Timers;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
-    internal sealed class JobHostHandler : IHostHandler
+    internal sealed class QueueListener : IHostHandler
     {
+
+        private readonly IDelayStrategy _delayStrategy;
+
         private readonly List<Task> _processing = new();
         private readonly IQueueMessageManager _messagesManager;
         private readonly IQueueMessageHandler _queueMessageHandler;
-        private readonly ILogger<JobHostHandler> _logger;
+        private readonly ILogger<QueueListener> _logger;
+        private readonly ListenerOptions _options;
 
-        public JobHostHandler(
+        public QueueListener(
             IQueueMessageManager messagesManager,
             IQueueMessageHandler queueMessageHandler,
-            ILogger<JobHostHandler> logger)
+            IOptions<ListenerOptions> options,
+            ILogger<QueueListener> logger)
         {
             _messagesManager = messagesManager;
             _queueMessageHandler = queueMessageHandler;
             _logger = logger;
+            _options = options.Value;
+            _delayStrategy = new RandomizedExponentialDelayStrategy(TimeSpan.FromMilliseconds(_options.MinimumPollingIntervalInMilliseconds),
+                TimeSpan.FromMilliseconds(_options.MaximumPollingIntervalInMilliseconds),
+                _options.DeltaBackOff);
         }
 
         public async Task HandleAsync(CancellationToken cancellationToken)
@@ -36,7 +48,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
                     _logger.LogDebug("No messages found");
                 }
 
-                return;
+                await WaitForDelay(messagesFound, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -53,7 +65,22 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
                 _processing.Add(task);
             }
 
-            return Task.WhenAll(_processing);
+            return WaitForNewBatchThreshold(cancellationToken);
+        }
+
+        private Task WaitForDelay(bool messageFound, CancellationToken cancellationToken)
+        {
+            var delay = _delayStrategy.GetNextDelay(executionSucceeded: messageFound);
+            return Task.Delay(delay, cancellationToken);
+        }
+
+        private async Task WaitForNewBatchThreshold(CancellationToken cancellationToken)
+        {
+            while (_processing.Count > _options.NewBatchThreshold && !cancellationToken.IsCancellationRequested)
+            {
+                var processed = await Task.WhenAny(_processing);
+                _processing.Remove(processed);
+            }
         }
     }
 }

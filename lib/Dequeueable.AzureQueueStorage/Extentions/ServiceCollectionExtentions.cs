@@ -1,5 +1,4 @@
-﻿using Dequeueable.AzureQueueStorage.Attributes;
-using Dequeueable.AzureQueueStorage.Configurations;
+﻿using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Factories;
 using Dequeueable.AzureQueueStorage.Services.Hosts;
 using Dequeueable.AzureQueueStorage.Services.Queues;
@@ -27,7 +26,7 @@ namespace Dequeueable.AzureQueueStorage.Extentions
         public static IServiceCollection AddAzureQueueStorageJob<TFunction>(this IServiceCollection services, Action<HostOptions>? options = null)
             where TFunction : class, IAzureQueueFunction
         {
-            services.AddOptions<HostOptions>().BindConfiguration(HostOptions.WebHost);
+            services.AddOptions<HostOptions>().BindConfiguration(HostOptions.Dequeueable);
 
             if (options is not null)
             {
@@ -35,8 +34,8 @@ namespace Dequeueable.AzureQueueStorage.Extentions
             }
 
             services.AddAzureQueueStorageServices<TFunction>();
-            services.AddHostedService<JobHost>();
-            services.AddSingleton<IHostHandler, JobHostHandler>();
+            services.AddHostedService<JobHostService>();
+            services.AddSingleton<IHostHandler, JobExecutor>();
 
             var singletonAttribute = typeof(TFunction).GetSingletonAttribute();
             if (singletonAttribute is not null)
@@ -59,7 +58,7 @@ namespace Dequeueable.AzureQueueStorage.Extentions
         public static IServiceCollection AddAzureQueueStorageListener<TFunction>(this IServiceCollection services, Action<ListenerOptions>? options = null)
             where TFunction : class, IAzureQueueFunction
         {
-            services.AddOptions<ListenerOptions>().BindConfiguration(HostOptions.WebHost);
+            services.AddOptions<ListenerOptions>().BindConfiguration(HostOptions.Dequeueable);
 
             if (options is not null)
             {
@@ -67,8 +66,8 @@ namespace Dequeueable.AzureQueueStorage.Extentions
             }
 
             services.AddAzureQueueStorageServices<TFunction>();
-            services.AddHostedService<ListenerHost>();
-            services.AddSingleton<IHostHandler, ListenerHostHandler>();
+            services.AddHostedService<QueueListenerHost>();
+            services.AddSingleton<IHostHandler, QueueListener>();
 
             var singletonAttribute = typeof(TFunction).GetSingletonAttribute();
             if (singletonAttribute is not null)

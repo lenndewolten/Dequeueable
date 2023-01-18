@@ -1,5 +1,5 @@
-﻿using Dequeueable.AzureQueueStorage.Attributes;
-using Dequeueable.AzureQueueStorage.Models;
+﻿using Dequeueable.AzureQueueStorage.Models;
+using Dequeueable.AzureQueueStorage.Services.Singleton;
 
 namespace Dequeueable.AzureQueueStorage.IntegrationTests.TestDataBuilders
 {

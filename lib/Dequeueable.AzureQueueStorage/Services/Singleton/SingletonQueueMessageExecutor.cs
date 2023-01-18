@@ -1,5 +1,4 @@
-﻿using Dequeueable.AzureQueueStorage.Attributes;
-using Dequeueable.AzureQueueStorage.Extentions;
+﻿using Dequeueable.AzureQueueStorage.Extentions;
 using Dequeueable.AzureQueueStorage.Models;
 using Dequeueable.AzureQueueStorage.Services.Queues;
 using Dequeueable.AzureQueueStorage.Services.Timers;
