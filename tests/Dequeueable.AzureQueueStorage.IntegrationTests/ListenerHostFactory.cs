@@ -67,10 +67,10 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
             return HostBuilder;
         }
 
-        public IHostHandler Build()
+        public Services.Hosts.IHost Build()
         {
             var host = HostBuilder.Build();
-            return host.Services.GetRequiredService<IHostHandler>();
+            return host.Services.GetRequiredService<Services.Hosts.IHost>();
         }
     }
 }

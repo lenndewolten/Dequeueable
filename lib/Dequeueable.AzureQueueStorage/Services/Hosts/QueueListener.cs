@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
-    internal sealed class QueueListener : IHostHandler
+    internal sealed class QueueListener : IHost
     {
 
         private readonly IDelayStrategy _delayStrategy;

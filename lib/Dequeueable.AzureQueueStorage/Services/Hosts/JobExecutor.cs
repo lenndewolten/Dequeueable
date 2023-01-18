@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
-    internal sealed class JobExecutor : IHostHandler
+    internal sealed class JobExecutor : IHost
     {
         private readonly List<Task> _processing = new();
         private readonly IQueueMessageManager _messagesManager;

@@ -35,7 +35,7 @@ namespace Dequeueable.AzureQueueStorage.Extentions
 
             services.AddAzureQueueStorageServices<TFunction>();
             services.AddHostedService<JobHostService>();
-            services.AddSingleton<IHostHandler, JobExecutor>();
+            services.AddSingleton<IHost, JobExecutor>();
 
             var singletonAttribute = typeof(TFunction).GetSingletonAttribute();
             if (singletonAttribute is not null)
@@ -67,7 +67,7 @@ namespace Dequeueable.AzureQueueStorage.Extentions
 
             services.AddAzureQueueStorageServices<TFunction>();
             services.AddHostedService<QueueListenerHost>();
-            services.AddSingleton<IHostHandler, QueueListener>();
+            services.AddSingleton<IHost, QueueListener>();
 
             var singletonAttribute = typeof(TFunction).GetSingletonAttribute();
             if (singletonAttribute is not null)

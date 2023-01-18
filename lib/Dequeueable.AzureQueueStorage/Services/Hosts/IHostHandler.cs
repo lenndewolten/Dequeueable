@@ -1,9 +1,9 @@
 ﻿namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
     /// <summary>
-    /// The handler that will be called when the host is started. This interface can be used for integration testing.
+    /// Inteface that will be called when the host is started. This interface can be used for integration testing.
     /// </summary>
-    public interface IHostHandler
+    public interface IHost
     {
         /// <summary>
         /// The method that will be called when the host is started.

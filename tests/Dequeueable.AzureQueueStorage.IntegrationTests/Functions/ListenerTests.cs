@@ -9,20 +9,25 @@ using Moq;
 
 namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
 {
-    [Collection("Azurite collection")]
-    public class hostHandlerTests
+    //[Collection("Azurite collection")]
+    public class ListenerTests : IClassFixture<AzuriteFixture>
     {
-
         private readonly QueueClientOptions _queueClientOptions = new() { MessageEncoding = QueueMessageEncoding.Base64 };
+        private readonly AzuriteFixture _azuriteFixture;
+
+        public ListenerTests(AzuriteFixture azuriteFixture)
+        {
+            _azuriteFixture = azuriteFixture;
+        }
 
         [Fact]
         public async Task Given_a_Queue_when_is_has_two_messages_then_they_are_handled_correctly()
         {
             // Arrange
             var queueName = "testqueue1";
-            var queueClient = new QueueClient(AzuriteFixture.ConnectionString, queueName, _queueClientOptions);
+            var queueClient = new QueueClient(_azuriteFixture.ConnectionString, queueName, _queueClientOptions);
 
-            var factory = new ListenerHostFactory<TestFunction>(AzuriteFixture.ConnectionString, queueName);
+            var factory = new ListenerHostFactory<TestFunction>(_azuriteFixture.ConnectionString, queueName);
 
             var fakeServiceMock = new Mock<IFakeService>();
 
@@ -41,8 +46,8 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             }
 
             // Act
-            var hostHandler = factory.Build();
-            await hostHandler.HandleAsync(CancellationToken.None);
+            var host = factory.Build();
+            await host.HandleAsync(CancellationToken.None);
 
             // Assert
             var peekedMessage = await queueClient.PeekMessageAsync();
@@ -59,9 +64,9 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
         {
             // Arrange
             var queueName = "testqueue2";
-            var queueClient = new QueueClient(AzuriteFixture.ConnectionString, queueName, _queueClientOptions);
+            var queueClient = new QueueClient(_azuriteFixture.ConnectionString, queueName, _queueClientOptions);
 
-            var factory = new ListenerHostFactory<TestFunction>(AzuriteFixture.ConnectionString, queueName, options =>
+            var factory = new ListenerHostFactory<TestFunction>(_azuriteFixture.ConnectionString, queueName, options =>
             {
                 options.MaxDequeueCount = 5;
             });
@@ -79,8 +84,8 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             await queueClient.SendMessageAsync(message);
 
             // Act
-            var hostHandler = factory.Build();
-            await hostHandler.HandleAsync(CancellationToken.None);
+            var host = factory.Build();
+            await host.HandleAsync(CancellationToken.None);
 
             // Assert
             var peekedMessage = await queueClient.PeekMessageAsync();
@@ -94,10 +99,10 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
         {
             // Arrange
             var queueName = "testqueue3";
-            var queueClient = new QueueClient(AzuriteFixture.ConnectionString, queueName, _queueClientOptions);
+            var queueClient = new QueueClient(_azuriteFixture.ConnectionString, queueName, _queueClientOptions);
             var poisenQueueSuffix = "poison";
 
-            var factory = new ListenerHostFactory<TestFunction>(AzuriteFixture.ConnectionString, queueName, options =>
+            var factory = new ListenerHostFactory<TestFunction>(_azuriteFixture.ConnectionString, queueName, options =>
             {
                 options.MaxDequeueCount = 1;
                 options.PoisonQueueSuffix = poisenQueueSuffix;
@@ -116,14 +121,14 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             await queueClient.SendMessageAsync(message);
 
             // Act
-            var hostHandler = factory.Build();
-            await hostHandler.HandleAsync(CancellationToken.None);
+            var host = factory.Build();
+            await host.HandleAsync(CancellationToken.None);
 
             // Assert
             var peekedMessage = await queueClient.PeekMessageAsync();
             peekedMessage.Value.Should().BeNull();
 
-            var poisenQueueClient = new QueueClient(AzuriteFixture.ConnectionString, $"{queueName}-{poisenQueueSuffix}", _queueClientOptions);
+            var poisenQueueClient = new QueueClient(_azuriteFixture.ConnectionString, $"{queueName}-{poisenQueueSuffix}", _queueClientOptions);
 
             var peekedPoisonQueueMessage = await poisenQueueClient.PeekMessageAsync();
             peekedPoisonQueueMessage.Value.Should().NotBeNull();
@@ -136,7 +141,7 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             // Arrange
             var queueName = "scopedsingletontestsqueue";
             var scope = "testscope";
-            var factory = new ListenerHostFactory<SingletonFunction>(AzuriteFixture.ConnectionString, queueName);
+            var factory = new ListenerHostFactory<SingletonFunction>(_azuriteFixture.ConnectionString, queueName);
 
             var fakeServiceMock = new Mock<IFakeService>();
 
@@ -145,8 +150,8 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
                 services.AddTransient(_ => fakeServiceMock.Object);
             });
 
-            var queueClient = new QueueClient(AzuriteFixture.ConnectionString, queueName, _queueClientOptions);
-            var blobContainerClient = new BlobContainerClient(AzuriteFixture.ConnectionString, SingletonFunction.ContainerName);
+            var queueClient = new QueueClient(_azuriteFixture.ConnectionString, queueName, _queueClientOptions);
+            var blobContainerClient = new BlobContainerClient(_azuriteFixture.ConnectionString, SingletonFunction.ContainerName);
 
             await queueClient.CreateAsync();
 
@@ -157,8 +162,8 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             }
 
             // Act
-            var hostHandler = factory.Build();
-            await hostHandler.HandleAsync(CancellationToken.None);
+            var host = factory.Build();
+            await host.HandleAsync(CancellationToken.None);
 
             // Assert
             fakeServiceMock.Verify(f => f.Execute(It.IsAny<Message>()), Times.Exactly(messages.Length));

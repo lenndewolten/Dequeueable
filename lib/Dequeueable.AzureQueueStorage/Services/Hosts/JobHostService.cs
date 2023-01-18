@@ -6,10 +6,10 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
     internal sealed class JobHostService : BackgroundService
     {
         private readonly ILogger<JobHostService> _logger;
-        private readonly IHostHandler _hostHandler;
+        private readonly IHost _hostHandler;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-        public JobHostService(IHostHandler hostHandler, IHostApplicationLifetime hostApplicationLifetime, ILogger<JobHostService> logger)
+        public JobHostService(IHost hostHandler, IHostApplicationLifetime hostApplicationLifetime, ILogger<JobHostService> logger)
         {
             _hostHandler = hostHandler;
             _hostApplicationLifetime = hostApplicationLifetime;

@@ -5,11 +5,11 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
     internal sealed class QueueListenerHost : BackgroundService
     {
-        private readonly IHostHandler _hostHandler;
+        private readonly IHost _hostHandler;
         private readonly ILogger<QueueListenerHost> _logger;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-        public QueueListenerHost(IHostHandler hostHandler, ILogger<QueueListenerHost> logger, IHostApplicationLifetime hostApplicationLifetime)
+        public QueueListenerHost(IHost hostHandler, ILogger<QueueListenerHost> logger, IHostApplicationLifetime hostApplicationLifetime)
         {
             _hostHandler = hostHandler;
             _logger = logger;

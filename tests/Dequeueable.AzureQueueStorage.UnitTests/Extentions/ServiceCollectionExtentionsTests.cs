@@ -81,7 +81,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Extentions
             // Assert
             services.GetServices<IHostedService>().Any(s => s.GetType() == typeof(QueueListenerHost)).Should().BeTrue();
             services.GetServices<IQueueMessageExecutor>().Should().HaveCount(2);
-            services.GetRequiredService<IHostHandler>().Should().BeOfType(typeof(QueueListener));
+            services.GetRequiredService<AzureQueueStorage.Services.Hosts.IHost>().Should().BeOfType(typeof(QueueListener));
             services.GetRequiredService<IOptions<ListenerOptions>>().Value.NewBatchThreshold.Should().Be(0);
         }
 
@@ -133,7 +133,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Extentions
             // Assert
             services.GetServices<IHostedService>().Any(s => s.GetType() == typeof(JobHostService)).Should().BeTrue();
             services.GetServices<IQueueMessageExecutor>().Should().HaveCount(2);
-            services.GetRequiredService<IHostHandler>().Should().BeOfType(typeof(JobExecutor));
+            services.GetRequiredService<AzureQueueStorage.Services.Hosts.IHost>().Should().BeOfType(typeof(JobExecutor));
         }
     }
 }

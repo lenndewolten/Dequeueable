@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<PackageId>lenndewolten.Webjobs.Azure.Queue.Storage.Functions</PackageId>
-		<Version>1.0.1</Version>
+		<PackageId>Dequeueable.AzureQueueStorage</PackageId>
+		<Version>1.0.0</Version>
 		<Authors>Lennart ten Wolde</Authors>
-		<PackageTags>Microsoft Azure Storage Blobs;Microsoft;Azure;Blobs;Blob;Microsoft Azure Storage Queues;Queues;Queue;Events;Event</PackageTags>
-		<Title>Webjobs Azure Queue Storage Functions</Title>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageTags>Microsoft;Azure;Microsoft Azure Storage Queues;Queues;Queue;QueueMessage;QueueMessages;Message;Microsoft Azure Storage Blobs;Events;Event</PackageTags>
+		<Title>Dequeueable for Azure Queue Storage library</Title>
 		<Description>
 			This client library enables working with the Microsoft Azure Storage Blob service for storing binary and text data.
 			Microsoft Azure Storage quickstarts and tutorials - https://learn.microsoft.com/azure/storage/
@@ -16,6 +15,7 @@
 		<RepositoryType>Git</RepositoryType>
 		<ProjectUrl>https://github.com/lenndewolten/webjobs</ProjectUrl>
 		<PackageProjectUrl>https://github.com/lenndewolten/webjobs</PackageProjectUrl>
+		<!--<GeneratePackageOnBuild>True</GeneratePackageOnBuild>-->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
