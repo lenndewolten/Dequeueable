@@ -1,33 +1,32 @@
-# WebJobs.Azure.QueueStorage.Function.SampleConsoleApp
+# Azure Queue Storage Sample listener
 
 ## Docker
 
 ### Build
 ```
-docker build -t <yourtagname> -f samples/WebJobs.Azure.QueueStorage.Function.SampleConsoleApp/deployment/Dockerfile .
+docker build -t <yourtagname> -f samples/Dequeueable.AzureQueueStorage.SampleListener/deployment/Dockerfile .
 ```
 Image stats:
 ```
-docker images -f reference=lenndewolten/webjobs
+docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplelistener-v1
 
-> REPOSITORY             TAG                      IMAGE ID       CREATED          SIZE
-> lenndewolten/webjobs   samplefunction-v1        f4b9bae68e71   14 seconds ago   82.5MB
+> REPOSITORY                 TAG                                     IMAGE ID       CREATED          SIZE
+> lenndewolten/dequeueable   azure-queue-storage-samplelistener-v1   54e3a074c316   50 seconds ago   84.1MB
 ```
 
 ```
-docker scan lenndewolten/webjobs:samplefunction-v1
+docker scan lenndewolten/dequeueable:azure-queue-storage-samplelistener-v1
 
-> Testing lenndewolten/webjobs:samplefunction-v1...
+> Testing lenndewolten/dequeueable:azure-queue-storage-samplelistener-v1...
 > 
 > Package manager:   apk
-> Project name:      docker-image|llenndewolten/webjobs
-> Docker image:      lenndewolten/webjobs:samplefunction-v1
+> Project name:      docker-image|lenndewolten/dequeueable
+> Docker image:      lenndewolten/dequeueable:azure-queue-storage-samplelistener-v1
 > Platform:          linux/amd64
-> Base image:        alpine:3.16.3
+> Base image:        alpine:3.17.1
 > 
-> ✔ Tested 23 dependencies for known vulnerabilities, no vulnerable paths found.
+> ✔ Tested 24 dependencies for known vulnerabilities, no vulnerable paths found.
 ```
-
 
 ## Kubernetes
 
@@ -84,60 +83,60 @@ kubectl logs pods/queuefunction-deployment-7cbc8d8649-sjp9v
 >       Hosting environment: Production
 > info: Microsoft.Hosting.Lifetime[0]
 >       Content root path: /app
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 0
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 0
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 1
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 1
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 2
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 2
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 0
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 0
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 3
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 3
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 1
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 1
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 4
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 4
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 2
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 2
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 5
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 5
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 3
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 3
-> info: WebJobs.Azure.QueueStorage.Core.Services.Queues.QueueMessageHandler[0]
+> info: Dequeueable.AzureQueueStorage.Services.Queues.QueueMessageHandler[0]
 >       Executed message with id '3566484e-895d-4949-96fd-a02799f4933f' (Succeeded)
-> info: WebJobs.Azure.QueueStorage.Core.Services.Queues.QueueMessageHandler[0]
+> info: Dequeueable.AzureQueueStorage.Services.Queues.QueueMessageHandler[0]
 >       Executed message with id '5307f82e-9d38-48ce-a80d-ee2812578484' (Succeeded)
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 4
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 4
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 5
-> info: WebJobs.Azure.QueueStorage.Function.SampleConsoleApp.Function.TestFunction[0]
+> info: Dequeueable.AzureQueueStorage.SampleListener.Function.TestFunction[0]
 >       Executing function loop 5
-> info: WebJobs.Azure.QueueStorage.Core.Services.Queues.QueueMessageHandler[0]
+> info: Dequeueable.AzureQueueStorage.Services.Queues.QueueMessageHandler[0]
 >       Executed message with id 'be0f39db-ff76-44cc-bc50-a7342bb4a023' (Succeeded)
-> info: WebJobs.Azure.QueueStorage.Core.Services.Queues.QueueMessageHandler[0]
+> info: Dequeueable.AzureQueueStorage.Services.Queues.QueueMessageHandler[0]
 >       Executed message with id '5540cb19-c318-4c7c-8e89-5d80b972b1e9' (Succeeded)
 ```

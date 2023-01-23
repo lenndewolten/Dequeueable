@@ -1,16 +1,32 @@
-# WebJobs.Azure.QueueStorage.Job
+# Dequeueable.AzureQueueStorage
 
+This project is inspired by the Azure Function Host. This project is an **opinionated** optimization on the Azure Function:
+- Build as a Console App
+- Being able to use optimized alpine/dotnet images
+- Have the freedom to use Keda or any other scalers to retrieve queue messages
+
+This framework can run as a **listener** or **job**:
+- **Listener:**
+Highly scalable queue listener that will be invoked automatically when new messages are detected on the Azure Queue.
+- **Job:**
+Framework that depends on external queue triggers, eg; KEDA. When the host is started, new messages on the Azure Queue are being retrieved and executed. After execution the host will shutdown automatically. 
 
 ## Getting started
+
 Scaffold a new project, you can either use a console or web app.
-1. Add a class that implements the `IAzureQueueJob`.
-2. After adding the service, add `AddAzureQueueStorageJob<YourJob>` in the DI container of your app.
+1. Add a class that implements the `IAzureQueueFunction`.
+2. Add the job or listener services:
+   - Add `AddAzureQueueStorageJob<TestFunction>` in the DI container of your app to run the host as a job.
+   - Add `AddAzureQueueStorageListener` in the DI container of your app to run the app as a back ground listener.
 
 ```csharp
 await Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        services.AddAzureQueueStorageJob<TestJob>();
+        // Uncomment to run as a job:
+        // services.AddAzureQueueStorageJob<TestFunction>();
+        // Uncomment to run as a listener
+        // services.AddAzureQueueStorageListener<TestFunction>();
     })
     .RunConsoleAsync();
 ```
@@ -20,10 +36,10 @@ You can configure the host via the `appsettings.json` or via the `IOptions` patt
 
 **Appsettings**
 
-Use the `WebHost` section to configure the settings:
+Use the `Dequeueable` section to configure the settings:
 
 ```json
-"WebHost": {
+"Dequeueable": {
     "ConnectionString": "UseDevelopmentStorage=true",
     "QueueName": "queue-name"
   }
@@ -35,7 +51,7 @@ Use the `WebHost` section to configure the settings:
 await Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        services.AddAzureQueueStorageJob<TestJob>(options =>
+        services.AddAzureQueueStorageJob<TestFunction>(options =>
         {
             options.AuthenticationScheme = new DefaultAzureCredential();
             options.VisibilityTimeout = TimeSpan.FromMinutes(10);
@@ -46,7 +62,10 @@ await Host.CreateDefaultBuilder(args)
 ```
 
 ###  Settings
-The library uses the `IOptions<JobHostOptions>` pattern to inject the configured app settings.
+The library uses the `IOptions` pattern to inject the configured app settings.
+
+#### Host options
+These options can be set for both the job as the listener project:
 
 Setting | Description | Default | Required
 --- | --- | --- | --- |
@@ -61,6 +80,14 @@ MaxDequeueCount | Max dequeue count before moving to the poison queue.  | 5 | No
 VisibilityTimeoutInSeconds | The timeout after the queue message is visible again for other services.| 300 | No |
 QueueClientOptions | Provides the client configuration options for connecting to Azure Queue Storage. | `new QueueClientOptions { MessageEncoding = QueueMessageEncoding.Base64 }` | No |
 
+#### Listener options
+Setting | Description | Default | Required
+--- | --- | --- | --- |
+NewBatchThreshold | The threshold at which a new batch of messages will be fetched. This setting is **ignored** when using the singleton function. | BatchSize / 2 | No |
+MinimumPollingIntervalInMilliseconds | The minimum polling interval to check the queue for new messages.  | 5  | No |
+MaximumPollingIntervalInMilliseconds | The maximum polling interval to check the queue for new messages.  | 10000 | No |
+DeltaBackOff | The delta used to randomize the polling interval. | MinimumPollingInterval | No |
+
 ## Authentication
 
 ### SAS
@@ -74,7 +101,7 @@ You can authenticate to the storage account & queue by setting the ConnectionStr
 ```
 
 ```csharp
-    services.AddAzureQueueStorageJob<TestJob>(options =>
+    services.AddAzureQueueStorageJob<TestFunction>(options =>
     {
         // ...
         options.ConnectionString = "UseDevelopmentStorage=true";
@@ -84,23 +111,23 @@ You can authenticate to the storage account & queue by setting the ConnectionStr
 ### Identity
 Authenticating via Azure Identity is also possible and the recommended option. Make sure that the identity used have the following roles on the storage account
 - 'Storage Queue Data Contributor'
-- 'Storage Blob Data Contributor' - Only when making use of the singleton function. 
+- 'Storage Blob Data Contributor' - Only when making use of the singleton function.
 
 Set the `AuthenticationScheme` and the `AccountName` options to authenticate via azure AD:
 
 ```csharp
-    services.AddAzureQueueStorageJob<TestJob>(options =>
+    services.AddAzureQueueStorageJob<TestFunction>(options =>
     {
         options.AuthenticationScheme = new DefaultAzureCredential();
         options.AccountName = "thestorageaccountName";
     });
 ```
-Any token credential provider can be used that inherits the abstract class `Azure.Core.TokenCredential` 
+Any token credential provider can be used that inherits the abstract class `Azure.Core.TokenCredential`
 
 The `QueueUriFormat` options is used to format the correct URI to the queue. When making use of the singleton function, the `BlobUriFormat` is used to format the correct URI to the blob lease.
 
 ### Custom QueueProvider
-There are plenty ways to construct the QueueClient, and not all are by default supported. You can override the default implementations to retrieve the queue client by implementing the `IQueueClientProvider`. You still should register your custom provider in your DI container, specific registration order is not needed: 
+There are plenty ways to construct the QueueClient, and not all are by default supported. You can override the default implementations to retrieve the queue client by implementing the `IQueueClientProvider`. You still should register your custom provider in your DI container, specific registration order is not needed:
 
 ```csharp
 internal class MyCustomQueueProvider : IQueueClientProvider
@@ -168,14 +195,14 @@ ContainerName | The container name for the lock files. | webjobshost | No |
 BlobUriFormat | The uri format to the blob storage. Used for identity flow. Use ` {accountName}`, `{containerName}` and `{blobName}` for variable substitution. | "https://{accountName}.blob.core.windows.net/{containerName}/{blobName}" | No
 
 ### Custom BlobClientProvider
-There are plenty ways to construct the BlobClient, and not all are by default supported. You can override the default implementations to retrieve the blob client for the lease by implementing the `IBlobClientProvider`. You still should register your custom provider in your DI container, specific registration order is not needed: 
+There are plenty ways to construct the BlobClient, and not all are by default supported. You can override the default implementations to retrieve the blob client for the lease by implementing the `IBlobClientProvider`. You still should register your custom provider in your DI container, specific registration order is not needed:
 
 ```csharp
 internal class MyCustomBlobClientProvider : IBlobClientProvider
     {
         public BlobClient Get(string blobName)
         {
-            return new BlobClient(new Uri($"https://myaccount.chinacloudapi.cn/mycontainer/{blobName}"), 
+            return new BlobClient(new Uri($"https://myaccount.chinacloudapi.cn/mycontainer/{blobName}"),
                 new BlobClientOptions { GeoRedundantSecondaryUri = new Uri($"https://mysecaccount.chinacloudapi.cn/mycontainer/{blobName}") });
         }
     }
@@ -191,4 +218,6 @@ The lease timeout of the blob lease is automatically updated. It will be updated
 
 
 ## Sample
-- [Console app](../../samples/WebJobs.Azure.QueueStorage.Job.SampleConsoleApp/README.md)
+- [Job Console app](../../samples/Dequeueable.AzureQueueStorage.SampleJob/README.md)
+- [Listener Console app](../../samples/Dequeueable.AzureQueueStorage.SampleListener/README.md)
+  

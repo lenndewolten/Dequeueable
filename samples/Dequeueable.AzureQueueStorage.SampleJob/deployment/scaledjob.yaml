@@ -4,8 +4,8 @@ metadata:
   name: queuejob-config
 data:
   # Only for demo purpose how to use the connection string, you should use secrets!
-  WebHost__ConnectionString: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://storage-azurite-service.default:10000/devstoreaccount1;QueueEndpoint=http://storage-azurite-service.default:10001/devstoreaccount1;TableEndpoint=http://storage-azurite-service.default:10002/devstoreaccount1;
-  WebHost__QueueName: "testqueue"
+  Dequeueable__ConnectionString: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://storage-azurite-service.default:10000/devstoreaccount1;QueueEndpoint=http://storage-azurite-service.default:10001/devstoreaccount1;TableEndpoint=http://storage-azurite-service.default:10002/devstoreaccount1;
+  Dequeueable__QueueName: "testqueue"
 ---
 apiVersion: keda.sh/v1alpha1
 kind: ScaledJob
@@ -18,7 +18,7 @@ spec:
       spec:
         containers:
           - name: queuejob-executor
-            image: lenndewolten/webjobs:samplejobfunction-v1
+            image: lenndewolten/dequeueable:azure-queue-storage-samplejob-v1
             imagePullPolicy: Always
             envFrom:
               - configMapRef:
@@ -32,5 +32,5 @@ spec:
       metadata:
         queueName: testqueue
         queueLength: "16"
-        connectionFromEnv: WebHost__ConnectionString
+        connectionFromEnv: Dequeueable__ConnectionString
         accountName: devstoreaccount1

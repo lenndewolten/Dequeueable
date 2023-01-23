@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine as build
 WORKDIR /app
 
-COPY /samples/WebJobs.Azure.QueueStorage.Job.SampleConsoleApp samples/consoleapp
+COPY /samples/Dequeueable.AzureQueueStorage.SampleJob samples/consoleapp
 COPY /lib lib
 COPY Directory.Build.props .
 
@@ -25,4 +25,4 @@ USER dotnetuser
 WORKDIR /app
 COPY --from=build /app/publish .
 EXPOSE 5000
-ENTRYPOINT ["./WebJobs.Azure.QueueStorage.Job.SampleConsoleApp"]
+ENTRYPOINT ["./Dequeueable.AzureQueueStorage.SampleJob"]
