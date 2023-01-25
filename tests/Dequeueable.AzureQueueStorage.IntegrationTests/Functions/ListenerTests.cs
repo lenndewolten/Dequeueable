@@ -9,7 +9,6 @@ using Moq;
 
 namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
 {
-    //[Collection("Azurite collection")]
     public class ListenerTests : IClassFixture<AzuriteFixture>
     {
         private readonly QueueClientOptions _queueClientOptions = new() { MessageEncoding = QueueMessageEncoding.Base64 };
