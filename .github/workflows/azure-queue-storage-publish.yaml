@@ -1,10 +1,10 @@
 on:
   push:
     tags:
-      - "[azure-queue-storage]_v[0-9]+.[0-9]+.[0-9]"
-      - "[azure-queue-storage]_v[0-9]+.[0-9]+.[0-9]-preview*"
-      - "[azure-queue-storage]_v[0-9]+.[0-9]+.[0-9]-beta*"
-      - "[azure-queue-storage]_v[0-9]+.[0-9]+.[0-9]-alpha*"
+      - "azure-queue-storage_v[0-9]+.[0-9]+.[0-9]"
+      - "azure-queue-storage_v[0-9]+.[0-9]+.[0-9]-preview*"
+      - "azure-queue-storage_v[0-9]+.[0-9]+.[0-9]-beta*"
+      - "azure-queue-storage_v[0-9]+.[0-9]+.[0-9]-alpha*"
 
 jobs:
   build:
