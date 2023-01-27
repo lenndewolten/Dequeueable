@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: queuejob-config
+data:
+  # Only for demo purpose how to use the connection string, you should use secrets!
+  Dequeueable__ConnectionString: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://storage-azurite-service.default:10000/devstoreaccount1;QueueEndpoint=http://storage-azurite-service.default:10001/devstoreaccount1;TableEndpoint=http://storage-azurite-service.default:10002/devstoreaccount1;
+  Dequeueable__QueueName: "testqueue"
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: queuejob-consumer
+  namespace: default
+spec:
+  jobTargetRef:
+    template:
+      spec:
+        containers:
+          - name: queuejob-executor
+            image: lenndewolten/dequeueable:azure-queue-storage-samplejob-v1
+            imagePullPolicy: Always
+            envFrom:
+              - configMapRef:
+                  name: queuejob-config
+        restartPolicy: Never
+    backoffLimit: 4
+  pollingInterval: 10
+  maxReplicaCount: 30
+  triggers:
+    - type: azure-queue
+      metadata:
+        queueName: testqueue
+        queueLength: "16"
+        connectionFromEnv: Dequeueable__ConnectionString
+        accountName: devstoreaccount1

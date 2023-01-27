@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<PackageId>Dequeueable.AzureQueueStorage</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>Lennart ten Wolde</Authors>
+		<PackageTags>Microsoft;Azure;Microsoft Azure Storage Queues;Queues;Queue;QueueMessage;QueueMessages;Message;Microsoft Azure Storage Blobs;Events;Event</PackageTags>
+		<Title>Dequeueable for Azure Queue Storage library</Title>
+		<Description>
+			This client library enables working with the Microsoft Azure Storage Blob service for storing binary and text data.
+			Microsoft Azure Storage quickstarts and tutorials - https://learn.microsoft.com/azure/storage/
+		</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>./README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/lenndewolten/webjobs</RepositoryUrl>
+		<RepositoryType>Git</RepositoryType>
+		<ProjectUrl>https://github.com/lenndewolten/webjobs</ProjectUrl>
+		<PackageProjectUrl>https://github.com/lenndewolten/webjobs</PackageProjectUrl>
+		<!--<GeneratePackageOnBuild>True</GeneratePackageOnBuild>-->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
+		<PackageReference Include="Azure.Storage.Queues" Version="12.12.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(AssemblyName).UnitTests" />
+		<InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
+		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+	</ItemGroup>
+	
+
+ <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>
