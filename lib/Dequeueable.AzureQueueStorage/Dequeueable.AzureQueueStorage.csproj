@@ -14,7 +14,6 @@
 		<RepositoryType>Git</RepositoryType>
 		<ProjectUrl>https://github.com/lenndewolten/Dequeueable</ProjectUrl>
 		<PackageProjectUrl>https://github.com/lenndewolten/Dequeueable</PackageProjectUrl>
-		<!--<GeneratePackageOnBuild>True</GeneratePackageOnBuild>-->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
