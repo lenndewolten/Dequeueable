@@ -43,8 +43,8 @@ jobs:
       - name: Test
         run: dotnet test --configuration Release /p:Version=${VERSION} --no-build
       - name: Pack
-        run: dotnet pack lib/Dequeueable.AzureQueueStorage/Dequeueable.AzureQueueStorage.csproj --configuration Release /p:Version=${VERSION} --no-build
-      # - name: Push
-      #   run: dotnet nuget push Dequeueable.AzureQueueStorage.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_KEY}
-      #   env:
-      #     NUGET_KEY: ${{secrets.NUGET_KEY}}
+        run: dotnet pack lib/Dequeueable.AzureQueueStorage/Dequeueable.AzureQueueStorage.csproj --configuration Release /p:Version=${VERSION} --no-build --output .
+      - name: Push
+        run: dotnet nuget push Dequeueable.AzureQueueStorage.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_KEY}
+        env:
+          NUGET_KEY: ${{secrets.NUGET_KEY}}
