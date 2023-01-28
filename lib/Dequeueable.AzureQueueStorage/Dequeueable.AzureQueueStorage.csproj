@@ -11,10 +11,10 @@
 		</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>./README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/lenndewolten/webjobs</RepositoryUrl>
+		<RepositoryUrl>https://github.com/lenndewolten/Dequeueable</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<ProjectUrl>https://github.com/lenndewolten/webjobs</ProjectUrl>
-		<PackageProjectUrl>https://github.com/lenndewolten/webjobs</PackageProjectUrl>
+		<ProjectUrl>https://github.com/lenndewolten/Dequeueable</ProjectUrl>
+		<PackageProjectUrl>https://github.com/lenndewolten/Dequeueable</PackageProjectUrl>
 		<!--<GeneratePackageOnBuild>True</GeneratePackageOnBuild>-->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
