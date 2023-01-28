@@ -218,6 +218,6 @@ The lease timeout of the blob lease is automatically updated. It will be updated
 
 
 ## Sample
-- [Job Console app](../../samples/Dequeueable.AzureQueueStorage.SampleJob/README.md)
-- [Listener Console app](../../samples/Dequeueable.AzureQueueStorage.SampleListener/README.md)
+- [Job Console app](https://github.com/lenndewolten/Dequeueable/samples/Dequeueable.AzureQueueStorage.SampleJob/README.md)
+- [Listener Console app](https://github.com/lenndewolten/Dequeueable/samples/Dequeueable.AzureQueueStorage.SampleListener/README.md)
   
