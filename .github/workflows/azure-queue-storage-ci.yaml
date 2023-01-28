@@ -3,7 +3,7 @@ on:
     branches:
       - "main"
     paths:
-      - "src/Dequeueable.AzureQueueStorage/**"
+      - "lib/Dequeueable.AzureQueueStorage/**"
       - "tests/Dequeueable.AzureQueueStorage.**/"
 
 jobs:
