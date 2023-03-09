@@ -1,28 +1,26 @@
-﻿using Dequeueable.AzureQueueStorage.Configurations;
-using Dequeueable.AzureQueueStorage.Models;
-using Dequeueable.AzureQueueStorage.Services.Queues;
+﻿using Dequeueable.AmazonSQS.Configurations;
+using Dequeueable.AmazonSQS.Services.Queues;
 using Dequeueable.AzureQueueStorage.Services.Timers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Dequeueable.AzureQueueStorage.Services.Hosts
+namespace Dequeueable.AmazonSQS.Services.Hosts
 {
-    internal sealed class QueueListener : IHost
+    internal sealed class QueueListenerExecutor : IHostExecutor
     {
-        private readonly List<Task> _processing = new();
-        private readonly IQueueMessageManager _messagesManager;
+        private readonly IQueueMessageManager _queueMessageManager;
         private readonly IQueueMessageHandler _queueMessageHandler;
+        private readonly ILogger<QueueListenerExecutor> _logger;
+        private readonly ListenerHostOptions _options;
         private readonly IDelayStrategy _delayStrategy;
-        private readonly ILogger<QueueListener> _logger;
-        private readonly ListenerOptions _options;
+        private readonly List<Task> _processing = new();
 
-        public QueueListener(
-            IQueueMessageManager messagesManager,
+        public QueueListenerExecutor(IQueueMessageManager queueMessageManager,
             IQueueMessageHandler queueMessageHandler,
-            IOptions<ListenerOptions> options,
-            ILogger<QueueListener> logger)
+            IOptions<ListenerHostOptions> options,
+            ILogger<QueueListenerExecutor> logger)
         {
-            _messagesManager = messagesManager;
+            _queueMessageManager = queueMessageManager;
             _queueMessageHandler = queueMessageHandler;
             _logger = logger;
             _options = options.Value;
@@ -35,7 +33,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
         {
             try
             {
-                var messages = (await _messagesManager.RetrieveMessagesAsync(cancellationToken)).ToArray();
+                var messages = await _queueMessageManager.RetreiveMessagesAsync(cancellationToken: cancellationToken);
                 var messagesFound = messages.Length > 0;
                 if (messagesFound)
                 {
@@ -55,7 +53,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
             }
         }
 
-        private Task HandleMessages(Message[] messages, CancellationToken cancellationToken)
+        private Task HandleMessages(Models.Message[] messages, CancellationToken cancellationToken)
         {
             foreach (var message in messages)
             {
@@ -74,7 +72,9 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
 
         private async Task WaitForNewBatchThreshold(CancellationToken cancellationToken)
         {
-            while (_processing.Count > _options.NewBatchThreshold && !cancellationToken.IsCancellationRequested)
+            var newBatchThreshold = _options.NewBatchThreshold ?? Convert.ToInt32(Math.Ceiling(_options.BatchSize / (double)2));
+
+            while (_processing.Count > newBatchThreshold && !cancellationToken.IsCancellationRequested)
             {
                 var processed = await Task.WhenAny(_processing);
                 _processing.Remove(processed);

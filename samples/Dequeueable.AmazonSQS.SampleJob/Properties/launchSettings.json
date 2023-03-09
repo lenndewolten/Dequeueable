@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Dequeueable.AmazonSQS.SampleJob": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "hotReloadEnabled": false
+    }
+  }
+}
