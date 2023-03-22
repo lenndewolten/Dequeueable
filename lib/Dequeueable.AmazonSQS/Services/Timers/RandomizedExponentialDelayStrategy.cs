@@ -1,4 +1,6 @@
-﻿namespace Dequeueable.AzureQueueStorage.Services.Timers
+﻿using Dequeueable.AzureQueueStorage.Services.Timers;
+
+namespace Dequeueable.AmazonSQS.Services.Timers
 {
     internal sealed class RandomizedExponentialDelayStrategy : IDelayStrategy
     {

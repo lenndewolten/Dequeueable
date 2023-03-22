@@ -41,6 +41,8 @@ namespace Dequeueable.AmazonSQS.Configurations
         public IDequeueableHostBuilder RunAsListener(Action<ListenerHostOptions>? options = null)
         {
             _services.AddOptions<ListenerHostOptions>().BindConfiguration(HostOptions.Dequeueable)
+                .Validate(ListenerHostOptions.ValidatePollingInterval, $"The '{nameof(ListenerHostOptions.MinimumPollingIntervalInMilliseconds)}' must not be greater than the '{nameof(ListenerHostOptions.MaximumPollingIntervalInMilliseconds)}'.")
+                .Validate(ListenerHostOptions.ValidateNewBatchThreshold, $"The '{nameof(ListenerHostOptions.NewBatchThreshold)}' must not be greater than the '{nameof(ListenerHostOptions.BatchSize)}'.")
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 

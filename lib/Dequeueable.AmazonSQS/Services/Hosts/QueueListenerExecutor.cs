@@ -1,5 +1,6 @@
 ﻿using Dequeueable.AmazonSQS.Configurations;
 using Dequeueable.AmazonSQS.Services.Queues;
+using Dequeueable.AmazonSQS.Services.Timers;
 using Dequeueable.AzureQueueStorage.Services.Timers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,7 +34,7 @@ namespace Dequeueable.AmazonSQS.Services.Hosts
         {
             try
             {
-                var messages = await _queueMessageManager.RetreiveMessagesAsync(cancellationToken: cancellationToken);
+                var messages = await _queueMessageManager.RetrieveMessagesAsync(cancellationToken: cancellationToken);
                 var messagesFound = messages.Length > 0;
                 if (messagesFound)
                 {

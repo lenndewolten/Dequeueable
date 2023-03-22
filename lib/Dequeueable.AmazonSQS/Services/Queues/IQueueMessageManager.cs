@@ -7,9 +7,7 @@ namespace Dequeueable.AmazonSQS.Services.Queues
     {
         Task DeleteMessageAsync(Message message, CancellationToken cancellationToken);
         Task EnqueueMessageAsync(Message message, CancellationToken cancellationToken);
-        Task EnqueueMessageAsync(Message[] messages, CancellationToken cancellationToken);
-        Task<Message[]> RetreiveMessagesAsync(CancellationToken cancellationToken = default);
+        Task<Message[]> RetrieveMessagesAsync(CancellationToken cancellationToken = default);
         Task<DateTimeOffset> UpdateVisibilityTimeOutAsync(Message message, CancellationToken cancellationToken);
-        Task<DateTimeOffset> UpdateVisibilityTimeOutAsync(Message[] messages, CancellationToken cancellationToken);
     }
 }
