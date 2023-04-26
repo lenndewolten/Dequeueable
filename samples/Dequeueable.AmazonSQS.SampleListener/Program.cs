@@ -11,8 +11,6 @@ await Host.CreateDefaultBuilder(args)
     {
         options.VisibilityTimeoutInSeconds = 300;
         options.BatchSize = 4;
-        options.NewBatchThreshold = 7;
-    })
-    .AsSingleton();
+    });
 })
 .RunConsoleAsync();

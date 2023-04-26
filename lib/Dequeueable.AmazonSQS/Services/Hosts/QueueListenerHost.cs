@@ -24,6 +24,10 @@ namespace Dequeueable.AmazonSQS.Services.Hosts
                 {
                     await _hostExecutor.HandleAsync(stoppingToken);
                 }
+                catch (TaskCanceledException)
+                {
+                    _hostApplicationLifetime.StopApplication();
+                }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Unhandled exception occurred, shutting down the host");

@@ -31,7 +31,6 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.TestDataBuilders
     {
         private readonly static SemaphoreSlim _lock = new(1, 1);
 
-
         public async Task Execute(Message message)
         {
 

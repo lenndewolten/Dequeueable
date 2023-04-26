@@ -14,7 +14,7 @@ namespace Dequeueable.AmazonSQS.SampleListener.Functions
 
         public Task ExecuteAsync(Message message, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Function called with MessageId {MessageId} and content {MessageBody}", message.MessageId, message.Body);
+            _logger.LogInformation("Function called with MessageId {MessageId} and content {MessageBody}", message.MessageId, message.Body.ToString());
             return Task.Delay(TimeSpan.FromMinutes(2), cancellationToken);
         }
     }

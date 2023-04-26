@@ -20,26 +20,18 @@ namespace Dequeueable.AmazonSQS.Services.Hosts
 
         public async Task HandleAsync(CancellationToken cancellationToken)
         {
-            try
+            var messages = await _queueMessageManager.RetrieveMessagesAsync(cancellationToken: cancellationToken);
+            var messagesFound = messages.Length > 0;
+            if (messagesFound)
             {
-                var messages = await _queueMessageManager.RetrieveMessagesAsync(cancellationToken: cancellationToken);
-                var messagesFound = messages.Length > 0;
-                if (messagesFound)
-                {
-                    await HandleMessages(messages!, cancellationToken);
-                }
-                else
-                {
-                    _logger.LogDebug("No messages found");
-                }
+                await HandleMessages(messages!, cancellationToken);
+            }
+            else
+            {
+                _logger.LogDebug("No messages found");
+            }
 
-                return;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unhandled exception occured");
-                throw;
-            }
+            return;
         }
 
         private Task HandleMessages(Models.Message[] messages, CancellationToken cancellationToken)
