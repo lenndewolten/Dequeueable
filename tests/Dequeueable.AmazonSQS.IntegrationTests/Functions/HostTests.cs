@@ -28,7 +28,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
 
             var fakeServiceMock = new Mock<IFakeService>();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>();
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1);
 
             clientFake.Setup(c => c.ReceiveMessageAsync(It.Is<ReceiveMessageRequest>(r => r.QueueUrl == options.QueueUrl), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ReceiveMessageResponse
@@ -77,7 +77,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
 
             var fakeServiceMock = new Mock<IFakeService>();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>();
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1);
 
             clientFake.Setup(c => c.ReceiveMessageAsync(It.Is<ReceiveMessageRequest>(r => r.QueueUrl == options.QueueUrl), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ReceiveMessageResponse
@@ -125,7 +125,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             var messages = new Message[] { new Message { Body = "message1", ReceiptHandle = "5", Attributes = new Dictionary<string, string> { { "MessageGroupId", "1" } } }, new Message { Body = "message2", ReceiptHandle = "6", Attributes = new Dictionary<string, string> { { "MessageGroupId", "1" } } } };
 
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>();
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1);
 
             clientFake.Setup(c => c.ReceiveMessageAsync(It.Is<ReceiveMessageRequest>(r => r.QueueUrl == options.QueueUrl), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ReceiveMessageResponse
@@ -173,7 +173,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             var messages = new Message[] { new Message { Body = "message1", ReceiptHandle = "7", Attributes = new Dictionary<string, string> { { "MessageGroupId", "1" } } }, new Message { Body = "message2", ReceiptHandle = "8", Attributes = new Dictionary<string, string> { { "MessageGroupId", "1" } } } };
 
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>();
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1);
 
             clientFake.Setup(c => c.ReceiveMessageAsync(It.Is<ReceiveMessageRequest>(r => r.QueueUrl == options.QueueUrl), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new ReceiveMessageResponse
