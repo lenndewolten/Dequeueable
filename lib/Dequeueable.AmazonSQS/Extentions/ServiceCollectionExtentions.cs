@@ -21,7 +21,6 @@ namespace Dequeueable.AmazonSQS.Extentions
         public static IDequeueableHostBuilder AddAmazonSQSServices<TFunction>(this IServiceCollection services)
            where TFunction : class, IAmazonSQSFunction
         {
-
             services.AddSingleton<IQueueMessageManager, QueueMessageManager>();
             services.TryAddSingleton<IAmazonSQSClientFactory, AmazonSQSClientFactory>();
             services.AddTransient<IQueueMessageHandler, QueueMessageHandler>();

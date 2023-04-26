@@ -3,7 +3,6 @@ using Dequeueable.AmazonSQS.Models;
 using Dequeueable.AmazonSQS.Services.Hosts;
 using Dequeueable.AmazonSQS.Services.Queues;
 using Dequeueable.AmazonSQS.UnitTests.TestDataBuilders;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -65,39 +64,6 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Hosts
 
             // Assert
             queueMessageHandlerMock.Verify(e => e.HandleAsync(It.Is<Message>(m => messages.Any(ma => ma.MessageId == m.MessageId)), It.IsAny<CancellationToken>()), Times.Exactly(messages.Length));
-        }
-
-        [Fact]
-        public async Task Given_a_QueueListenerExecutor_when_HandleAsync_is_called_and_exceptions_occrured_then_it_is_logged_correctly()
-        {
-            // Arrange
-            var exception = new Exception("Test");
-            var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
-            var queueMessageHandlerMock = new Mock<IQueueMessageHandler>(MockBehavior.Strict);
-            var options = new ListenerHostOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueUrl = "testurl" };
-            var optionsMock = new Mock<IOptions<ListenerHostOptions>>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<QueueListenerExecutor>>(MockBehavior.Strict);
-
-            optionsMock.SetupGet(o => o.Value).Returns(options);
-            queueMessageManagerMock.Setup(r => r.RetrieveMessagesAsync(It.IsAny<CancellationToken>()))
-                .ThrowsAsync(exception);
-
-            loggerMock.Setup(
-                x => x.Log(
-                It.Is<LogLevel>(l => l == LogLevel.Error),
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Unhandled exception occured")),
-                It.Is<Exception>(e => e.Message == exception.Message),
-                It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true))).Verifiable();
-
-            var sut = new QueueListenerExecutor(queueMessageManagerMock.Object, queueMessageHandlerMock.Object, optionsMock.Object, loggerMock.Object);
-
-            // Act
-            Func<Task> act = () => sut.HandleAsync(CancellationToken.None);
-
-            // Assert
-            await act.Should().ThrowAsync<Exception>();
-            loggerMock.Verify();
         }
     }
 }

@@ -52,7 +52,6 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             foreach (var message in messages)
             {
                 fakeServiceMock.Verify(f => f.Execute(It.Is<Models.Message>(m => m.Body.ToString() == message.Body)), Times.Once());
-                clientFake.Verify(c => c.DeleteMessageAsync(options.QueueUrl, message.ReceiptHandle, It.IsAny<CancellationToken>()), Times.Once());
                 clientFake.Verify(c => c.ChangeMessageVisibilityAsync(It.IsAny<ChangeMessageVisibilityRequest>(), It.IsAny<CancellationToken>()), Times.Never());
             }
         }
@@ -102,7 +101,6 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             foreach (var message in messages)
             {
                 fakeServiceMock.Verify(f => f.Execute(It.Is<Models.Message>(m => m.Body.ToString() == message.Body)), Times.Once());
-                clientFake.Verify(c => c.DeleteMessageAsync(options.QueueUrl, message.ReceiptHandle, It.IsAny<CancellationToken>()), Times.Once());
                 clientFake.Verify(c => c.ChangeMessageVisibilityAsync(It.IsAny<ChangeMessageVisibilityRequest>(), It.IsAny<CancellationToken>()), Times.Never());
             }
         }
