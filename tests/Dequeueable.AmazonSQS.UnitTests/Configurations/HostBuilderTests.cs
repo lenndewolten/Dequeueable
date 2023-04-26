@@ -1,6 +1,7 @@
 ﻿using Dequeueable.AmazonSQS.Configurations;
 using Dequeueable.AmazonSQS.Extentions;
 using Dequeueable.AmazonSQS.Models;
+using Dequeueable.AmazonSQS.Services.Hosts;
 using Dequeueable.AmazonSQS.Services.Queues;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,28 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
             {
                 throw new NotImplementedException();
             }
+        }
+
+        [Fact]
+        public void Given_a_HostBuilder_when_RunAsJob_is_called_then_the_Host_is_registered_correctly()
+        {
+            // Arrange
+            var hostBuilder = Host.CreateDefaultBuilder()
+            .ConfigureServices(services =>
+            {
+                services
+                .AddAmazonSQSServices<TestFunction>()
+                .RunAsJob(options =>
+                {
+                    options.QueueUrl = "test";
+                });
+            });
+
+            // Act
+            var host = hostBuilder.Build();
+
+            // Assert
+            host.Services.GetRequiredService<IHostedService>().Should().BeOfType<JobHost>();
         }
 
         [Fact]
@@ -39,6 +62,28 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
 
             // Assert
             host.Services.GetRequiredService<IHostOptions>().Should().BeOfType<AmazonSQS.Configurations.HostOptions>();
+        }
+
+        [Fact]
+        public void Given_a_HostBuilder_when_RunAsListener_is_called_then_the_Host_is_registered_correctly()
+        {
+            // Arrange
+            var hostBuilder = Host.CreateDefaultBuilder()
+            .ConfigureServices(services =>
+            {
+                services
+                .AddAmazonSQSServices<TestFunction>()
+                .RunAsListener(options =>
+                {
+                    options.QueueUrl = "test";
+                });
+            });
+
+            // Act
+            var host = hostBuilder.Build();
+
+            // Assert
+            host.Services.GetRequiredService<IHostedService>().Should().BeOfType<QueueListenerHost>();
         }
 
         [Fact]
