@@ -17,7 +17,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             // Arrange
             var options = new HostOptions();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>(MockBehavior.Strict);
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1); ;
             var fakeResponse = new ReceiveMessageResponse
             {
                 Messages = new List<Message> { new Message() }
@@ -42,7 +42,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             // Arrange
             var options = new HostOptions();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>(MockBehavior.Strict);
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1); ;
             var message = new MessageTestDataBuilder().Build();
             clientFake.Setup(r => r.DeleteMessageAsync(options.QueueUrl, message.ReceiptHandle, It.IsAny<CancellationToken>())).ReturnsAsync(new DeleteMessageResponse()).Verifiable();
 
@@ -62,7 +62,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             // Arrange
             var options = new HostOptions();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>(MockBehavior.Strict);
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1); ;
             var message = new MessageTestDataBuilder().Build();
             clientFake.Setup(r => r.DeleteMessageAsync(options.QueueUrl, message.ReceiptHandle, It.IsAny<CancellationToken>())).ThrowsAsync(new AmazonSQSException("testfail") { ErrorCode = "NonExistentQueue" });
 
@@ -82,7 +82,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             // Arrange
             var options = new HostOptions();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>(MockBehavior.Strict);
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1); ;
             var message = new MessageTestDataBuilder().Build();
             clientFake.Setup(r => r.DeleteMessageAsync(options.QueueUrl, message.ReceiptHandle, It.IsAny<CancellationToken>())).ThrowsAsync(new AmazonSQSException("testfail") { StatusCode = System.Net.HttpStatusCode.NotFound });
 
@@ -102,7 +102,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             // Arrange
             var options = new HostOptions();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>(MockBehavior.Strict);
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1); ;
             var message = new MessageTestDataBuilder().Build();
             clientFake.Setup(r => r.DeleteMessageAsync(options.QueueUrl, message.ReceiptHandle, It.IsAny<CancellationToken>())).ThrowsAsync(new AmazonSQSException("testfail") { StatusCode = System.Net.HttpStatusCode.BadGateway });
 
@@ -122,7 +122,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             // Arrange
             var options = new HostOptions();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>(MockBehavior.Strict);
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1); ;
             var message = new MessageTestDataBuilder().Build();
 
             clientFake.Setup(r => r.ChangeMessageVisibilityAsync(It.Is<ChangeMessageVisibilityRequest>(o => o.VisibilityTimeout == options.VisibilityTimeoutInSeconds), It.IsAny<CancellationToken>())).ReturnsAsync(new ChangeMessageVisibilityResponse()).Verifiable();
@@ -144,7 +144,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             // Arrange
             var options = new HostOptions();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>(MockBehavior.Strict);
-            var clientFake = new Mock<AmazonSQSClient>();
+            var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1); ;
             var message = new MessageTestDataBuilder().Build();
 
             clientFake.Setup(r => r.ChangeMessageVisibilityAsync(It.Is<ChangeMessageVisibilityRequest>(o => o.VisibilityTimeout == 0), It.IsAny<CancellationToken>())).ReturnsAsync(new ChangeMessageVisibilityResponse()).Verifiable();
