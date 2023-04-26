@@ -9,10 +9,12 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
     internal sealed class QueueListener : IHost
     {
+
+        private readonly IDelayStrategy _delayStrategy;
+
         private readonly List<Task> _processing = new();
         private readonly IQueueMessageManager _messagesManager;
         private readonly IQueueMessageHandler _queueMessageHandler;
-        private readonly IDelayStrategy _delayStrategy;
         private readonly ILogger<QueueListener> _logger;
         private readonly ListenerOptions _options;
 
