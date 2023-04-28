@@ -169,7 +169,6 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
 
             var blobclient = blobContainerClient.GetBlobClient(scope);
             (await blobclient.ExistsAsync()).Value.Should().BeTrue();
-
         }
     }
 }
