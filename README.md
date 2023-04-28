@@ -6,3 +6,5 @@ A framework to simplify event driven applications in containerized host environm
 ## Libraries
 - [Azure Queue Storage](lib/Dequeueable.AzureQueueStorage/README.md)
 Framework that handles the messages on the Azure Queue. A function will be invoked when new messages are detected on the queue. Dequeueing, exception handling and distributed singleton are handled for you.
+- [Amazon Simple Queue Service](lib/Dequeueable.AmazonSQS/README.md)
+Framework that handles the messages on the AWS SQS. A function will be invoked when new messages are detected on the queue. 
