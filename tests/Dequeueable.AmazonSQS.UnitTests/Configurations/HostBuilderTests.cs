@@ -1,5 +1,7 @@
-﻿using Dequeueable.AmazonSQS.Configurations;
+﻿using Amazon;
+using Dequeueable.AmazonSQS.Configurations;
 using Dequeueable.AmazonSQS.Extentions;
+using Dequeueable.AmazonSQS.Factories;
 using Dequeueable.AmazonSQS.Models;
 using Dequeueable.AmazonSQS.Services.Hosts;
 using Dequeueable.AmazonSQS.Services.Queues;
@@ -7,6 +9,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Moq;
 
 namespace Dequeueable.AmazonSQS.UnitTests.Configurations
 {
@@ -33,6 +36,10 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
                 {
                     options.QueueUrl = "test";
                 });
+
+                var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>();
+                amazonSQSClientFactoryMock.Setup(c => c.Create()).Returns(new Amazon.SQS.AmazonSQSClient("dummy", "dummy", RegionEndpoint.MECentral1));
+                services.AddSingleton(_ => amazonSQSClientFactoryMock.Object);
             });
 
             // Act
@@ -77,6 +84,10 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
                 {
                     options.QueueUrl = "test";
                 });
+
+                var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>();
+                amazonSQSClientFactoryMock.Setup(c => c.Create()).Returns(new Amazon.SQS.AmazonSQSClient("dummy", "dummy", RegionEndpoint.MECentral1));
+                services.AddSingleton(_ => amazonSQSClientFactoryMock.Object);
             });
 
             // Act
