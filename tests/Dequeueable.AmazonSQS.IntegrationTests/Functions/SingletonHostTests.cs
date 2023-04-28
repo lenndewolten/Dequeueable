@@ -9,13 +9,13 @@ using Moq;
 
 namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
 {
-    public class HostTests : IClassFixture<LocalStackFixture>, IAsyncLifetime
+    public class SingletonHostTests : IClassFixture<LocalStackFixture>, IAsyncLifetime
     {
         private readonly LocalStackFixture _localStackFixture;
         private readonly AmazonSQSClient _client;
         private string _queueUrl = null!;
 
-        public HostTests(LocalStackFixture localStackFixture)
+        public SingletonHostTests(LocalStackFixture localStackFixture)
         {
             _localStackFixture = localStackFixture;
             _client = new AmazonSQSClient("dummy", "dummy", new AmazonSQSConfig { ServiceURL = _localStackFixture.SQSURL });
@@ -23,7 +23,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
 
         public async Task InitializeAsync()
         {
-            var res = await _client.CreateQueueAsync("testqueue");
+            var res = await _client.CreateQueueAsync(new CreateQueueRequest { Attributes = new Dictionary<string, string> { { "FifoQueue", "true" }, { "ContentBasedDeduplication", "true" } }, QueueName = "testqueue.fifo" });
             _queueUrl = res.QueueUrl;
         }
 
@@ -33,15 +33,15 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
         }
 
         [Fact]
-        public async Task Given_a_host_running_as_a_job_when_a_Queue_has_two_messages_then_they_are_handled_correctly()
+        public async Task Given_a_host_running_as_a_singleton_job_when_a_Queue_has_two_messages_of_the_same_group_then_they_are_handled_correctly()
         {
             // Arrange
             var messages = new List<SendMessageBatchRequestEntry>
             {
-                new SendMessageBatchRequestEntry("1", "body1"),
-                new SendMessageBatchRequestEntry("2", "body2")
+                new SendMessageBatchRequestEntry("1", "body1"){MessageGroupId ="1"},
+                new SendMessageBatchRequestEntry("2", "body2"){MessageGroupId ="1"}
             };
-            await _client.SendMessageBatchAsync(new SendMessageBatchRequest
+            var response = await _client.SendMessageBatchAsync(new SendMessageBatchRequest
             {
                 QueueUrl = _queueUrl,
                 Entries = messages
@@ -56,7 +56,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             {
                 opt.VisibilityTimeoutInSeconds = options.VisibilityTimeoutInSeconds;
                 opt.QueueUrl = options.QueueUrl;
-            });
+            }, runAsSingleton: true);
 
             var fakeServiceMock = new Mock<IFakeService>();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>();
@@ -75,6 +75,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             // Assert
             var queueResult = await _client.ReceiveMessageAsync(new ReceiveMessageRequest { MaxNumberOfMessages = 10, QueueUrl = _queueUrl });
             queueResult.Messages.Should().BeEmpty();
+
             foreach (var message in messages)
             {
                 fakeServiceMock.Verify(f => f.Execute(It.Is<Models.Message>(m => m.Body.ToString() == message.MessageBody)), Times.Once());
@@ -82,15 +83,15 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
         }
 
         [Fact]
-        public async Task Given_a_host_running_as_a_listener_when_a_Queue_has_two_messages_then_they_are_handled_correctly()
+        public async Task Given_a_host_running_as_a_singleton_listener_when_a_Queue_has_two_messages_of_the_same_group_then_they_are_handled_correctly()
         {
             // Arrange
             var messages = new List<SendMessageBatchRequestEntry>
             {
-                new SendMessageBatchRequestEntry("1", "body1"),
-                new SendMessageBatchRequestEntry("2", "body2")
+                new SendMessageBatchRequestEntry("1", "body1"){MessageGroupId ="1"},
+                new SendMessageBatchRequestEntry("2", "body2"){MessageGroupId ="1"}
             };
-            await _client.SendMessageBatchAsync(new SendMessageBatchRequest
+            var response = await _client.SendMessageBatchAsync(new SendMessageBatchRequest
             {
                 QueueUrl = _queueUrl,
                 Entries = messages
@@ -105,9 +106,9 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             {
                 opt.VisibilityTimeoutInSeconds = options.VisibilityTimeoutInSeconds;
                 opt.MinimumPollingIntervalInMilliseconds = 1;
-                opt.MaximumPollingIntervalInMilliseconds = 2;
+                opt.MaximumPollingIntervalInMilliseconds = 1000;
                 opt.QueueUrl = options.QueueUrl;
-            });
+            }, runAsSingleton: true);
 
             var fakeServiceMock = new Mock<IFakeService>();
             var amazonSQSClientFactoryMock = new Mock<IAmazonSQSClientFactory>();

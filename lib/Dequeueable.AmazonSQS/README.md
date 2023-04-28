@@ -121,7 +121,7 @@ internal class MyCustomQueueFactory : IAmazonSQSClientFactory
 ```
 
 ## Singleton
-The application can run as distributed singleton. The Amazon SQS message group ID is used to processed the messages one by one, in a strict order relative to the message group.
+The application can run as distributed singleton. The Amazon SQS message group ID is used to processed the messages one by one, in a strict order relative to the message group. Therefore a fifo queue is required.
 Both the Job as the Listener services can run as singleton by defining this during registration:
 
 ```csharp
