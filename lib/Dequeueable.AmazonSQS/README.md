@@ -18,7 +18,7 @@ Scaffold a new project, you can either use a console or web app.
 2. Add `.AddAmazonSQSServices<TFunction>()` in the DI container.
 3. Specify how you want to run your service:
    - Add `.RunAsJob()` in the DI container of your app to run the host as a job.
-   - Add `RunAsListener()` in the DI container of your app to run the app as a back ground listener.
+   - Add `.RunAsListener()` in the DI container of your app to run the app as a back ground listener.
 
 
 *function.cs*:
