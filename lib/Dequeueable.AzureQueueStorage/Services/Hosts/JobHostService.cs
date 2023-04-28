@@ -22,9 +22,10 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
             {
                 await _hostHandler.HandleAsync(stoppingToken);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not TaskCanceledException)
             {
                 _logger.LogError(ex, "Unhandled exception occurred, shutting down the host");
+                throw;
             }
             finally
             {

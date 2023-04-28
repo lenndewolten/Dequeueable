@@ -35,26 +35,18 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
 
         public async Task HandleAsync(CancellationToken cancellationToken)
         {
-            try
+            var messages = (await _messagesManager.RetrieveMessagesAsync(cancellationToken)).ToArray();
+            var messagesFound = messages.Length > 0;
+            if (messagesFound)
             {
-                var messages = (await _messagesManager.RetrieveMessagesAsync(cancellationToken)).ToArray();
-                var messagesFound = messages.Length > 0;
-                if (messagesFound)
-                {
-                    await HandleMessages(messages!, cancellationToken);
-                }
-                else
-                {
-                    _logger.LogDebug("No messages found");
-                }
+                await HandleMessages(messages!, cancellationToken);
+            }
+            else
+            {
+                _logger.LogDebug("No messages found");
+            }
 
-                await WaitForDelay(messagesFound, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unhandled exception occured");
-                throw;
-            }
+            await WaitForDelay(messagesFound, cancellationToken);
         }
 
         private Task HandleMessages(Message[] messages, CancellationToken cancellationToken)
