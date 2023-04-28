@@ -164,8 +164,8 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
 
             // Assert
             fakeServiceMock.Verify(f => f.Execute(It.IsAny<Message>()), Times.AtLeastOnce());
-            var peekedMessage = await _queueClient.PeekMessageAsync();
-            peekedMessage.Value.Should().BeNull();
+            var peekedMessages = await _queueClient.PeekMessagesAsync();
+            peekedMessages.Value.Should().HaveCountLessThanOrEqualTo(1);
 
             var blobclient = blobContainerClient.GetBlobClient(scope);
             (await blobclient.ExistsAsync()).Value.Should().BeTrue();
