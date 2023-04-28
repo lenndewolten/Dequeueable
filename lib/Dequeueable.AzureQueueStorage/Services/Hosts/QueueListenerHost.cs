@@ -24,6 +24,10 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
                 {
                     await _hostHandler.HandleAsync(stoppingToken);
                 }
+                catch (TaskCanceledException)
+                {
+                    _hostApplicationLifetime.StopApplication();
+                }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Unhandled exception occurred, shutting down the host");
