@@ -146,6 +146,43 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             result.Should().Be(leaseId);
         }
 
+        [Fact]
+        public async Task Given_a_DistributedLockManager_when_AcquireAsync_is_called_and_the_created_container_already_exists_then_the_lease_is_acquired_correctly()
+        {
+            // Arrange
+            var leaseId = "someId";
+            var blobPropertiesFake = BlobsModelFactory.BlobProperties(leaseState: LeaseState.Available);
+            var blobLeaseFake = BlobsModelFactory.BlobLease(new ETag(), DateTimeOffset.Now, leaseId: leaseId);
+            var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
+            var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
+            var blobContainerClientFake = new Mock<BlobContainerClient>(MockBehavior.Strict);
+            var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
+
+            var loggerMock = new Mock<ILogger>();
+
+            blobLeaseResponseFake.SetupGet(p => p.Value).Returns(blobLeaseFake);
+            blobLeaseClientFake.Setup(b => b.AcquireAsync(TimeSpan.FromSeconds(60), null, It.IsAny<CancellationToken>())).ReturnsAsync(blobLeaseResponseFake.Object);
+
+            blobClientFake.Protected().Setup<BlobLeaseClient>("GetBlobLeaseClientCore", ItExpr.IsAny<string>())
+                .Returns<string>((leaseId) => blobLeaseClientFake.Object);
+            blobClientFake.Setup(b => b.GetPropertiesAsync(null, It.IsAny<CancellationToken>())).ThrowsAsync(new RequestFailedException(404, "blob not found"));
+            blobClientFake.SetupSequence(b => b.UploadAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new RequestFailedException(404, "container not found"))
+                .ReturnsAsync(new Mock<Response<BlobContentInfo>>(MockBehavior.Strict).Object);
+
+            blobContainerClientFake.Setup(c => c.CreateAsync(PublicAccessType.None, null, null, It.IsAny<CancellationToken>())).ThrowsAsync(new RequestFailedException(409, "container already exists"));
+            blobClientFake.Protected().Setup<BlobContainerClient>("GetParentBlobContainerClientCore")
+                .Returns(() => blobContainerClientFake.Object);
+
+            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+
+            // Act
+            var result = await sut.AcquireAsync(CancellationToken.None);
+
+            // Assert
+            result.Should().Be(leaseId);
+        }
+
         [Theory]
         [InlineData(409)]
         [InlineData(412)]

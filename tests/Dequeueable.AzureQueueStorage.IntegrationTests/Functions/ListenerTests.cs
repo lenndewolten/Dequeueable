@@ -163,7 +163,7 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             await host.HandleAsync(CancellationToken.None);
 
             // Assert
-            fakeServiceMock.Verify(f => f.Execute(It.IsAny<Message>()), Times.AtLeastOnce());
+            fakeServiceMock.Verify(f => f.Execute(It.IsAny<Message>()), Times.Exactly(messages.Length));
             var peekedMessage = await _queueClient.PeekMessageAsync();
             peekedMessage.Value.Should().BeNull();
 

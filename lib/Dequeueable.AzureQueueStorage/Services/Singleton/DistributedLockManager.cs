@@ -118,8 +118,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             }
             catch (RequestFailedException exception) when (exception.Status == 404)
             {
-                var containerClient = blobClient.GetParentBlobContainerClient();
-                await containerClient.CreateAsync(cancellationToken: cancellationToken);
+                await TryCreateBlobContainerAsync(blobClient, cancellationToken);
 
                 using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty)))
                 {
@@ -131,6 +130,20 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             {
                 // The blob already exists, or is leased by someone else
                 return false;
+            }
+        }
+
+        private static async Task TryCreateBlobContainerAsync(BlobClient blobClient, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var containerClient = blobClient.GetParentBlobContainerClient();
+                await containerClient.CreateAsync(cancellationToken: cancellationToken);
+            }
+            catch (RequestFailedException exception) when (exception.Status == 409 || exception.Status == 412)
+            {
+                // The container already exists
+                return;
             }
         }
     }
