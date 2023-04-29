@@ -218,44 +218,6 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
         }
 
         [Fact]
-        public async Task Given_a_DistributedLockManager_when_AcquireAsync_is_called_and_an_unexpected_exception_occurres_then_it_is_catched_and_logged_correctly()
-        {
-            // Arrange
-            var leaseId = "someId";
-            var blobPropertiesFake = BlobsModelFactory.BlobProperties(leaseState: LeaseState.Available);
-            var blobLeaseFake = BlobsModelFactory.BlobLease(new ETag(), DateTimeOffset.Now, leaseId: leaseId);
-            var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
-            var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
-            var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger>();
-
-            blobLeaseResponseFake.SetupGet(p => p.Value).Returns(blobLeaseFake);
-            blobClientFake.Protected().Setup<BlobLeaseClient>("GetBlobLeaseClientCore", ItExpr.IsAny<string>())
-                .Returns<string>((leaseId) => blobLeaseClientFake.Object);
-            blobClientFake.Setup(b => b.GetPropertiesAsync(null, It.IsAny<CancellationToken>())).ThrowsAsync(new RequestFailedException(404, "blob not found"));
-            blobClientFake.Setup(b => b.UploadAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
-                .ThrowsAsync(new RequestFailedException(500, "server error"));
-            blobClientFake.SetupGet(c => c.Name).Returns("some file name");
-            loggerMock.Setup(
-                x => x.Log(
-                It.Is<LogLevel>(l => l == LogLevel.Error),
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains($"An error occurred while acquiring the lease")),
-                It.IsAny<RequestFailedException>(),
-                It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)))
-                .Verifiable();
-
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
-
-            // Act
-            var result = await sut.AcquireAsync(CancellationToken.None);
-
-            // Assert
-            result.Should().BeNull();
-            loggerMock.Verify();
-        }
-
-        [Fact]
         public async Task Given_a_LockManager_when_RenewAsync_is_called_for_a_blob_that_is_Leased_then_the_lease_is_renewed()
         {
             // Arrange

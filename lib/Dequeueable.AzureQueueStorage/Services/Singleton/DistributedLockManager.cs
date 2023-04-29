@@ -31,9 +31,8 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
                     _ => null,
                 };
             }
-            catch (RequestFailedException exception)
+            catch (RequestFailedException)
             {
-                _logger.LogError(exception, "An error occurred while acquiring the lease for blob '{BlobName}'", _blobClient.Name);
                 return null;
             }
         }
