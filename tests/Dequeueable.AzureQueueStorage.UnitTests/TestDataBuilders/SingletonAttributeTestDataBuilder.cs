@@ -4,7 +4,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.TestDataBuilders
 {
     public class SingletonAttributeTestDataBuilder
     {
-        private int _minimumInterval = 0;
+        private int _minimumInterval = 1;
         private int _maximumInterval = 1;
         private string _scope = "id";
         private int _maxRetries;

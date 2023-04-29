@@ -1,4 +1,5 @@
 ﻿using Dequeueable.AzureQueueStorage.Factories;
+using Dequeueable.AzureQueueStorage.Services.Timers;
 using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AzureQueueStorage.Services.Singleton
@@ -19,6 +20,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             _blobClientProvider = blobClientProvider;
             _distributedLockManagerFactory = distributedLockManagerFactory;
             _singletonAttribute = singletonAttribute;
+
         }
         public async Task<string> AquireLockAsync(string fileName, CancellationToken cancellationToken)
         {
@@ -53,6 +55,8 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
 
         private static async Task<string> AcquireLockAsync(SingletonAttribute singleton, IDistributedLockManager lockManager, CancellationToken cancellationToken)
         {
+            var delayStrategy = new RandomizedExponentialDelayStrategy(TimeSpan.FromSeconds(singleton.MinimumPollingIntervalInSeconds), TimeSpan.FromSeconds(singleton.MaximumPollingIntervalInSeconds));
+
             for (var retry = 0; retry <= singleton.MaxRetries; retry++)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -67,7 +71,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
                     return leaseId;
                 }
 
-                await Task.Delay(singleton.MinimumPollingIntervalInSeconds, cancellationToken);
+                await Task.Delay(delayStrategy.GetNextDelay(executionSucceeded: false), cancellationToken);
             }
 
             throw new SingletonException($"Unable to acquire lock, max retries of '{singleton.MaxRetries}' reached");
