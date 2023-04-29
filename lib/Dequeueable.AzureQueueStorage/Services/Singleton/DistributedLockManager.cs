@@ -135,10 +135,9 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
 
         private static async Task TryCreateBlobContainerAsync(BlobClient blobClient, CancellationToken cancellationToken)
         {
-            var containerClient = blobClient.GetParentBlobContainerClient();
-
             try
             {
+                var containerClient = blobClient.GetParentBlobContainerClient();
                 await containerClient.CreateAsync(cancellationToken: cancellationToken);
             }
             catch (RequestFailedException exception) when (exception.Status == 409 || exception.Status == 412)
