@@ -31,9 +31,8 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
                     _ => null,
                 };
             }
-            catch (RequestFailedException exception)
+            catch (RequestFailedException)
             {
-                _logger.LogError(exception, "An error occurred while acquiring the lease for blob '{BlobName}'", _blobClient.Name);
                 return null;
             }
         }
@@ -120,11 +119,19 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             {
                 await TryCreateBlobContainerAsync(blobClient, cancellationToken);
 
-                using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty)))
+                try
                 {
-                    await blobClient.UploadAsync(stream, cancellationToken);
+                    using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(string.Empty)))
+                    {
+                        await blobClient.UploadAsync(stream, cancellationToken);
+                    }
+                    return true;
                 }
-                return true;
+                catch (RequestFailedException innerException) when (innerException.Status == 409 || innerException.Status == 412)
+                {
+                    // The blob already exists, or is leased by someone else
+                    return false;
+                }
             }
             catch (RequestFailedException exception) when (exception.Status == 409 || exception.Status == 412)
             {
