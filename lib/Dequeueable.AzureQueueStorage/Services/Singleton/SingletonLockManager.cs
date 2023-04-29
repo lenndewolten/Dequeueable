@@ -20,8 +20,8 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             _blobClientProvider = blobClientProvider;
             _distributedLockManagerFactory = distributedLockManagerFactory;
             _singletonAttribute = singletonAttribute;
-
         }
+
         public async Task<string> AquireLockAsync(string fileName, CancellationToken cancellationToken)
         {
             var blobClient = _blobClientProvider.Get(fileName);
