@@ -3,13 +3,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
-    internal sealed class JobHostService : BackgroundService
+    internal sealed class JobHost : BackgroundService
     {
-        private readonly ILogger<JobHostService> _logger;
+        private readonly ILogger<JobHost> _logger;
         private readonly IHost _hostHandler;
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-        public JobHostService(IHost hostHandler, IHostApplicationLifetime hostApplicationLifetime, ILogger<JobHostService> logger)
+        public JobHost(IHost hostHandler, IHostApplicationLifetime hostApplicationLifetime, ILogger<JobHost> logger)
         {
             _hostHandler = hostHandler;
             _hostApplicationLifetime = hostApplicationLifetime;

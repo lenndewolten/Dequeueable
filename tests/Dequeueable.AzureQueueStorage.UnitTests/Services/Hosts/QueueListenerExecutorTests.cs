@@ -9,18 +9,18 @@ using Moq;
 
 namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Hosts
 {
-    public class QueueListenerTests
+    public class QueueListenerExecutorTests
     {
 
         [Fact]
-        public async Task Given_a_QueueListener_when_HandleAsync_is_called_but_no_messages_are_retrieved_then_the_handler_is_not_called()
+        public async Task Given_a_QueueListenerExecutor_when_HandleAsync_is_called_but_no_messages_are_retrieved_then_the_handler_is_not_called()
         {
             // Arrange
             var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageHandlerMock = new Mock<IQueueMessageHandler>(MockBehavior.Strict);
             var options = new ListenerOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueName = "TestQueue" };
             var optionsMock = new Mock<IOptions<ListenerOptions>>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<QueueListener>>(MockBehavior.Strict);
+            var loggerMock = new Mock<ILogger<QueueListenerExecutor>>(MockBehavior.Strict);
 
             queueMessageManagerMock.Setup(m => m.RetrieveMessagesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Array.Empty<Message>());
             optionsMock.SetupGet(o => o.Value).Returns(options);
@@ -33,7 +33,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Hosts
                 null,
                 It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)));
 
-            var sut = new QueueListener(queueMessageManagerMock.Object, queueMessageHandlerMock.Object, optionsMock.Object, loggerMock.Object);
+            var sut = new QueueListenerExecutor(queueMessageManagerMock.Object, queueMessageHandlerMock.Object, optionsMock.Object, loggerMock.Object);
 
             // Act
             await sut.HandleAsync(CancellationToken.None);
@@ -43,7 +43,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Hosts
         }
 
         [Fact]
-        public async Task Given_a_QueueListener_when_HandleAsync_is_called_and_messages_are_retrieved_then_the_handler_is_called_correctly()
+        public async Task Given_a_QueueListenerExecutor_when_HandleAsync_is_called_and_messages_are_retrieved_then_the_handler_is_called_correctly()
         {
             // Arrange
             var messages = new[] { new MessageTestDataBuilder().WithmessageId("1").Build(), new MessageTestDataBuilder().WithmessageId("2").Build() };
@@ -51,14 +51,14 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Hosts
             var queueMessageHandlerMock = new Mock<IQueueMessageHandler>(MockBehavior.Strict);
             var options = new ListenerOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueName = "TestQueue" };
             var optionsMock = new Mock<IOptions<ListenerOptions>>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<QueueListener>>(MockBehavior.Strict);
+            var loggerMock = new Mock<ILogger<QueueListenerExecutor>>(MockBehavior.Strict);
 
             queueMessageManagerMock.Setup(m => m.RetrieveMessagesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(messages);
             optionsMock.SetupGet(o => o.Value).Returns(options);
 
             queueMessageHandlerMock.Setup(h => h.HandleAsync(It.Is<Message>(m => messages.Any(ma => ma.MessageId == m.MessageId)), CancellationToken.None)).Returns(Task.CompletedTask);
 
-            var sut = new QueueListener(queueMessageManagerMock.Object, queueMessageHandlerMock.Object, optionsMock.Object, loggerMock.Object);
+            var sut = new QueueListenerExecutor(queueMessageManagerMock.Object, queueMessageHandlerMock.Object, optionsMock.Object, loggerMock.Object);
 
             // Act
             await sut.HandleAsync(CancellationToken.None);
