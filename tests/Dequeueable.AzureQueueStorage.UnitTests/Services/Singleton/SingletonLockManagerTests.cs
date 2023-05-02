@@ -2,9 +2,9 @@
 using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Factories;
 using Dequeueable.AzureQueueStorage.Services.Singleton;
-using Dequeueable.AzureQueueStorage.UnitTests.TestDataBuilders;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
@@ -23,9 +23,11 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientProviderMock = new Mock<IBlobClientProvider>(MockBehavior.Strict);
             var distributedLockManagerFactoryMock = new Mock<IDistributedLockManagerFactory>(MockBehavior.Strict);
             var distributedLockManagerMock = new Mock<IDistributedLockManager>(MockBehavior.Strict);
-            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithMaxRetries(3).Build();
+            var singletonOptions = new SingletonOptions();
+            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
             var blobClientFake = new Mock<BlobClient>();
 
+            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
             blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
             distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
             loggerMock.Setup(
@@ -38,7 +40,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 .Verifiable();
             distributedLockManagerMock.Setup(m => m.AcquireAsync(CancellationToken.None)).ReturnsAsync(leaseId);
 
-            var sut = new SingletonLockManager(loggerMock.Object, blobClientProviderMock.Object, distributedLockManagerFactoryMock.Object, singletonAttribute);
+            var sut = new SingletonLockManager(loggerMock.Object, blobClientProviderMock.Object, distributedLockManagerFactoryMock.Object, singletonOptionsMock.Object);
 
             // Act
             var result = await sut.AquireLockAsync(fileName, CancellationToken.None);
@@ -59,9 +61,11 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientProviderMock = new Mock<IBlobClientProvider>(MockBehavior.Strict);
             var distributedLockManagerFactoryMock = new Mock<IDistributedLockManagerFactory>(MockBehavior.Strict);
             var distributedLockManagerMock = new Mock<IDistributedLockManager>(MockBehavior.Strict);
-            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithMaxRetries(1).Build();
+            var singletonOptions = new SingletonOptions { MaxRetries = 5, MinimumPollingIntervalInSeconds = 1, MaximumPollingIntervalInSeconds = 1 };
+            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
             var blobClientFake = new Mock<BlobClient>();
 
+            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
             blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
             distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
             loggerMock.Setup(
@@ -76,7 +80,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 .ReturnsAsync((string?)null)
                 .ReturnsAsync(leaseId);
 
-            var sut = new SingletonLockManager(loggerMock.Object, blobClientProviderMock.Object, distributedLockManagerFactoryMock.Object, singletonAttribute);
+            var sut = new SingletonLockManager(loggerMock.Object, blobClientProviderMock.Object, distributedLockManagerFactoryMock.Object, singletonOptionsMock.Object);
 
             // Act
             var result = await sut.AquireLockAsync(fileName, CancellationToken.None);
@@ -96,22 +100,24 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientProviderMock = new Mock<IBlobClientProvider>(MockBehavior.Strict);
             var distributedLockManagerFactoryMock = new Mock<IDistributedLockManagerFactory>(MockBehavior.Strict);
             var distributedLockManagerMock = new Mock<IDistributedLockManager>(MockBehavior.Strict);
-            var singletonAttribute = new SingletonAttributeTestDataBuilder().WithMaxRetries(1).WithMinimumInterval(1).WithMaximumInterval(1).Build();
+            var singletonOptions = new SingletonOptions { MaxRetries = 1, MinimumPollingIntervalInSeconds = 1, MaximumPollingIntervalInSeconds = 1 };
+            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
             var blobClientFake = new Mock<BlobClient>();
 
+            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
             blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
             distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
             distributedLockManagerMock.SetupSequence(m => m.AcquireAsync(CancellationToken.None))
                 .ReturnsAsync((string?)null)
                 .ReturnsAsync((string?)null);
 
-            var sut = new SingletonLockManager(loggerMock.Object, blobClientProviderMock.Object, distributedLockManagerFactoryMock.Object, singletonAttribute);
+            var sut = new SingletonLockManager(loggerMock.Object, blobClientProviderMock.Object, distributedLockManagerFactoryMock.Object, singletonOptionsMock.Object);
 
             // Act
             Func<Task> act = () => sut.AquireLockAsync(fileName, CancellationToken.None);
 
             // Assert
-            await act.Should().ThrowExactlyAsync<SingletonException>().WithMessage($"Unable to acquire lock, max retries of '{singletonAttribute.MaxRetries}' reached");
+            await act.Should().ThrowExactlyAsync<SingletonException>().WithMessage($"Unable to acquire lock, max retries of '{singletonOptions.MaxRetries}' reached");
         }
     }
 }
