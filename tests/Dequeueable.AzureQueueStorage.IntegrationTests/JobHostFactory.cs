@@ -11,14 +11,8 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
         public readonly IHostBuilder HostBuilder;
         private readonly Action<Configurations.HostOptions>? _options;
 
-        public JobHostFactory(string connectionString, string queueName, Action<Configurations.HostOptions>? overrideOptions = null)
+        public JobHostFactory(Action<Configurations.HostOptions>? overrideOptions = null, Action<Configurations.SingletonHostOptions>? singletonHostOptions = null)
         {
-            _options = opt =>
-            {
-                opt.ConnectionString = connectionString;
-                opt.QueueName = queueName;
-            };
-
             if (overrideOptions is not null)
             {
                 _options += overrideOptions;
@@ -27,23 +21,13 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
             HostBuilder = Host.CreateDefaultBuilder()
                 .ConfigureServices(services =>
                 {
-                    services.AddAzureQueueStorageJob<TFunction>(_options);
-                    services.AddTransient<IFakeService, FakeService>();
-                });
-        }
+                    var hostBuilder = services.AddAzureQueueStorageServices<TestFunction>()
+                    .RunAsJob(_options);
 
-        public JobHostFactory(string connectionString, string queueName)
-        {
-            HostBuilder = Host.CreateDefaultBuilder()
-                .ConfigureServices(services =>
-                {
-                    services
-                    .AddAzureQueueStorageJob<TFunction>(options =>
+                    if (singletonHostOptions is not null)
                     {
-                        options.ConnectionString = connectionString;
-                        options.QueueName = queueName;
-
-                    });
+                        hostBuilder.AsSingleton(singletonHostOptions);
+                    }
 
                     services.AddTransient<IFakeService, FakeService>();
                 });
@@ -55,10 +39,10 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
             return HostBuilder;
         }
 
-        public Services.Hosts.IHost Build()
+        public Services.Hosts.IHostExecutor Build()
         {
             var host = HostBuilder.Build();
-            return host.Services.GetRequiredService<Services.Hosts.IHost>();
+            return host.Services.GetRequiredService<Services.Hosts.IHostExecutor>();
         }
     }
 }

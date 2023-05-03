@@ -18,8 +18,10 @@ RUN adduser --disabled-password \
   --home /app \
   --gecos '' dotnetuser && chown -R dotnetuser /app
 
-# upgrade musl to remove potential vulnerability
+# upgrade to remove potential vulnerability
 RUN apk upgrade musl
+RUN apk add openssl>3.1.0
+RUN apk update && apk upgrade
 USER dotnetuser
 
 WORKDIR /app

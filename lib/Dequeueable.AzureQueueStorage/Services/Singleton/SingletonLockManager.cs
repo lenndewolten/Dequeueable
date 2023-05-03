@@ -1,6 +1,8 @@
-﻿using Dequeueable.AzureQueueStorage.Factories;
+﻿using Dequeueable.AzureQueueStorage.Configurations;
+using Dequeueable.AzureQueueStorage.Factories;
 using Dequeueable.AzureQueueStorage.Services.Timers;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Services.Singleton
 {
@@ -9,17 +11,17 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
         private readonly ILogger<SingletonLockManager> _logger;
         private readonly IBlobClientProvider _blobClientProvider;
         private readonly IDistributedLockManagerFactory _distributedLockManagerFactory;
-        private readonly SingletonAttribute _singletonAttribute;
+        private readonly SingletonHostOptions _singletonHostOptions;
 
         public SingletonLockManager(ILogger<SingletonLockManager> logger,
         IBlobClientProvider blobClientProvider,
         IDistributedLockManagerFactory distributedLockManagerFactory,
-        SingletonAttribute singletonAttribute)
+        IOptions<SingletonHostOptions> singletonHostOptions)
         {
             _logger = logger;
             _blobClientProvider = blobClientProvider;
             _distributedLockManagerFactory = distributedLockManagerFactory;
-            _singletonAttribute = singletonAttribute;
+            _singletonHostOptions = singletonHostOptions.Value;
         }
 
         public async Task<string> AquireLockAsync(string fileName, CancellationToken cancellationToken)
@@ -27,7 +29,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             var blobClient = _blobClientProvider.Get(fileName);
             var lockManager = _distributedLockManagerFactory.Create(blobClient, _logger);
 
-            var leaseId = await AcquireLockAsync(_singletonAttribute, lockManager, cancellationToken);
+            var leaseId = await AcquireLockAsync(_singletonHostOptions, lockManager, cancellationToken);
 
             _logger.LogInformation("Lock with Id '{LeaseId}' acquired for '{FileName}'", leaseId, fileName);
 
@@ -53,7 +55,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             return lockManager.ReleaseAsync(leaseId, cancellationToken);
         }
 
-        private static async Task<string> AcquireLockAsync(SingletonAttribute singleton, IDistributedLockManager lockManager, CancellationToken cancellationToken)
+        private static async Task<string> AcquireLockAsync(SingletonHostOptions singleton, IDistributedLockManager lockManager, CancellationToken cancellationToken)
         {
             var delayStrategy = new RandomizedExponentialDelayStrategy(TimeSpan.FromSeconds(singleton.MinimumPollingIntervalInSeconds), TimeSpan.FromSeconds(singleton.MaximumPollingIntervalInSeconds));
 

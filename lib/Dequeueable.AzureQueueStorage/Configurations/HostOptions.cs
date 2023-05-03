@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Azure.Storage.Queues;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dequeueable.AzureQueueStorage.Configurations
 {
@@ -8,49 +9,34 @@ namespace Dequeueable.AzureQueueStorage.Configurations
     /// </summary>
     public class HostOptions : IHostOptions
     {
-        /// <summary>
-        /// Constant string used to bind the appsettings.*.json
-        /// </summary>
-        public static string Dequeueable => nameof(Dequeueable);
-        private long _visibilityTimeoutInSeconds = 300;
-        private long _maxDequeueCount = 5;
-        private int _batchSize = 16;
-        private string _poisonQueueSuffix = "poison";
+        internal static string Dequeueable => nameof(Dequeueable);
 
         /// <summary>
         /// The connection string used to authenticate to the queue. 
         /// </summary>
         public string? ConnectionString { get; set; }
+
         /// <summary>
         /// The storage account name, used for identity flow.
         /// </summary>
         public string? AccountName { get; set; }
+
         /// <summary>
         /// The queue used to retrieve the messages.
         /// </summary>
+        [Required(AllowEmptyStrings = true, ErrorMessage = "Value for {0} cannot be null.")]
         public string QueueName { get; set; } = string.Empty;
 
         /// <summary>
         /// The poisen queue used to post queue message that reach the <see cref="MaxDequeueCount">MaxDequeueCount</see>.
         /// </summary>
-        public string PoisonQueueName => $"{QueueName}-{_poisonQueueSuffix}";
+        public string PoisonQueueName => $"{QueueName}-{PoisonQueueSuffix}";
 
         /// <summary>
         /// Suffix that will be used after the <see cref="QueueName">QueueName</see>, eg queuename-suffix.
         /// </summary>
-        public string PoisonQueueSuffix
-        {
-            get { return _poisonQueueSuffix; }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException($"'{nameof(PoisonQueueSuffix)}' cannot be null or whitespace.", nameof(PoisonQueueSuffix));
-                }
-
-                _poisonQueueSuffix = value;
-            }
-        }
+        [Required(AllowEmptyStrings = false, ErrorMessage = "{0} cannot be null or whitespace.")]
+        public string PoisonQueueSuffix { get; set; } = "poison";
 
         /// <summary>
         /// The uri format to the queue storage. Used for identity flow. Use ` {accountName}` and `{queueName}` for variable substitution.
@@ -70,53 +56,19 @@ namespace Dequeueable.AzureQueueStorage.Configurations
         /// <summary>
         /// The maximum number of messages processed in parallel.
         /// </summary>
-        public int BatchSize
-        {
-            get => _batchSize;
-            set
-            {
-                if (value < 1)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(BatchSize), $"'{nameof(BatchSize)}' must not be negative or zero.");
-                }
-
-                _batchSize = value;
-            }
-        }
+        [Range(1, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        public int BatchSize { get; set; } = 16;
 
         /// <summary>
         /// Max dequeue count before moving to the poison queue. 
         /// </summary>
-        public long MaxDequeueCount
-        {
-            get => _maxDequeueCount;
-            set
-            {
-                if (value < 0 || value > 20)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(MaxDequeueCount),
-                          $"{nameof(MaxDequeueCount)} must be between 0 and 20.");
-                }
-
-                _maxDequeueCount = value;
-            }
-        }
+        [Range(0, 20, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        public long MaxDequeueCount { get; set; } = 5;
 
         /// <summary>
         /// The timeout after the queue message is visible again for other services.
         /// </summary>
-        public long VisibilityTimeoutInSeconds
-        {
-            get => _visibilityTimeoutInSeconds;
-            set
-            {
-                if (value < 1)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(VisibilityTimeoutInSeconds), $"'{nameof(VisibilityTimeoutInSeconds)}' must not be negative or zero.");
-                }
-
-                _visibilityTimeoutInSeconds = value;
-            }
-        }
+        [Range(1, long.MaxValue, ErrorMessage = "Value for {0} must not be negative or zero.")]
+        public long VisibilityTimeoutInSeconds { get; set; } = 300;
     }
 }

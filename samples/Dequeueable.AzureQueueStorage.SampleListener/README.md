@@ -8,24 +8,26 @@ docker build -t <yourtagname> -f samples/Dequeueable.AzureQueueStorage.SampleLis
 ```
 Image stats:
 ```
-docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplelistener-v1
+docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplelistener-v2
 
 > REPOSITORY                 TAG                                     IMAGE ID       CREATED          SIZE
-> lenndewolten/dequeueable   azure-queue-storage-samplelistener-v1   54e3a074c316   50 seconds ago   84.1MB
+> lenndewolten/dequeueable   azure-queue-storage-samplelistener-v2   26a4b226e4b8   46 seconds ago   92.6MB
 ```
 
 ```
-docker scan lenndewolten/dequeueable:azure-queue-storage-samplelistener-v1
+docker scan lenndewolten/dequeueable:azure-queue-storage-samplelistener-v2
 
-> Testing lenndewolten/dequeueable:azure-queue-storage-samplelistener-v1...
-> 
+> Organization:      lenndewolten
 > Package manager:   apk
 > Project name:      docker-image|lenndewolten/dequeueable
-> Docker image:      lenndewolten/dequeueable:azure-queue-storage-samplelistener-v1
+> Docker image:      lenndewolten/dequeueable:azure-queue-storage-samplelistener-v2
 > Platform:          linux/amd64
-> Base image:        alpine:3.17.1
+> Base image:        alpine:3.17.3
+> Licenses:          enabled
 > 
-> ✔ Tested 24 dependencies for known vulnerabilities, no vulnerable paths found.
+> ✔ Tested 25 dependencies for known issues, no vulnerable paths found.
+> 
+> According to our scan, you are currently using the most secure version of the selected base image
 ```
 
 ## Kubernetes
@@ -38,7 +40,7 @@ kubectl apply -f deployment.yaml
 ```
 
 #### **Connect to azurite**
-Get the public IP address of one of your nodes that is running a Hello World pod. How you get this address depends on how you set up your cluster. For example, if you are using Minikube or Docker Desktop, you can see the node address by running kubectl cluster-info. 
+Get the public IP address of one of your nodes that is running a Hello World pod. How you get this address depends on how you set up your cluster. For example, if you are using Minikube or Docker Desktop, you can see the node address by running kubectl cluster-info.
 
 ```
 kubectl cluster-info

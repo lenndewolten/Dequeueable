@@ -1,5 +1,4 @@
-﻿using Azure.Storage.Blobs;
-using Azure.Storage.Queues;
+﻿using Azure.Storage.Queues;
 using Dequeueable.AzureQueueStorage.IntegrationTests.Fixtures;
 using Dequeueable.AzureQueueStorage.IntegrationTests.TestDataBuilders;
 using Dequeueable.AzureQueueStorage.Models;
@@ -37,7 +36,11 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
         public async Task Given_a_Queue_when_is_has_two_messages_then_they_are_handled_correctly()
         {
             // Arrange
-            var factory = new JobHostFactory<TestFunction>(_azuriteFixture.ConnectionString, _queueName);
+            var factory = new JobHostFactory<TestFunction>(opt =>
+            {
+                opt.ConnectionString = _azuriteFixture.ConnectionString;
+                opt.QueueName = _queueName;
+            });
 
             var fakeServiceMock = new Mock<IFakeService>();
 
@@ -71,9 +74,11 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
         public async Task Given_a_QueueMessage_with_DequeueCount_1_when_an_error_occurred_while_executing_the_function_and_the_MaxDequeueCount_is_not_yet_reached_then_the_message_is_enqueued_correctly()
         {
             // Arrange
-            var factory = new JobHostFactory<TestFunction>(_azuriteFixture.ConnectionString, _queueName, options =>
+            var factory = new JobHostFactory<TestFunction>(opt =>
             {
-                options.MaxDequeueCount = 5;
+                opt.ConnectionString = _azuriteFixture.ConnectionString;
+                opt.QueueName = _queueName;
+                opt.MaxDequeueCount = 5;
             });
 
             var fakeServiceMock = new Mock<IFakeService>();
@@ -103,11 +108,12 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
         {
             // Arrange
             var poisenQueueSuffix = "poison";
-
-            var factory = new JobHostFactory<TestFunction>(_azuriteFixture.ConnectionString, _queueName, options =>
+            var factory = new JobHostFactory<TestFunction>(opt =>
             {
-                options.MaxDequeueCount = 1;
-                options.PoisonQueueSuffix = poisenQueueSuffix;
+                opt.ConnectionString = _azuriteFixture.ConnectionString;
+                opt.QueueName = _queueName;
+                opt.MaxDequeueCount = 1;
+                opt.PoisonQueueSuffix = poisenQueueSuffix;
             });
 
             var fakeServiceMock = new Mock<IFakeService>();
@@ -134,42 +140,6 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             var peekedPoisonQueueMessage = await poisenQueueClient.PeekMessageAsync();
             peekedPoisonQueueMessage.Value.Should().NotBeNull();
             peekedPoisonQueueMessage.Value.Body.ToString().Should().Be(message);
-        }
-
-        [Fact]
-        public async Task Given_a_Function_with_a_singleton_attribute_when_a_queue_has_two_messages_then_they_are_handled_correctly()
-        {
-            // Arrange
-            var scope = "testscope";
-            var factory = new JobHostFactory<SingletonFunction>(_azuriteFixture.ConnectionString, _queueName);
-
-            var fakeServiceMock = new Mock<IFakeService>();
-
-            factory.ConfigureTestServices(services =>
-            {
-                services.AddTransient(_ => fakeServiceMock.Object);
-            });
-
-            var blobContainerClient = new BlobContainerClient(_azuriteFixture.ConnectionString, SingletonFunction.ContainerName);
-
-            var messages = new[] { new { Id = scope }, new { Id = scope } };
-            foreach (var message in messages)
-            {
-                await _queueClient.SendMessageAsync(BinaryData.FromObjectAsJson(message));
-            }
-
-            // Act
-            var host = factory.Build();
-            await host.HandleAsync(CancellationToken.None);
-
-            // Assert
-            fakeServiceMock.Verify(f => f.Execute(It.IsAny<Message>()), Times.Exactly(messages.Length));
-            var peekedMessage = await _queueClient.PeekMessageAsync();
-            peekedMessage.Value.Should().BeNull();
-
-            var blobclient = blobContainerClient.GetBlobClient(scope);
-            (await blobclient.ExistsAsync()).Value.Should().BeTrue();
-
         }
     }
 }

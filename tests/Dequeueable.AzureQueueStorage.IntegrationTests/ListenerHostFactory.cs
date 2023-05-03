@@ -1,7 +1,5 @@
-﻿using Dequeueable.AzureQueueStorage.Configurations;
-using Dequeueable.AzureQueueStorage.Extentions;
+﻿using Dequeueable.AzureQueueStorage.Extentions;
 using Dequeueable.AzureQueueStorage.IntegrationTests.TestDataBuilders;
-using Dequeueable.AzureQueueStorage.Services.Hosts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -11,51 +9,28 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
         where TFunction : class, IAzureQueueFunction
     {
         public readonly IHostBuilder HostBuilder;
-
-        private readonly Action<ListenerOptions> _options = options =>
+        private readonly Action<Configurations.ListenerHostOptions>? _options = opt =>
         {
-            options.NewBatchThreshold = 0;
-            options.MinimumPollingIntervalInMilliseconds = 0;
-            options.MaximumPollingIntervalInMilliseconds = 50;
+            opt.NewBatchThreshold = 0;
         };
 
-        public ListenerHostFactory(string connectionString, string queueName, Action<ListenerOptions>? overrideOptions = null)
+        public ListenerHostFactory(Action<Configurations.ListenerHostOptions>? overrideOptions = null, Action<Configurations.SingletonHostOptions>? singletonHostOptions = null)
         {
-            Action<ListenerOptions> options = opt =>
-            {
-                opt.ConnectionString = connectionString;
-                opt.QueueName = queueName;
-            };
-
-            options += _options;
-
             if (overrideOptions is not null)
             {
-                options += overrideOptions;
+                _options += overrideOptions;
             }
 
             HostBuilder = Host.CreateDefaultBuilder()
                 .ConfigureServices(services =>
                 {
-                    services.AddAzureQueueStorageListener<TFunction>(options);
-                    services.AddTransient<IFakeService, FakeService>();
-                });
-        }
+                    var hostBuilder = services.AddAzureQueueStorageServices<TestFunction>()
+                    .RunAsListener(_options);
 
-        public ListenerHostFactory(string connectionString, string queueName)
-        {
-            var options = _options;
-
-            HostBuilder = Host.CreateDefaultBuilder()
-                .ConfigureServices(services =>
-                {
-                    services
-                    .AddAzureQueueStorageListener<TFunction>(options =>
+                    if (singletonHostOptions is not null)
                     {
-                        options.ConnectionString = connectionString;
-                        options.QueueName = queueName;
-
-                    });
+                        hostBuilder.AsSingleton(singletonHostOptions);
+                    }
 
                     services.AddTransient<IFakeService, FakeService>();
                 });
@@ -67,10 +42,10 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
             return HostBuilder;
         }
 
-        public Services.Hosts.IHost Build()
+        public Services.Hosts.IHostExecutor Build()
         {
             var host = HostBuilder.Build();
-            return host.Services.GetRequiredService<Services.Hosts.IHost>();
+            return host.Services.GetRequiredService<Services.Hosts.IHostExecutor>();
         }
     }
 }

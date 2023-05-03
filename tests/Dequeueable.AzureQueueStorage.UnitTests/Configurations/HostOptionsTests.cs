@@ -1,188 +1,178 @@
 ﻿using Dequeueable.AzureQueueStorage.Configurations;
 using FluentAssertions;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
 {
     public class HostOptionsTests
     {
         [Fact]
-        public void Given_the_PoisonQueueSuffix_when_it_is_set_with_a_valid_value_then_it_set_correctly()
+        public void Given_a_HostOptions_when_QueueName_is_null_then_the_validation_result_contains_the_correct_error_message()
         {
             // Arrange
-            var expected = "test";
             var sut = new HostOptions
             {
-                PoisonQueueSuffix = expected,
+                QueueName = null!
             };
 
             // Act
-            var actual = sut.PoisonQueueSuffix;
+            var result = ValidateModel(sut);
 
             // Assert
-            actual.Should().Be(expected);
+            result.Should().Contain(e => e.ErrorMessage!.Contains("Value for QueueName cannot be null."));
         }
 
         [Fact]
-        public void Given_the_PoisonQueueSuffix_when_it_is_set_with_an_invalid_value_then_an_ArgumentException_is_thrown()
+        public void Given_a_HostOptions_when_QueueName_is_empty_then_the_validation_result_contains_the_correct_error_message()
         {
             // Arrange
-            var expected = string.Empty;
-
-            // Act
-            Action act = () =>
-            {
-                var options = new HostOptions
-                {
-                    PoisonQueueSuffix = expected,
-                };
-            };
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentException>();
-        }
-
-        [Fact]
-        public void Given_the_MaxDequeueCount_when_it_is_set_to_zero_then_it_set_correctly()
-        {
-            // Arrange
-            var expected = 0;
             var sut = new HostOptions
             {
-                MaxDequeueCount = expected,
+                QueueName = string.Empty
             };
 
             // Act
-            var actual = sut.MaxDequeueCount;
+            var result = ValidateModel(sut);
 
             // Assert
-            actual.Should().Be(expected);
+            result.Should().NotContain(e => e.MemberNames!.Contains("QueueName"));
         }
 
         [Fact]
-        public void Given_the_MaxDequeueCount_when_it_to_twenty_then_it_set_correctly()
+        public void Given_a_HostOptions_when_BatchSize_is_within_range_then_the_validation_result_are_empty()
         {
             // Arrange
-            var expected = 20;
             var sut = new HostOptions
             {
-                MaxDequeueCount = expected,
+                BatchSize = 5
             };
 
             // Act
-            var actual = sut.MaxDequeueCount;
+            var result = ValidateModel(sut);
 
             // Assert
-            actual.Should().Be(expected);
+            result.Should().NotContain(e => e.MemberNames!.Contains("BatchSize"));
         }
 
         [Fact]
-        public void Given_the_MaxDequeueCount_when_it_is_set_to_minus_one_then_an_ArgumentException_is_thrown()
+        public void Given_a_HostOptions_when_BatchSize_is_zero_then_the_validation_result_contains_the_correct_error_message()
         {
             // Arrange
-            var expected = -1;
-
-            // Act
-            Action act = () =>
-            {
-                var options = new HostOptions
-                {
-                    MaxDequeueCount = expected,
-                };
-            };
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentOutOfRangeException>();
-        }
-
-        [Fact]
-        public void Given_the_MaxDequeueCount_when_it_is_set_to_twentyone_then_an_ArgumentException_is_thrown()
-        {
-            // Arrange
-            var expected = 21;
-
-            // Act
-            Action act = () =>
-            {
-                var options = new HostOptions
-                {
-                    MaxDequeueCount = expected,
-                };
-            };
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentOutOfRangeException>();
-        }
-
-        [Fact]
-        public void Given_the_VisibilityTimeoutInSeconds_when_it_to_twenty_then_it_set_correctly()
-        {
-            // Arrange
-            var expected = 10;
             var sut = new HostOptions
             {
-                VisibilityTimeoutInSeconds = expected,
+                BatchSize = 0
             };
 
             // Act
-            var actual = sut.VisibilityTimeoutInSeconds;
+            var result = ValidateModel(sut);
 
             // Assert
-            actual.Should().Be(expected);
+            result.Should().Contain(e => e.ErrorMessage!.Contains("Value for BatchSize must be between 1 and 100."));
         }
 
         [Fact]
-        public void Given_the_VisibilityTimeoutInSeconds_when_it_is_set_to_minus_one_then_an_ArgumentException_is_thrown()
+        public void Given_a_HostOptions_when_BatchSize_is_101_then_the_validation_result_contains_the_correct_error_message()
         {
             // Arrange
-            var expected = 0;
-
-            // Act
-            Action act = () =>
-            {
-                var options = new HostOptions
-                {
-                    VisibilityTimeoutInSeconds = expected,
-                };
-            };
-
-            // Assert
-            act.Should().ThrowExactly<ArgumentOutOfRangeException>();
-        }
-
-        [Fact]
-        public void Given_the_BatchSize_when_it_to_twenty_then_it_set_correctly()
-        {
-            // Arrange
-            var expected = 1;
             var sut = new HostOptions
             {
-                BatchSize = expected,
+                BatchSize = 101
             };
 
             // Act
-            var actual = sut.BatchSize;
+            var result = ValidateModel(sut);
 
             // Assert
-            actual.Should().Be(expected);
+            result.Should().Contain(e => e.ErrorMessage!.Contains("Value for BatchSize must be between 1 and 100."));
         }
 
         [Fact]
-        public void Given_the_BatchSize_when_it_is_set_to_minus_one_then_an_ArgumentException_is_thrown()
+        public void Given_a_HostOptions_when_MaxDequeueCount_is_within_range_then_the_validation_result_are_empty()
         {
             // Arrange
-            var expected = 0;
-
-            // Act
-            Action act = () =>
+            var sut = new HostOptions
             {
-                var options = new HostOptions
-                {
-                    BatchSize = expected,
-                };
+                MaxDequeueCount = 5
             };
 
+            // Act
+            var result = ValidateModel(sut);
+
             // Assert
-            act.Should().ThrowExactly<ArgumentOutOfRangeException>();
+            result.Should().NotContain(e => e.MemberNames!.Contains("MaxDequeueCount"));
+        }
+
+        [Fact]
+        public void Given_a_HostOptions_when_MaxDequeueCount_is_negative_then_the_validation_result_contains_the_correct_error_message()
+        {
+            // Arrange
+            var sut = new HostOptions
+            {
+                MaxDequeueCount = -1
+            };
+
+            // Act
+            var result = ValidateModel(sut);
+
+            // Assert
+            result.Should().Contain(e => e.ErrorMessage!.Contains("Value for MaxDequeueCount must be between 0 and 20."));
+        }
+
+        [Fact]
+        public void Given_a_HostOptions_when_MaxDequeueCount_is_21_then_the_validation_result_contains_the_correct_error_message()
+        {
+            // Arrange
+            var sut = new HostOptions
+            {
+                MaxDequeueCount = 21
+            };
+
+            // Act
+            var result = ValidateModel(sut);
+
+            // Assert
+            result.Should().Contain(e => e.ErrorMessage!.Contains("Value for MaxDequeueCount must be between 0 and 20."));
+        }
+
+
+        [Fact]
+        public void Given_a_HostOptions_when_VisibilityTimeoutInSeconds_is_within_range_then_the_validation_result_are_empty()
+        {
+            // Arrange
+            var sut = new HostOptions
+            {
+                VisibilityTimeoutInSeconds = 5
+            };
+
+            // Act
+            var result = ValidateModel(sut);
+
+            // Assert
+            result.Should().NotContain(e => e.MemberNames!.Contains("VisibilityTimeoutInSeconds"));
+        }
+
+        [Fact]
+        public void Given_a_HostOptions_when_VisibilityTimeoutInSeconds_is_zero_then_the_validation_result_contains_the_correct_error_message()
+        {
+            // Arrange
+            var sut = new HostOptions
+            {
+                VisibilityTimeoutInSeconds = 0
+            };
+
+            // Act
+            var result = ValidateModel(sut);
+
+            // Assert
+            result.Should().Contain(e => e.ErrorMessage!.Contains("Value for VisibilityTimeoutInSeconds must not be negative or zero"));
+        }
+
+        private static IList<ValidationResult> ValidateModel(object model)
+        {
+            var validationResults = new List<ValidationResult>();
+            var ctx = new ValidationContext(model, null, null);
+            Validator.TryValidateObject(model, ctx, validationResults, true);
+            return validationResults;
         }
     }
 }

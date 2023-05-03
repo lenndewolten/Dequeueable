@@ -1,6 +1,5 @@
 # Azure Queue Storage Sample job
 
-
 ## Docker
 
 ### Build
@@ -9,24 +8,26 @@ docker build -t <yourtagname> -f samples/Dequeueable.AzureQueueStorage.SampleJob
 ```
 Image stats:
 ```
-docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplejob-v1 
+docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplejob-v2
 
 > REPOSITORY                 TAG                                IMAGE ID       CREATED         SIZE
-> lenndewolten/dequeueable   azure-queue-storage-samplejob-v1   168a56c83660   5 minutes ago   82.2MB
+> lenndewolten/dequeueable   azure-queue-storage-samplejob-v2   2709a261957e   6 minutes ago   90.8MB
 ```
 
 ```
-docker scan lenndewolten/dequeueable:azure-queue-storage-samplejob-v1  
+docker scan lenndewolten/dequeueable:azure-queue-storage-samplejob-v2
 
-> Testing lenndewolten/dequeueable:azure-queue-storage-samplejob-v1...
-> 
+> Organization:      lenndewolten
 > Package manager:   apk
 > Project name:      docker-image|lenndewolten/dequeueable
-> Docker image:      lenndewolten/dequeueable:azure-queue-storage-samplejob-v1
+> Docker image:      lenndewolten/dequeueable:azure-queue-storage-samplejob-v2
 > Platform:          linux/amd64
-> Base image:        alpine:3.17.1
+> Base image:        alpine:3.17.3
+> Licenses:          enabled
 > 
-> ✔ Tested 24 dependencies for known vulnerabilities, no vulnerable paths found.
+> ✔ Tested 25 dependencies for known issues, no vulnerable paths found.
+> 
+> According to our scan, you are currently using the most secure version of the selected base image
 ```
 
 ## Kubernetes

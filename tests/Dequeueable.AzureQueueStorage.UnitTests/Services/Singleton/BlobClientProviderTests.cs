@@ -1,11 +1,12 @@
 ﻿using Moq;
 using Microsoft.Extensions.Logging;
-using Azure.Identity;
-using FluentAssertions;
 using Azure.Storage.Blobs;
 using Dequeueable.AzureQueueStorage.Services.Singleton;
 using Dequeueable.AzureQueueStorage.Factories;
 using Dequeueable.AzureQueueStorage.Configurations;
+using Microsoft.Extensions.Options;
+using Azure.Identity;
+using FluentAssertions;
 
 namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
 {
@@ -21,15 +22,17 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 ConnectionString = "unit-test",
             };
 
-            var attribute = new SingletonAttribute("id");
+            var singletonHostOptions = new SingletonHostOptions();
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
             var loggerMock = new Mock<ILogger<BlobClientProvider>>();
             var factoryMock = new Mock<IBlobClientFactory>(MockBehavior.Strict);
 
-            factoryMock.Setup(f => f.Create(options.ConnectionString, attribute.ContainerName, fileName))
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
+            factoryMock.Setup(f => f.Create(options.ConnectionString, singletonHostOptions.ContainerName, fileName))
                 .Returns(new Mock<BlobClient>().Object)
                 .Verifiable();
 
-            var sut = new BlobClientProvider(factoryMock.Object, options, attribute, loggerMock.Object);
+            var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
             sut.Get(fileName);
@@ -57,15 +60,18 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 AccountName = "testaccount"
             };
 
-            var attribute = new SingletonAttribute("id");
+            var singletonHostOptions = new SingletonHostOptions();
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
             var loggerMock = new Mock<ILogger<BlobClientProvider>>();
             var factoryMock = new Mock<IBlobClientFactory>(MockBehavior.Strict);
+
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
 
             factoryMock.Setup(f => f.Create(It.Is<Uri>(uri => uri.AbsoluteUri == "https://testaccount.blob.core.windows.net/webjobshost/some-file"), options.AuthenticationScheme))
                 .Returns(new Mock<BlobClient>().Object)
                 .Verifiable();
 
-            var sut = new BlobClientProvider(factoryMock.Object, options, attribute, loggerMock.Object);
+            var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
             sut.Get(fileName);
@@ -93,15 +99,18 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 AccountName = "testaccount"
             };
 
-            var attribute = new SingletonAttribute("id", blobUriFormat: "https://{blobName}.privateazure.com");
+            var singletonHostOptions = new SingletonHostOptions { BlobUriFormat = "https://{blobName}.privateazure.com" };
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
             var loggerMock = new Mock<ILogger<BlobClientProvider>>();
             var factoryMock = new Mock<IBlobClientFactory>(MockBehavior.Strict);
+
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
 
             factoryMock.Setup(f => f.Create(It.Is<Uri>(uri => uri.AbsoluteUri == "https://some-file.privateazure.com/"), options.AuthenticationScheme))
                 .Returns(new Mock<BlobClient>().Object)
                 .Verifiable();
 
-            var sut = new BlobClientProvider(factoryMock.Object, options, attribute, loggerMock.Object);
+            var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
             sut.Get(fileName);
@@ -129,11 +138,14 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 AccountName = "invalid account!"
             };
 
-            var attribute = new SingletonAttribute("id");
+            var singletonHostOptions = new SingletonHostOptions();
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
             var loggerMock = new Mock<ILogger<BlobClientProvider>>();
             var factoryMock = new Mock<IBlobClientFactory>(MockBehavior.Strict);
 
-            var sut = new BlobClientProvider(factoryMock.Object, options, attribute, loggerMock.Object);
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
+
+            var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
             Action act = () => sut.Get(fileName);
@@ -162,11 +174,14 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 ConnectionString = null
             };
 
-            var attribute = new SingletonAttribute("id");
+            var singletonHostOptions = new SingletonHostOptions();
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
             var loggerMock = new Mock<ILogger<BlobClientProvider>>();
             var factoryMock = new Mock<IBlobClientFactory>(MockBehavior.Strict);
 
-            var sut = new BlobClientProvider(factoryMock.Object, options, attribute, loggerMock.Object);
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
+
+            var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
             Action act = () => sut.Get(fileName);

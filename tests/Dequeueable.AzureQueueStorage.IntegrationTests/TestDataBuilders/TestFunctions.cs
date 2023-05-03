@@ -1,5 +1,4 @@
 ﻿using Dequeueable.AzureQueueStorage.Models;
-using Dequeueable.AzureQueueStorage.Services.Singleton;
 
 namespace Dequeueable.AzureQueueStorage.IntegrationTests.TestDataBuilders
 {
@@ -18,22 +17,22 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.TestDataBuilders
         }
     }
 
-    [Singleton(scope: "Id", containerName: ContainerName, minimumIntervalInSeconds: 1)]
-    public class SingletonFunction : IAzureQueueFunction
-    {
-        public const string ContainerName = "scopedtestcontainer";
-        private readonly IFakeService _fakeService;
+    //[Singleton(scope: "Id", containerName: ContainerName, minimumIntervalInSeconds: 1)]
+    //public class SingletonFunction : IAzureQueueFunction
+    //{
+    //    public const string ContainerName = "scopedtestcontainer";
+    //    private readonly IFakeService _fakeService;
 
-        public SingletonFunction(IFakeService fakeService)
-        {
-            _fakeService = fakeService;
-        }
+    //    public SingletonFunction(IFakeService fakeService)
+    //    {
+    //        _fakeService = fakeService;
+    //    }
 
-        public Task ExecuteAsync(Message message, CancellationToken cancellationToken)
-        {
-            return _fakeService.Execute(message);
-        }
-    }
+    //    public Task ExecuteAsync(Message message, CancellationToken cancellationToken)
+    //    {
+    //        return _fakeService.Execute(message);
+    //    }
+    //}
 
     public interface IFakeService
     {

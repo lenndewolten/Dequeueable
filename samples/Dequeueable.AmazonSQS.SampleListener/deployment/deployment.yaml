@@ -13,6 +13,7 @@ metadata:
 data:
   AWS_ACCESS_KEY_ID: <your encoded key>
   AWS_SECRET_ACCESS_KEY: <your encoded secret>
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -37,4 +38,4 @@ spec:
             - configMapRef:
                 name: test-config
             - secretRef:
-                  name: test-secrets
+                name: test-secrets

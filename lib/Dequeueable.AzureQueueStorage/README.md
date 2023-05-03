@@ -15,19 +15,21 @@ Framework that depends on external queue triggers, eg; KEDA. When the host is st
 
 Scaffold a new project, you can either use a console or web app.
 1. Add a class that implements the `IAzureQueueFunction`.
+2. Add `.AddAzureQueueStorageServices<TestFunction>` in the DI container.
 2. Add the job or listener services:
-   - Add `AddAzureQueueStorageJob<TestFunction>` in the DI container of your app to run the host as a job.
-   - Add `AddAzureQueueStorageListener` in the DI container of your app to run the app as a back ground listener.
+   - Add `RunAsJob` in the DI container of your app to run the host as a job.
+   - Add `RunAsListener` in the DI container of your app to run the app as a back ground listener.
 
 ```csharp
 await Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        // Uncomment to run as a job:
-        // services.AddAzureQueueStorageJob<TestFunction>();
-        // Uncomment to run as a listener
-        // services.AddAzureQueueStorageListener<TestFunction>();
-    })
+        services.AddAzureQueueStorageServices<TestFunction>()
+        .RunAsJob(options =>
+        {
+            // ...
+        });
+     })
     .RunConsoleAsync();
 ```
 
@@ -51,7 +53,8 @@ Use the `Dequeueable` section to configure the settings:
 await Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        services.AddAzureQueueStorageJob<TestFunction>(options =>
+        services.AddAzureQueueStorageServices<TestFunction>()
+        .RunAsJob(options =>
         {
             options.AuthenticationScheme = new DefaultAzureCredential();
             options.VisibilityTimeout = TimeSpan.FromMinutes(10);
@@ -62,7 +65,7 @@ await Host.CreateDefaultBuilder(args)
 ```
 
 ###  Settings
-The library uses the `IOptions` pattern to inject the configured app settings.
+The library uses the `IOptions` pattern to inject the configured app settings. These settings will be validated on startup. 
 
 #### Host options
 These options can be set for both the job as the listener project:
@@ -101,7 +104,9 @@ You can authenticate to the storage account & queue by setting the ConnectionStr
 ```
 
 ```csharp
-    services.AddAzureQueueStorageJob<TestFunction>(options =>
+    services.AddAzureQueueStorageServices<TestFunction>()
+    // .RunAsListener(options =>
+    // .RunAsJob(options =>
     {
         // ...
         options.ConnectionString = "UseDevelopmentStorage=true";
@@ -116,7 +121,9 @@ Authenticating via Azure Identity is also possible and the recommended option. M
 Set the `AuthenticationScheme` and the `AccountName` options to authenticate via azure AD:
 
 ```csharp
-    services.AddAzureQueueStorageJob<TestFunction>(options =>
+    services.AddAzureQueueStorageServices<TestFunction>()
+    // .RunAsListener(options =>
+    // .RunAsJob(options =>
     {
         options.AuthenticationScheme = new DefaultAzureCredential();
         options.AccountName = "thestorageaccountName";
@@ -149,14 +156,15 @@ A singleton attribute can be applied the job to ensure that only a single  insta
 
 NOTE: The blob files will not be automatically deleted. If needed, consider specifying data lifecycle rules for the blob container: https://learn.microsoft.com/en-us/azure/storage/blobs/lifecycle-management-overview
 
-Set the `Singleton("<scope>"` attribute above the job:
+To run the host as singleton, call the `.AsSingleton()` in the DI container:
 
 ```csharp
-    [Singleton("Id")]
-    internal class SampleSingletonJob : IAzureQueueJob
+services.AddAzureQueueStorageServices<TestFunction>()
+    .RunAsJob()
+    .AsSingleton(opt =>
     {
-        //...
-    }
+        opt.Scope = "id";
+    });
 ```
 
 Only messages containing a JSON format is supported. The scope should **always** be a property in the message body that exists.
@@ -168,7 +176,7 @@ Given a queue message with the following body:
     // ...
 }
 ```
-When the scope is set to `[Singleton("Id")]` on the job. Only a single message containing id "d89c209a-6b81-4266-a768-8cde6f613753" will be executed at an given time.
+When the scope is set to `"Id"` on the job. Only a single message containing Id "d89c209a-6b81-4266-a768-8cde6f613753" will be executed at an given time. This is case sensitive! 
 
 Nested properties are also supported. Given a queue message with the following body:
 ```json
@@ -184,7 +192,17 @@ Nested properties are also supported. Given a queue message with the following b
 When the scope is set to `[Singleton("My:Nested:Property")]` on the function. Only a single message containing `500` will be executed at an given time.
 
 ### Singleton Options
-You can specify the following singleton options via the singleton attribute `[Singleton(scope: "Id", containerName: ContainerName, minimumIntervalInSeconds: 1)]`:
+You can specify the following singleton options via the singleton function `.AsSingleton(opt => {})` or via the `appsettings.json` using the Dequeueable:Singleton section:
+
+```json
+{
+  "Dequeueable": {
+    "Singleton": {
+      "Scope": "id"
+    }
+  }
+}
+```
 
 Setting | Description | Default | Required
 --- | --- | --- | --- |

@@ -1,7 +1,9 @@
-﻿using Dequeueable.AzureQueueStorage.Extentions;
+﻿using Dequeueable.AzureQueueStorage.Configurations;
+using Dequeueable.AzureQueueStorage.Extentions;
 using Dequeueable.AzureQueueStorage.Models;
 using Dequeueable.AzureQueueStorage.Services.Queues;
 using Dequeueable.AzureQueueStorage.Services.Timers;
+using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Services.Singleton
 {
@@ -9,20 +11,20 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
     {
         private readonly ISingletonLockManager _singletonLockManager;
         private readonly IQueueMessageExecutor _queueMessageExecutor;
-        private readonly SingletonAttribute _singletonAttribute;
+        private readonly SingletonHostOptions _options;
 
         public SingletonQueueMessageExecutor(ISingletonLockManager singletonLockManager,
             IQueueMessageExecutor queueMessageExecutor,
-            SingletonAttribute singletonAttribute)
+            IOptions<SingletonHostOptions> singletonHostOptions)
         {
             _singletonLockManager = singletonLockManager;
             _queueMessageExecutor = queueMessageExecutor;
-            _singletonAttribute = singletonAttribute;
+            _options = singletonHostOptions.Value;
         }
 
         public async Task ExecuteAsync(Message message, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(_singletonAttribute.Scope))
+            if (string.IsNullOrWhiteSpace(_options.Scope))
             {
                 throw new InvalidOperationException("The Singleton Scope cannot be empty when creating a scoped distributed lock");
             }
@@ -56,7 +58,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             try
             {
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                using var timer = new LeaseTimeoutTimer(_singletonLockManager, new LinearDelayStrategy(TimeSpan.FromSeconds(_singletonAttribute.MinimumPollingIntervalInSeconds)));
+                using var timer = new LeaseTimeoutTimer(_singletonLockManager, new LinearDelayStrategy(TimeSpan.FromSeconds(_options.MinimumPollingIntervalInSeconds)));
 
                 timer.Start(leaseId, lockName, onFaultedAction: () =>
                 {
@@ -82,15 +84,15 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
         {
             try
             {
-                var lockName = message.GetValueByPropertyName(_singletonAttribute.Scope!);
+                var lockName = message.GetValueByPropertyName(_options.Scope);
 
                 return string.IsNullOrWhiteSpace(lockName)
-                    ? throw new SingletonException($"The provided scope name, '{_singletonAttribute.Scope}' , does not exist on the message with id '{message.MessageId}'")
+                    ? throw new SingletonException($"The provided scope name, '{_options.Scope}' , does not exist on the message with id '{message.MessageId}'")
                     : lockName;
             }
             catch (KeyNotFoundException ex)
             {
-                throw new SingletonException($"The provided scope name, '{_singletonAttribute.Scope}' , does not exist on the message with id '{message.MessageId}'", ex);
+                throw new SingletonException($"The provided scope name, '{_options.Scope}' , does not exist on the message with id '{message.MessageId}'", ex);
             }
             catch (System.Text.Json.JsonException ex)
             {

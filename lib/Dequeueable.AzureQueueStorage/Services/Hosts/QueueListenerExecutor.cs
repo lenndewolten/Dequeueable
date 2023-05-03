@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
-    internal sealed class QueueListener : IHost
+    internal sealed class QueueListenerExecutor : IHostExecutor
     {
 
         private readonly IDelayStrategy _delayStrategy;
@@ -15,14 +15,14 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
         private readonly List<Task> _processing = new();
         private readonly IQueueMessageManager _messagesManager;
         private readonly IQueueMessageHandler _queueMessageHandler;
-        private readonly ILogger<QueueListener> _logger;
-        private readonly ListenerOptions _options;
+        private readonly ILogger<QueueListenerExecutor> _logger;
+        private readonly ListenerHostOptions _options;
 
-        public QueueListener(
+        public QueueListenerExecutor(
             IQueueMessageManager messagesManager,
             IQueueMessageHandler queueMessageHandler,
-            IOptions<ListenerOptions> options,
-            ILogger<QueueListener> logger)
+            IOptions<ListenerHostOptions> options,
+            ILogger<QueueListenerExecutor> logger)
         {
             _messagesManager = messagesManager;
             _queueMessageHandler = queueMessageHandler;
