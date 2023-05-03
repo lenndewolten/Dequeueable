@@ -5,7 +5,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
     /// <summary>
     /// Host options to configure the settings of the host and it's queue listeners
     /// </summary>
-    public class ListenerOptions : HostOptions
+    public class ListenerHostOptions : HostOptions
     {
         private int? _newBatchThreshold;
 
@@ -38,12 +38,12 @@ namespace Dequeueable.AzureQueueStorage.Configurations
         /// </summary>
         public TimeSpan? DeltaBackOff { get; set; }
 
-        internal static bool ValidatePollingInterval(ListenerOptions options)
+        internal static bool ValidatePollingInterval(ListenerHostOptions options)
         {
             return options.MinimumPollingIntervalInMilliseconds < options.MaximumPollingIntervalInMilliseconds;
         }
 
-        internal static bool ValidateNewBatchThreshold(ListenerOptions options)
+        internal static bool ValidateNewBatchThreshold(ListenerHostOptions options)
         {
             return options._newBatchThreshold is null || options.NewBatchThreshold <= options.BatchSize;
         }

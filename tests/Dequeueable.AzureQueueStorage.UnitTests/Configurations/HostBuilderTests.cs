@@ -110,7 +110,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
             var host = hostBuilder.Build();
 
             // Assert
-            host.Services.GetRequiredService<IHostOptions>().Should().BeOfType<ListenerOptions>();
+            host.Services.GetRequiredService<IHostOptions>().Should().BeOfType<ListenerHostOptions>();
         }
 
         [Fact]
@@ -158,7 +158,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
             var host = hostBuilder.Build();
 
             // Assert
-            host.Services.GetRequiredService<IOptions<ListenerOptions>>().Value.NewBatchThreshold.Should().Be(0);
+            host.Services.GetRequiredService<IOptions<ListenerHostOptions>>().Value.NewBatchThreshold.Should().Be(0);
         }
     }
 }

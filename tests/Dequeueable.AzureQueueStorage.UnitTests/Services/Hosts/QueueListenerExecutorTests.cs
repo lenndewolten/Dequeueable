@@ -18,8 +18,8 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Hosts
             // Arrange
             var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageHandlerMock = new Mock<IQueueMessageHandler>(MockBehavior.Strict);
-            var options = new ListenerOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueName = "TestQueue" };
-            var optionsMock = new Mock<IOptions<ListenerOptions>>(MockBehavior.Strict);
+            var options = new ListenerHostOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueName = "TestQueue" };
+            var optionsMock = new Mock<IOptions<ListenerHostOptions>>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger<QueueListenerExecutor>>(MockBehavior.Strict);
 
             queueMessageManagerMock.Setup(m => m.RetrieveMessagesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(Array.Empty<Message>());
@@ -49,8 +49,8 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Hosts
             var messages = new[] { new MessageTestDataBuilder().WithmessageId("1").Build(), new MessageTestDataBuilder().WithmessageId("2").Build() };
             var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageHandlerMock = new Mock<IQueueMessageHandler>(MockBehavior.Strict);
-            var options = new ListenerOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueName = "TestQueue" };
-            var optionsMock = new Mock<IOptions<ListenerOptions>>(MockBehavior.Strict);
+            var options = new ListenerHostOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1, QueueName = "TestQueue" };
+            var optionsMock = new Mock<IOptions<ListenerHostOptions>>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger<QueueListenerExecutor>>(MockBehavior.Strict);
 
             queueMessageManagerMock.Setup(m => m.RetrieveMessagesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(messages);

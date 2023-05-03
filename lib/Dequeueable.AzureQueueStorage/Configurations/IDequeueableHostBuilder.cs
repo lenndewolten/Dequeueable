@@ -21,8 +21,8 @@
         /// <summary>
         /// The application will run as a listener, the queue will periodically be polled for new message.
         /// </summary>
-        /// <param name="options">Action to configure the <see cref="ListenerOptions"/></param>
+        /// <param name="options">Action to configure the <see cref="ListenerHostOptions"/></param>
         /// <returns><see cref="IDequeueableHostBuilder"/></returns>
-        IDequeueableHostBuilder RunAsListener(Action<ListenerOptions>? options = null);
+        IDequeueableHostBuilder RunAsListener(Action<ListenerHostOptions>? options = null);
     }
 }

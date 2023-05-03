@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
 {
-    public class ListenerOptionsTests
+    public class ListenerHostOptionsTests
     {
         [Fact]
-        public void Given_a_ListenerOptions_when_MinimumPollingIntervalInMilliseconds_is_zero_then_the_validation_result_contains_the_correct_error_message()
+        public void Given_a_ListenerHostOptions_when_MinimumPollingIntervalInMilliseconds_is_zero_then_the_validation_result_contains_the_correct_error_message()
         {
             // Arrange
-            var sut = new ListenerOptions
+            var sut = new ListenerHostOptions
             {
                 MinimumPollingIntervalInMilliseconds = 0
             };
@@ -23,10 +23,10 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_ListenerOptions_when_MinimumPollingIntervalInMilliseconds_is_within_range_then_the_validation_result_are_empty()
+        public void Given_a_ListenerHostOptions_when_MinimumPollingIntervalInMilliseconds_is_within_range_then_the_validation_result_are_empty()
         {
             // Arrange
-            var sut = new ListenerOptions
+            var sut = new ListenerHostOptions
             {
                 MinimumPollingIntervalInMilliseconds = 5
             };
@@ -39,10 +39,10 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_ListenerOptions_when_MaximumPollingIntervalInMilliseconds_is_zero_then_the_validation_result_contains_the_correct_error_message()
+        public void Given_a_ListenerHostOptions_when_MaximumPollingIntervalInMilliseconds_is_zero_then_the_validation_result_contains_the_correct_error_message()
         {
             // Arrange
-            var sut = new ListenerOptions
+            var sut = new ListenerHostOptions
             {
                 MaximumPollingIntervalInMilliseconds = 0
             };
@@ -55,10 +55,10 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_ListenerOptions_when_MaximumPollingIntervalInMilliseconds_is_within_range_then_the_validation_result_are_empty()
+        public void Given_a_ListenerHostOptions_when_MaximumPollingIntervalInMilliseconds_is_within_range_then_the_validation_result_are_empty()
         {
             // Arrange
-            var sut = new ListenerOptions
+            var sut = new ListenerHostOptions
             {
                 MaximumPollingIntervalInMilliseconds = 5
             };
@@ -71,68 +71,68 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_ListenerOptions_when_MinimumPollingIntervalInMilliseconds_is_higher_than_MaximumPollingIntervalInMilliseconds_then_ValidatePollingInterval_returns_false()
+        public void Given_a_ListenerHostOptions_when_MinimumPollingIntervalInMilliseconds_is_higher_than_MaximumPollingIntervalInMilliseconds_then_ValidatePollingInterval_returns_false()
         {
             // Arrange
-            var sut = new ListenerOptions
+            var sut = new ListenerHostOptions
             {
                 MaximumPollingIntervalInMilliseconds = 5,
                 MinimumPollingIntervalInMilliseconds = 6
             };
 
             // Act
-            var result = ListenerOptions.ValidatePollingInterval(sut);
+            var result = ListenerHostOptions.ValidatePollingInterval(sut);
 
             // Assert
             result.Should().BeFalse();
         }
 
         [Fact]
-        public void Given_a_ListenerOptions_when_MinimumPollingIntervalInMilliseconds_is_lower_than_MaximumPollingIntervalInMilliseconds_then_ValidatePollingInterval_returns_true()
+        public void Given_a_ListenerHostOptions_when_MinimumPollingIntervalInMilliseconds_is_lower_than_MaximumPollingIntervalInMilliseconds_then_ValidatePollingInterval_returns_true()
         {
             // Arrange
-            var sut = new ListenerOptions
+            var sut = new ListenerHostOptions
             {
                 MaximumPollingIntervalInMilliseconds = 6,
                 MinimumPollingIntervalInMilliseconds = 5
             };
 
             // Act
-            var result = ListenerOptions.ValidatePollingInterval(sut);
+            var result = ListenerHostOptions.ValidatePollingInterval(sut);
 
             // Assert
             result.Should().BeTrue();
         }
 
         [Fact]
-        public void Given_a_ListenerOptions_when_NewBatchThreshold_is_higher_than_BatchSize_then_ValidateNewBatchThreshold_returns_false()
+        public void Given_a_ListenerHostOptions_when_NewBatchThreshold_is_higher_than_BatchSize_then_ValidateNewBatchThreshold_returns_false()
         {
             // Arrange
-            var sut = new ListenerOptions
+            var sut = new ListenerHostOptions
             {
                 NewBatchThreshold = 6,
                 BatchSize = 4
             };
 
             // Act
-            var result = ListenerOptions.ValidateNewBatchThreshold(sut);
+            var result = ListenerHostOptions.ValidateNewBatchThreshold(sut);
 
             // Assert
             result.Should().BeFalse();
         }
 
         [Fact]
-        public void Given_a_ListenerOptions_when_NewBatchThreshold_is_lower_than_BatchSize_then_ValidateNewBatchThreshold_returns_true()
+        public void Given_a_ListenerHostOptions_when_NewBatchThreshold_is_lower_than_BatchSize_then_ValidateNewBatchThreshold_returns_true()
         {
             // Arrange
-            var sut = new ListenerOptions
+            var sut = new ListenerHostOptions
             {
                 NewBatchThreshold = 5,
                 BatchSize = 5
             };
 
             // Act
-            var result = ListenerOptions.ValidateNewBatchThreshold(sut);
+            var result = ListenerHostOptions.ValidateNewBatchThreshold(sut);
 
             // Assert
             result.Should().BeTrue();

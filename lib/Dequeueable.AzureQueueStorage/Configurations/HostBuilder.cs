@@ -40,11 +40,11 @@ namespace Dequeueable.AzureQueueStorage.Configurations
             return this;
         }
 
-        public IDequeueableHostBuilder RunAsListener(Action<ListenerOptions>? options = null)
+        public IDequeueableHostBuilder RunAsListener(Action<ListenerHostOptions>? options = null)
         {
-            _services.AddOptions<ListenerOptions>().BindConfiguration(HostOptions.Dequeueable)
-                .Validate(ListenerOptions.ValidatePollingInterval, $"The '{nameof(ListenerOptions.MinimumPollingIntervalInMilliseconds)}' must not be greater than the '{nameof(ListenerOptions.MaximumPollingIntervalInMilliseconds)}'.")
-                .Validate(ListenerOptions.ValidateNewBatchThreshold, $"The '{nameof(ListenerOptions.NewBatchThreshold)}' must not be greater than the '{nameof(ListenerOptions.BatchSize)}'.")
+            _services.AddOptions<ListenerHostOptions>().BindConfiguration(HostOptions.Dequeueable)
+                .Validate(ListenerHostOptions.ValidatePollingInterval, $"The '{nameof(ListenerHostOptions.MinimumPollingIntervalInMilliseconds)}' must not be greater than the '{nameof(ListenerHostOptions.MaximumPollingIntervalInMilliseconds)}'.")
+                .Validate(ListenerHostOptions.ValidateNewBatchThreshold, $"The '{nameof(ListenerHostOptions.NewBatchThreshold)}' must not be greater than the '{nameof(ListenerHostOptions.BatchSize)}'.")
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
@@ -58,7 +58,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
 
             _services.TryAddSingleton<IHostOptions>(provider =>
             {
-                var opt = provider.GetRequiredService<IOptions<ListenerOptions>>();
+                var opt = provider.GetRequiredService<IOptions<ListenerHostOptions>>();
                 return opt.Value;
             });
 
@@ -92,7 +92,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
                 return new SingletonQueueMessageExecutor(singletonManager, executor, attribute);
             });
 
-            _services.PostConfigure<ListenerOptions>(storageAccountOptions => storageAccountOptions.NewBatchThreshold = 0);
+            _services.PostConfigure<ListenerHostOptions>(storageAccountOptions => storageAccountOptions.NewBatchThreshold = 0);
 
             return this;
         }

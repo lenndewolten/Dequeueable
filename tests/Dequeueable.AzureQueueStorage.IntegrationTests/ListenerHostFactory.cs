@@ -9,12 +9,12 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
         where TFunction : class, IAzureQueueFunction
     {
         public readonly IHostBuilder HostBuilder;
-        private readonly Action<Configurations.ListenerOptions>? _options = opt =>
+        private readonly Action<Configurations.ListenerHostOptions>? _options = opt =>
         {
             opt.NewBatchThreshold = 0;
         };
 
-        public ListenerHostFactory(Action<Configurations.ListenerOptions>? overrideOptions = null, Action<Configurations.SingletonOptions>? singletonOptions = null)
+        public ListenerHostFactory(Action<Configurations.ListenerHostOptions>? overrideOptions = null, Action<Configurations.SingletonOptions>? singletonOptions = null)
         {
             if (overrideOptions is not null)
             {

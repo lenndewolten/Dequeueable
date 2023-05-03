@@ -16,12 +16,12 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
         private readonly IQueueMessageManager _messagesManager;
         private readonly IQueueMessageHandler _queueMessageHandler;
         private readonly ILogger<QueueListenerExecutor> _logger;
-        private readonly ListenerOptions _options;
+        private readonly ListenerHostOptions _options;
 
         public QueueListenerExecutor(
             IQueueMessageManager messagesManager,
             IQueueMessageHandler queueMessageHandler,
-            IOptions<ListenerOptions> options,
+            IOptions<ListenerHostOptions> options,
             ILogger<QueueListenerExecutor> logger)
         {
             _messagesManager = messagesManager;
