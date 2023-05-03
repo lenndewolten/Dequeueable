@@ -9,18 +9,18 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
     internal sealed class BlobClientProvider : IBlobClientProvider
     {
         private readonly IHostOptions _options;
-        private readonly SingletonOptions _singletonOptions;
+        private readonly SingletonHostOptions _singletonHostOptions;
         private readonly IBlobClientFactory _factory;
         private readonly ILogger<BlobClientProvider> _logger;
 
         public BlobClientProvider(
             IBlobClientFactory factory,
             IHostOptions options,
-            IOptions<SingletonOptions> singletonOptions,
+            IOptions<SingletonHostOptions> singletonHostOptions,
             ILogger<BlobClientProvider> logger)
         {
             _options = options;
-            _singletonOptions = singletonOptions.Value;
+            _singletonHostOptions = singletonHostOptions.Value;
             _factory = factory;
             _logger = logger;
         }
@@ -31,7 +31,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             {
                 _logger.LogDebug("Authenticate the BlobClient through Active Directory");
 
-                var uri = BuildUri(_singletonOptions.BlobUriFormat, _options.AccountName, _singletonOptions.ContainerName, fileName);
+                var uri = BuildUri(_singletonHostOptions.BlobUriFormat, _options.AccountName, _singletonHostOptions.ContainerName, fileName);
                 return _factory.Create(uri, _options.AuthenticationScheme);
             }
 
@@ -41,7 +41,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             }
 
             _logger.LogDebug("Authenticate the BlobClient through the ConnectionString");
-            return _factory.Create(_options.ConnectionString, _singletonOptions.ContainerName, fileName);
+            return _factory.Create(_options.ConnectionString, _singletonHostOptions.ContainerName, fileName);
         }
 
         private Uri BuildUri(string? uriFormat, string? accountName, string containerName, string fileName)
@@ -56,7 +56,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
                 uriFormat = uriFormat.Replace($"{{{nameof(IHostOptions.AccountName)}}}", accountName, StringComparison.InvariantCultureIgnoreCase);
             }
 
-            uriFormat = uriFormat.Replace($"{{{nameof(_singletonOptions.ContainerName)}}}", containerName, StringComparison.InvariantCultureIgnoreCase);
+            uriFormat = uriFormat.Replace($"{{{nameof(_singletonHostOptions.ContainerName)}}}", containerName, StringComparison.InvariantCultureIgnoreCase);
             uriFormat = uriFormat.Replace($"{{blobName}}", fileName, StringComparison.InvariantCultureIgnoreCase);
 
             try

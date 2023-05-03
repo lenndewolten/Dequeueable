@@ -1,6 +1,5 @@
 # Azure Queue Storage Sample job
 
-
 ## Docker
 
 ### Build
@@ -16,7 +15,7 @@ docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplejo
 ```
 
 ```
-docker scan lenndewolten/dequeueable:azure-queue-storage-samplejob-v2 
+docker scan lenndewolten/dequeueable:azure-queue-storage-samplejob-v2
 
 > Organization:      lenndewolten
 > Package manager:   apk

@@ -11,7 +11,7 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
         public readonly IHostBuilder HostBuilder;
         private readonly Action<Configurations.HostOptions>? _options;
 
-        public JobHostFactory(Action<Configurations.HostOptions>? overrideOptions = null, Action<Configurations.SingletonOptions>? singletonOptions = null)
+        public JobHostFactory(Action<Configurations.HostOptions>? overrideOptions = null, Action<Configurations.SingletonHostOptions>? singletonHostOptions = null)
         {
             if (overrideOptions is not null)
             {
@@ -24,9 +24,9 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
                     var hostBuilder = services.AddAzureQueueStorageServices<TestFunction>()
                     .RunAsJob(_options);
 
-                    if (singletonOptions is not null)
+                    if (singletonHostOptions is not null)
                     {
-                        hostBuilder.AsSingleton(singletonOptions);
+                        hostBuilder.AsSingleton(singletonHostOptions);
                     }
 
                     services.AddTransient<IFakeService, FakeService>();

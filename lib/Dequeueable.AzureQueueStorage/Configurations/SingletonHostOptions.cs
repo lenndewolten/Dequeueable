@@ -3,9 +3,9 @@
 namespace Dequeueable.AzureQueueStorage.Configurations
 {
     /// <summary>
-    /// SingletonOptions to configure the singleton settings of the host
+    /// SingletonHostOptions to configure the singleton settings of the host
     /// </summary>
-    public class SingletonOptions
+    public class SingletonHostOptions
     {
         internal static string Name => $"{HostOptions.Dequeueable}:Singleton";
 
@@ -45,7 +45,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
         [Required(AllowEmptyStrings = false, ErrorMessage = "{0} cannot be empty.")]
         public string BlobUriFormat { get; set; } = "https://{accountName}.blob.core.windows.net/{containerName}/{blobName}";
 
-        internal static bool ValidatePollingInterval(SingletonOptions options)
+        internal static bool ValidatePollingInterval(SingletonHostOptions options)
         {
             return options.MinimumPollingIntervalInSeconds < options.MaximumPollingIntervalInSeconds;
         }

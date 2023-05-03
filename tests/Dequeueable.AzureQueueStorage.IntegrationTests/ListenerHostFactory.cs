@@ -14,7 +14,7 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
             opt.NewBatchThreshold = 0;
         };
 
-        public ListenerHostFactory(Action<Configurations.ListenerHostOptions>? overrideOptions = null, Action<Configurations.SingletonOptions>? singletonOptions = null)
+        public ListenerHostFactory(Action<Configurations.ListenerHostOptions>? overrideOptions = null, Action<Configurations.SingletonHostOptions>? singletonHostOptions = null)
         {
             if (overrideOptions is not null)
             {
@@ -27,9 +27,9 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
                     var hostBuilder = services.AddAzureQueueStorageServices<TestFunction>()
                     .RunAsListener(_options);
 
-                    if (singletonOptions is not null)
+                    if (singletonHostOptions is not null)
                     {
-                        hostBuilder.AsSingleton(singletonOptions);
+                        hostBuilder.AsSingleton(singletonHostOptions);
                     }
 
                     services.AddTransient<IFakeService, FakeService>();

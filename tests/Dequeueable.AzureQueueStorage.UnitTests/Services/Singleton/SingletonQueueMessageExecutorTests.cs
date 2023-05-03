@@ -18,11 +18,11 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
 
-            var singletonOptions = new SingletonOptions { Scope = null! };
-            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
-            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
+            var singletonHostOptions = new SingletonHostOptions { Scope = null! };
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonOptionsMock.Object); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonHostOptionsMock.Object); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -40,17 +40,17 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
 
-            var singletonOptions = new SingletonOptions { Scope = propertyName };
-            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
-            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
+            var singletonHostOptions = new SingletonHostOptions { Scope = propertyName };
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonOptionsMock.Object); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonHostOptionsMock.Object); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
 
             // Assert
-            await act.Should().ThrowExactlyAsync<SingletonException>().WithMessage($"The provided scope name, '{singletonOptions.Scope}' , does not exist on the message with id '{message.MessageId}'");
+            await act.Should().ThrowExactlyAsync<SingletonException>().WithMessage($"The provided scope name, '{singletonHostOptions.Scope}' , does not exist on the message with id '{message.MessageId}'");
         }
 
         [Fact]
@@ -62,11 +62,11 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
 
-            var singletonOptions = new SingletonOptions { Scope = propertyName };
-            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
-            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
+            var singletonHostOptions = new SingletonHostOptions { Scope = propertyName };
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonOptionsMock.Object); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonHostOptionsMock.Object); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -84,17 +84,17 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
 
-            var singletonOptions = new SingletonOptions { Scope = propertyName };
-            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
-            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
+            var singletonHostOptions = new SingletonHostOptions { Scope = propertyName };
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonOptionsMock.Object); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonHostOptionsMock.Object); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
 
             // Assert
-            await act.Should().ThrowExactlyAsync<SingletonException>().WithMessage($"The provided scope name, '{singletonOptions.Scope}' , does not exist on the message with id '{message.MessageId}'");
+            await act.Should().ThrowExactlyAsync<SingletonException>().WithMessage($"The provided scope name, '{singletonHostOptions.Scope}' , does not exist on the message with id '{message.MessageId}'");
         }
 
         [Fact]
@@ -108,15 +108,15 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
 
-            var singletonOptions = new SingletonOptions { Scope = propertyName };
-            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
-            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
+            var singletonHostOptions = new SingletonHostOptions { Scope = propertyName };
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
             singletonLockManagerMock.Setup(s => s.AquireLockAsync(value, It.IsAny<CancellationToken>())).ReturnsAsync(leaseId);
             singletonLockManagerMock.Setup(s => s.ReleaseLockAsync(leaseId, value, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             singletonLockManagerMock.Setup(s => s.RenewLockAsync(leaseId, value, It.IsAny<CancellationToken>())).ThrowsAsync(new Exception("Renew fails!"));
             queueMessageExecutorMock.Setup(s => s.ExecuteAsync(message, It.IsAny<CancellationToken>())).Returns(Task.Delay(TimeSpan.FromSeconds(10)));
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonOptionsMock.Object); ;
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonHostOptionsMock.Object); ;
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -136,15 +136,15 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
 
-            var singletonOptions = new SingletonOptions { Scope = propertyName };
-            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
-            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
+            var singletonHostOptions = new SingletonHostOptions { Scope = propertyName };
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
             singletonLockManagerMock.Setup(s => s.AquireLockAsync(scope, It.IsAny<CancellationToken>())).ReturnsAsync(leaseId);
             singletonLockManagerMock.Setup(s => s.ReleaseLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             singletonLockManagerMock.Setup(s => s.RenewLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).ReturnsAsync(DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(60)));
             queueMessageExecutorMock.Setup(s => s.ExecuteAsync(message, It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonOptionsMock.Object);
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonHostOptionsMock.Object);
 
             // Act
             Func<Task> act = () => sut.ExecuteAsync(message, CancellationToken.None);
@@ -164,15 +164,15 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var singletonLockManagerMock = new Mock<ISingletonLockManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
 
-            var singletonOptions = new SingletonOptions { Scope = propertyName };
-            var singletonOptionsMock = new Mock<IOptions<SingletonOptions>>();
-            singletonOptionsMock.Setup(o => o.Value).Returns(singletonOptions);
+            var singletonHostOptions = new SingletonHostOptions { Scope = propertyName };
+            var singletonHostOptionsMock = new Mock<IOptions<SingletonHostOptions>>();
+            singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
             singletonLockManagerMock.Setup(s => s.AquireLockAsync(scope, It.IsAny<CancellationToken>())).ReturnsAsync(leaseId);
             singletonLockManagerMock.Setup(s => s.ReleaseLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             singletonLockManagerMock.Setup(s => s.RenewLockAsync(leaseId, scope, It.IsAny<CancellationToken>())).ReturnsAsync(DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(60)));
             queueMessageExecutorMock.Setup(s => s.ExecuteAsync(message, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
 
-            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonOptionsMock.Object);
+            var sut = new SingletonQueueMessageExecutor(singletonLockManagerMock.Object, queueMessageExecutorMock.Object, singletonHostOptionsMock.Object);
 
             // Act
             await sut.ExecuteAsync(message, CancellationToken.None);

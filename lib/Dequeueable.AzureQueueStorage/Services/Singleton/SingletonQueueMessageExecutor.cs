@@ -11,15 +11,15 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
     {
         private readonly ISingletonLockManager _singletonLockManager;
         private readonly IQueueMessageExecutor _queueMessageExecutor;
-        private readonly SingletonOptions _options;
+        private readonly SingletonHostOptions _options;
 
         public SingletonQueueMessageExecutor(ISingletonLockManager singletonLockManager,
             IQueueMessageExecutor queueMessageExecutor,
-            IOptions<SingletonOptions> singletonOptions)
+            IOptions<SingletonHostOptions> singletonHostOptions)
         {
             _singletonLockManager = singletonLockManager;
             _queueMessageExecutor = queueMessageExecutor;
-            _options = singletonOptions.Value;
+            _options = singletonHostOptions.Value;
         }
 
         public async Task ExecuteAsync(Message message, CancellationToken cancellationToken)

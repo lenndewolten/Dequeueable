@@ -65,10 +65,10 @@ namespace Dequeueable.AzureQueueStorage.Configurations
             return this;
         }
 
-        public IDequeueableHostBuilder AsSingleton(Action<SingletonOptions>? options = null)
+        public IDequeueableHostBuilder AsSingleton(Action<SingletonHostOptions>? options = null)
         {
-            _services.AddOptions<SingletonOptions>().BindConfiguration(SingletonOptions.Name)
-                .Validate(SingletonOptions.ValidatePollingInterval, $"The '{nameof(SingletonOptions.MinimumPollingIntervalInSeconds)}' must not be greater than the '{nameof(SingletonOptions.MaximumPollingIntervalInSeconds)}'.")
+            _services.AddOptions<SingletonHostOptions>().BindConfiguration(SingletonHostOptions.Name)
+                .Validate(SingletonHostOptions.ValidatePollingInterval, $"The '{nameof(SingletonHostOptions.MinimumPollingIntervalInSeconds)}' must not be greater than the '{nameof(SingletonHostOptions.MaximumPollingIntervalInSeconds)}'.")
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
@@ -87,7 +87,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
             {
                 var singletonManager = provider.GetRequiredService<ISingletonLockManager>();
                 var executor = provider.GetRequiredService<QueueMessageExecutor>();
-                var attribute = provider.GetRequiredService<IOptions<SingletonOptions>>();
+                var attribute = provider.GetRequiredService<IOptions<SingletonHostOptions>>();
 
                 return new SingletonQueueMessageExecutor(singletonManager, executor, attribute);
             });
