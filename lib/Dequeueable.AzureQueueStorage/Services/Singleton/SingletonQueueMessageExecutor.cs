@@ -7,20 +7,12 @@ using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Services.Singleton
 {
-    internal sealed class SingletonQueueMessageExecutor : IQueueMessageExecutor
+    internal sealed class SingletonQueueMessageExecutor(ISingletonLockManager singletonLockManager,
+        IQueueMessageExecutor queueMessageExecutor,
+        TimeProvider timeProvider,
+        IOptions<SingletonHostOptions> singletonHostOptions) : IQueueMessageExecutor
     {
-        private readonly ISingletonLockManager _singletonLockManager;
-        private readonly IQueueMessageExecutor _queueMessageExecutor;
-        private readonly SingletonHostOptions _options;
-
-        public SingletonQueueMessageExecutor(ISingletonLockManager singletonLockManager,
-            IQueueMessageExecutor queueMessageExecutor,
-            IOptions<SingletonHostOptions> singletonHostOptions)
-        {
-            _singletonLockManager = singletonLockManager;
-            _queueMessageExecutor = queueMessageExecutor;
-            _options = singletonHostOptions.Value;
-        }
+        private readonly SingletonHostOptions _options = singletonHostOptions.Value;
 
         public async Task ExecuteAsync(Message message, CancellationToken cancellationToken)
         {
@@ -47,7 +39,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             try
             {
                 lockName = GetLockName(message);
-                leaseId = await _singletonLockManager.AquireLockAsync(lockName, cancellationToken);
+                leaseId = await singletonLockManager.AquireLockAsync(lockName, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -58,7 +50,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             try
             {
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                using var timer = new LeaseTimeoutTimer(_singletonLockManager, new LinearDelayStrategy(TimeSpan.FromSeconds(_options.MinimumPollingIntervalInSeconds)));
+                await using var timer = new LeaseTimeoutTimer(singletonLockManager, timeProvider, new LinearDelayStrategy(TimeSpan.FromSeconds(_options.MinimumPollingIntervalInSeconds)));
 
                 timer.Start(leaseId, lockName, onFaultedAction: () =>
                 {
@@ -66,8 +58,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
                     cts.Cancel();
                 });
 
-                await _queueMessageExecutor.ExecuteAsync(message, cts.Token);
-                timer.Stop();
+                await queueMessageExecutor.ExecuteAsync(message, cts.Token);
                 taskCompletionSource.TrySetResult();
             }
             catch (Exception ex)
@@ -76,7 +67,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             }
             finally
             {
-                await _singletonLockManager.ReleaseLockAsync(leaseId, lockName, cancellationToken);
+                await singletonLockManager.ReleaseLockAsync(leaseId, lockName, cancellationToken);
             }
         }
 

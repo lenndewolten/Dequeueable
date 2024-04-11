@@ -142,40 +142,5 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             peekedPoisonQueueMessage.Value.Should().NotBeNull();
             peekedPoisonQueueMessage.Value.Body.ToString().Should().Be(message);
         }
-
-        //[Fact]
-        //public async Task Given_a_Function_with_a_singleton_attribute_when_a_queue_has_two_messages_then_they_are_handled_correctly()
-        //{
-        //    // Arrange
-        //    var scope = "testscope";
-        //    var factory = new ListenerHostFactory<SingletonFunction>(_azuriteFixture.ConnectionString, _queueName);
-
-        //    var fakeServiceMock = new Mock<IFakeService>();
-
-        //    factory.ConfigureTestServices(services =>
-        //    {
-        //        services.AddTransient(_ => fakeServiceMock.Object);
-        //    });
-
-        //    var blobContainerClient = new BlobContainerClient(_azuriteFixture.ConnectionString, SingletonFunction.ContainerName);
-
-        //    var messages = new[] { new { Id = scope }, new { Id = scope } };
-        //    foreach (var message in messages)
-        //    {
-        //        await _queueClient.SendMessageAsync(BinaryData.FromObjectAsJson(message));
-        //    }
-
-        //    // Act
-        //    var host = factory.Build();
-        //    await host.HandleAsync(CancellationToken.None);
-
-        //    // Assert
-        //    fakeServiceMock.Verify(f => f.Execute(It.IsAny<Message>()), Times.Exactly(messages.Length));
-        //    var peekedMessage = await _queueClient.PeekMessageAsync();
-        //    peekedMessage.Value.Should().BeNull();
-
-        //    var blobclient = blobContainerClient.GetBlobClient(scope);
-        //    (await blobclient.ExistsAsync()).Value.Should().BeTrue();
-        //}
     }
 }

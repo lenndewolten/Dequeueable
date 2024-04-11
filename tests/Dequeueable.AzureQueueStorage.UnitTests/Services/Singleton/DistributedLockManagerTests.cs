@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
+using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Services.Singleton;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -29,6 +30,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger>();
+            var options = new SingletonHostOptions();
 
             blobPropertiesResponseFake.SetupGet(p => p.Value).Returns(blobPropertiesFake);
             blobLeaseResponseFake.SetupGet(p => p.Value).Returns(blobLeaseFake);
@@ -38,7 +40,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 .Returns<string>((leaseId) => blobLeaseClientFake.Object);
             blobClientFake.Setup(b => b.GetPropertiesAsync(null, It.IsAny<CancellationToken>())).ReturnsAsync(blobPropertiesResponseFake.Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             var result = await sut.AcquireAsync(CancellationToken.None);
@@ -59,7 +61,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
-
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobPropertiesResponseFake.SetupGet(p => p.Value).Returns(blobPropertiesFake);
@@ -70,7 +72,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 .Returns<string>((leaseId) => blobLeaseClientFake.Object);
             blobClientFake.Setup(b => b.GetPropertiesAsync(null, It.IsAny<CancellationToken>())).ReturnsAsync(blobPropertiesResponseFake.Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             var result = await sut.AcquireAsync(CancellationToken.None);
@@ -89,7 +91,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
-
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobLeaseResponseFake.SetupGet(p => p.Value).Returns(blobLeaseFake);
@@ -100,7 +102,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             blobClientFake.Setup(b => b.UploadAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>())).ReturnsAsync(new Mock<Response<BlobContentInfo>>(MockBehavior.Strict).Object);
             blobClientFake.Setup(b => b.GetPropertiesAsync(null, It.IsAny<CancellationToken>())).ThrowsAsync(new RequestFailedException(404, "not found"));
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             var result = await sut.AcquireAsync(CancellationToken.None);
@@ -120,7 +122,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobContainerClientFake = new Mock<BlobContainerClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
-
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobLeaseResponseFake.SetupGet(p => p.Value).Returns(blobLeaseFake);
@@ -137,7 +139,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             blobClientFake.Protected().Setup<BlobContainerClient>("GetParentBlobContainerClientCore")
                 .Returns(() => blobContainerClientFake.Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             var result = await sut.AcquireAsync(CancellationToken.None);
@@ -157,7 +159,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobContainerClientFake = new Mock<BlobContainerClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
-
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobLeaseResponseFake.SetupGet(p => p.Value).Returns(blobLeaseFake);
@@ -174,7 +176,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             blobClientFake.Protected().Setup<BlobContainerClient>("GetParentBlobContainerClientCore")
                 .Returns(() => blobContainerClientFake.Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             var result = await sut.AcquireAsync(CancellationToken.None);
@@ -195,7 +197,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
-
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobLeaseResponseFake.SetupGet(p => p.Value).Returns(blobLeaseFake);
@@ -208,7 +210,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 .ThrowsAsync(new RequestFailedException(statusCode, "conflict"))
                 .ReturnsAsync(new Mock<Response<BlobContentInfo>>(MockBehavior.Strict).Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             var result = await sut.AcquireAsync(CancellationToken.None);
@@ -229,7 +231,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
-
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobPropertiesResponseFake.SetupGet(p => p.Value).Returns(blobPropertiesFake);
@@ -240,7 +242,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                 .Returns<string>((leaseId) => blobLeaseClientFake.Object);
             blobClientFake.Setup(b => b.GetPropertiesAsync(null, It.IsAny<CancellationToken>())).ReturnsAsync(blobPropertiesResponseFake.Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             var nextTimeout = await sut.RenewAsync(leaseId, CancellationToken.None);
@@ -260,12 +262,13 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobPropertiesResponseFake = new Mock<Response<BlobProperties>>(MockBehavior.Strict);
             var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger>();
+            var options = new SingletonHostOptions();
 
             blobClientFake.SetupGet(c => c.Name).Returns("some file name");
             blobPropertiesResponseFake.SetupGet(p => p.Value).Returns(blobPropertiesFake);
             blobClientFake.Setup(b => b.GetPropertiesAsync(null, It.IsAny<CancellationToken>())).ReturnsAsync(blobPropertiesResponseFake.Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             Func<Task> act = () => sut.RenewAsync(leaseId, CancellationToken.None);
@@ -286,6 +289,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<BlobLease>>(MockBehavior.Strict);
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobClientFake.SetupGet(c => c.Name).Returns("some file name");
@@ -306,7 +310,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
                It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)))
                 .Verifiable();
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             Func<Task> act = () => sut.RenewAsync(leaseId, CancellationToken.None);
@@ -326,13 +330,14 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<ReleasedObjectInfo>>(MockBehavior.Strict);
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobLeaseClientFake.Setup(b => b.ReleaseAsync(null, It.IsAny<CancellationToken>())).ReturnsAsync(blobLeaseResponseFake.Object).Verifiable();
             blobClientFake.Protected().Setup<BlobLeaseClient>("GetBlobLeaseClientCore", ItExpr.IsAny<string>())
                 .Returns<string>((leaseId) => blobLeaseClientFake.Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             await sut.ReleaseAsync(leaseId, CancellationToken.None);
@@ -352,13 +357,14 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobLeaseFake = BlobsModelFactory.BlobLease(new ETag(), DateTimeOffset.Now, leaseId: leaseId);
             var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobLeaseClientFake.Setup(b => b.ReleaseAsync(null, It.IsAny<CancellationToken>())).ThrowsAsync(new RequestFailedException(statusCode, "some message")).Verifiable();
             blobClientFake.Protected().Setup<BlobLeaseClient>("GetBlobLeaseClientCore", ItExpr.IsAny<string>())
                 .Returns<string>((leaseId) => blobLeaseClientFake.Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             await sut.ReleaseAsync(leaseId, CancellationToken.None);
@@ -377,13 +383,14 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>(MockBehavior.Strict);
             var blobLeaseClientFake = new Mock<BlobLeaseClient>(MockBehavior.Strict);
             var blobLeaseResponseFake = new Mock<Response<ReleasedObjectInfo>>(MockBehavior.Strict);
+            var options = new SingletonHostOptions();
             var loggerMock = new Mock<ILogger>();
 
             blobLeaseClientFake.Setup(b => b.ReleaseAsync(null, It.IsAny<CancellationToken>())).ThrowsAsync(new RequestFailedException(500, "server error"));
             blobClientFake.Protected().Setup<BlobLeaseClient>("GetBlobLeaseClientCore", ItExpr.IsAny<string>())
                 .Returns<string>((leaseId) => blobLeaseClientFake.Object);
 
-            var sut = new DistributedLockManager(blobClientFake.Object, loggerMock.Object);
+            var sut = new DistributedLockManager(blobClientFake.Object, options, loggerMock.Object);
 
             // Act
             Func<Task> act = () => sut.ReleaseAsync(leaseId, CancellationToken.None);

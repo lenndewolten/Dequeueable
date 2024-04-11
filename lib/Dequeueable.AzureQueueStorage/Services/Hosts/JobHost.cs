@@ -3,35 +3,24 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
-    internal sealed class JobHost : BackgroundService
+    internal sealed class JobHost(IHostExecutor hostHandler, IHostApplicationLifetime hostApplicationLifetime, ILogger<JobHost> logger) : BackgroundService
     {
-        private readonly ILogger<JobHost> _logger;
-        private readonly IHostExecutor _hostHandler;
-        private readonly IHostApplicationLifetime _hostApplicationLifetime;
-
-        public JobHost(IHostExecutor hostHandler, IHostApplicationLifetime hostApplicationLifetime, ILogger<JobHost> logger)
-        {
-            _hostHandler = hostHandler;
-            _hostApplicationLifetime = hostApplicationLifetime;
-            _logger = logger;
-        }
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
             {
-                await _hostHandler.HandleAsync(stoppingToken);
+                await hostHandler.HandleAsync(stoppingToken);
             }
             catch (Exception ex) when (ex is not TaskCanceledException)
             {
-                _logger.LogError(ex, "Unhandled exception occurred, shutting down the host");
+                logger.LogError(ex, "Unhandled exception occurred, shutting down the host");
                 throw;
             }
             finally
             {
                 if (!stoppingToken.IsCancellationRequested)
                 {
-                    _hostApplicationLifetime.StopApplication();
+                    hostApplicationLifetime.StopApplication();
                 }
             }
         }

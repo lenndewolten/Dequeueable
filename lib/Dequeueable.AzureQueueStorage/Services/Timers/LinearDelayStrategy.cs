@@ -1,14 +1,9 @@
 ﻿namespace Dequeueable.AzureQueueStorage.Services.Timers
 {
-    internal sealed class LinearDelayStrategy : IDelayStrategy
+    internal sealed class LinearDelayStrategy(TimeSpan minimalRenewalDelay) : IDelayStrategy
     {
-        public TimeSpan MinimalRenewalDelay { get; set; }
+        public TimeSpan MinimalRenewalDelay { get; set; } = minimalRenewalDelay;
         internal int Divisor { get; set; } = 2;
-
-        public LinearDelayStrategy(TimeSpan minimalRenewalDelay)
-        {
-            MinimalRenewalDelay = minimalRenewalDelay;
-        }
 
         public TimeSpan GetNextDelay(DateTimeOffset? nextVisibleOn = null, bool? executionSucceeded = null)
         {

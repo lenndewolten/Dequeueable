@@ -7,35 +7,23 @@ using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
-    internal sealed class QueueListenerExecutor : IHostExecutor
+    internal sealed class QueueListenerExecutor(
+        IQueueMessageManager messagesManager,
+        IQueueMessageHandler queueMessageHandler,
+        IOptions<ListenerHostOptions> options,
+        ILogger<QueueListenerExecutor> logger) : IHostExecutor
     {
 
-        private readonly IDelayStrategy _delayStrategy;
-
-        private readonly List<Task> _processing = new();
-        private readonly IQueueMessageManager _messagesManager;
-        private readonly IQueueMessageHandler _queueMessageHandler;
-        private readonly ILogger<QueueListenerExecutor> _logger;
-        private readonly ListenerHostOptions _options;
-
-        public QueueListenerExecutor(
-            IQueueMessageManager messagesManager,
-            IQueueMessageHandler queueMessageHandler,
-            IOptions<ListenerHostOptions> options,
-            ILogger<QueueListenerExecutor> logger)
-        {
-            _messagesManager = messagesManager;
-            _queueMessageHandler = queueMessageHandler;
-            _logger = logger;
-            _options = options.Value;
-            _delayStrategy = new RandomizedExponentialDelayStrategy(TimeSpan.FromMilliseconds(_options.MinimumPollingIntervalInMilliseconds),
+        private RandomizedExponentialDelayStrategy DelayStrategy => new(TimeSpan.FromMilliseconds(_options.MinimumPollingIntervalInMilliseconds),
                 TimeSpan.FromMilliseconds(_options.MaximumPollingIntervalInMilliseconds),
                 _options.DeltaBackOff);
-        }
+
+        private readonly List<Task> _processing = [];
+        private readonly ListenerHostOptions _options = options.Value;
 
         public async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var messages = (await _messagesManager.RetrieveMessagesAsync(cancellationToken)).ToArray();
+            var messages = (await messagesManager.RetrieveMessagesAsync(cancellationToken)).ToArray();
             var messagesFound = messages.Length > 0;
             if (messagesFound)
             {
@@ -43,7 +31,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
             }
             else
             {
-                _logger.LogDebug("No messages found");
+                logger.LogDebug("No messages found");
             }
 
             await WaitForDelay(messagesFound, cancellationToken);
@@ -53,7 +41,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
         {
             foreach (var message in messages)
             {
-                var task = _queueMessageHandler.HandleAsync(message, cancellationToken);
+                var task = queueMessageHandler.HandleAsync(message, cancellationToken);
                 _processing.Add(task);
             }
 
@@ -62,7 +50,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
 
         private Task WaitForDelay(bool messageFound, CancellationToken cancellationToken)
         {
-            var delay = _delayStrategy.GetNextDelay(executionSucceeded: messageFound);
+            var delay = DelayStrategy.GetNextDelay(executionSucceeded: messageFound);
             return Task.Delay(delay, cancellationToken);
         }
 

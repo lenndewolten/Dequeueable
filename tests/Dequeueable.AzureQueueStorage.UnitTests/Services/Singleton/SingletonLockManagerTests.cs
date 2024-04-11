@@ -29,7 +29,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
 
             singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
             blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
-            distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
+            distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, singletonHostOptions, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
             loggerMock.Setup(
                 x => x.Log(
                 It.Is<LogLevel>(l => l == LogLevel.Information),
@@ -67,7 +67,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
 
             singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
             blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
-            distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
+            distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, singletonHostOptions, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
             loggerMock.Setup(
                 x => x.Log(
                 It.Is<LogLevel>(l => l == LogLevel.Information),
@@ -106,7 +106,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
 
             singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
             blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
-            distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
+            distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, singletonHostOptions, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
             distributedLockManagerMock.SetupSequence(m => m.AcquireAsync(CancellationToken.None))
                 .ReturnsAsync((string?)null)
                 .ReturnsAsync((string?)null);

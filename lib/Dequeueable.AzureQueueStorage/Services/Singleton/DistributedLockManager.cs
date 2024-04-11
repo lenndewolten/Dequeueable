@@ -2,32 +2,25 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
+using Dequeueable.AzureQueueStorage.Configurations;
 using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace Dequeueable.AzureQueueStorage.Services.Singleton
 {
-    internal sealed class DistributedLockManager : IDistributedLockManager
+    internal sealed class DistributedLockManager(BlobClient blobClient, SingletonHostOptions singletonHostOptions, ILogger logger) : IDistributedLockManager
     {
-        private static readonly TimeSpan _leaseDuration = TimeSpan.FromSeconds(60);
-        private readonly BlobClient _blobClient;
-        private readonly ILogger _logger;
-
-        public DistributedLockManager(BlobClient blobClient, ILogger logger)
-        {
-            _blobClient = blobClient;
-            _logger = logger;
-        }
+        private TimeSpan LeaseDuration => TimeSpan.FromSeconds(singletonHostOptions.LeaseDurationInSeconds);
 
         public async Task<string?> AcquireAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var blobProperties = await GetBlobMetadataAsync(_blobClient, cancellationToken);
+                var blobProperties = await GetBlobMetadataAsync(blobClient, cancellationToken);
 
                 return (blobProperties?.LeaseState) switch
                 {
-                    null or LeaseState.Available or LeaseState.Expired or LeaseState.Broken => await TryLeaseAsync(_blobClient),
+                    null or LeaseState.Available or LeaseState.Expired or LeaseState.Broken => await TryLeaseAsync(blobClient),
                     _ => null,
                 };
             }
@@ -41,18 +34,18 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
         {
             try
             {
-                var blobProperties = await GetBlobMetadataAsync(_blobClient, cancellationToken);
+                var blobProperties = await GetBlobMetadataAsync(blobClient, cancellationToken);
 
                 if (blobProperties?.LeaseState is not LeaseState.Leased)
                 {
-                    throw new SingletonException($"Unable to renew the lock for {_blobClient.Name} because the lease is not active anymore");
+                    throw new SingletonException($"Unable to renew the lock for {blobClient.Name} because the lease is not active anymore");
                 }
 
-                return await TryRenewAsync(leaseId, _blobClient);
+                return await TryRenewAsync(leaseId, blobClient);
             }
             catch (RequestFailedException exception)
             {
-                _logger.LogError(exception, "An error occurred while acquiring the lease for blob '{BlobName}'", _blobClient.Name);
+                logger.LogError(exception, "An error occurred while acquiring the lease for blob '{BlobName}'", blobClient.Name);
                 throw;
             }
         }
@@ -61,7 +54,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
         {
             try
             {
-                var blobLeaseClient = _blobClient.GetBlobLeaseClient(leaseId);
+                var blobLeaseClient = blobClient.GetBlobLeaseClient(leaseId);
                 // Note that this call returns without throwing if the lease is expired.
                 await blobLeaseClient.ReleaseAsync(cancellationToken: cancellationToken);
             }
@@ -88,19 +81,19 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             }
         }
 
-        private static async Task<string> TryLeaseAsync(BlobClient blobClient)
+        private async Task<string> TryLeaseAsync(BlobClient blobClient)
         {
             var blobLeaseClient = blobClient.GetBlobLeaseClient();
-            var leaseResponse = await blobLeaseClient.AcquireAsync(_leaseDuration);
+            var leaseResponse = await blobLeaseClient.AcquireAsync(LeaseDuration);
             return leaseResponse.Value.LeaseId;
         }
 
-        private static async Task<DateTimeOffset> TryRenewAsync(string leaseId, BlobClient blobClient)
+        private async Task<DateTimeOffset> TryRenewAsync(string leaseId, BlobClient blobClient)
         {
             var blobLeaseClient = blobClient.GetBlobLeaseClient(leaseId);
             await blobLeaseClient.RenewAsync();
 
-            var nextTimeout = DateTimeOffset.UtcNow.Add(_leaseDuration);
+            var nextTimeout = DateTimeOffset.UtcNow.Add(LeaseDuration);
 
             return nextTimeout;
         }

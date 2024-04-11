@@ -28,7 +28,7 @@ namespace Dequeueable.AzureQueueStorage.Extentions
             services.AddTransient<IQueueClientFactory, QueueClientFactory>();
             services.AddTransient<IAzureQueueFunction, TFunction>();
             services.TryAddTransient<IQueueClientProvider, QueueClientProvider>();
-
+            services.TryAddSingleton(TimeProvider.System);
 
             return new HostBuilder(services);
         }

@@ -16,6 +16,13 @@ namespace Dequeueable.AzureQueueStorage.Configurations
         public string Scope { get; set; } = string.Empty;
 
         /// <summary>
+        /// Specifies the duration of the lease, in seconds.
+        /// A lease can be between 15 and 60 seconds.
+        /// </summary>
+        [Range(15, 60, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        public int LeaseDurationInSeconds { get; set; } = 60;
+
+        /// <summary>
         /// The minimum polling interval to check if a new lease can be acquired.
         /// </summary>
         [Range(0, int.MaxValue, ErrorMessage = "Value for {0} must not be negative or zero.")]
