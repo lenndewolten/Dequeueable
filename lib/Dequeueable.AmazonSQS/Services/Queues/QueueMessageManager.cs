@@ -5,21 +5,14 @@ using Dequeueable.AmazonSQS.Factories;
 
 namespace Dequeueable.AmazonSQS.Services.Queues
 {
-    internal sealed class QueueMessageManager : IQueueMessageManager
+    internal sealed class QueueMessageManager(IAmazonSQSClientFactory amazonSQSClientFactory,
+        IHostOptions hostOptions) : IQueueMessageManager
     {
-        private readonly AmazonSQSClient _client;
-        private readonly IHostOptions _hostOptions;
-
-        public QueueMessageManager(IAmazonSQSClientFactory amazonSQSClientFactory,
-            IHostOptions hostOptions)
-        {
-            _client = amazonSQSClientFactory.Create();
-            _hostOptions = hostOptions;
-        }
+        private readonly AmazonSQSClient _client = amazonSQSClientFactory.Create();
 
         public async Task<Models.Message[]> RetrieveMessagesAsync(CancellationToken cancellationToken = default)
         {
-            var request = new ReceiveMessageRequest { QueueUrl = _hostOptions.QueueUrl, MaxNumberOfMessages = _hostOptions.BatchSize, VisibilityTimeout = _hostOptions.VisibilityTimeoutInSeconds, AttributeNames = _hostOptions.AttributeNames };
+            var request = new ReceiveMessageRequest { QueueUrl = hostOptions.QueueUrl, MaxNumberOfMessages = hostOptions.BatchSize, VisibilityTimeout = hostOptions.VisibilityTimeoutInSeconds, AttributeNames = hostOptions.AttributeNames };
             var res = await _client.ReceiveMessageAsync(request, cancellationToken);
 
             var nextVisbileOn = NextVisbileOn();
@@ -30,7 +23,7 @@ namespace Dequeueable.AmazonSQS.Services.Queues
         {
             try
             {
-                await _client.DeleteMessageAsync(_hostOptions.QueueUrl, message.ReceiptHandle, cancellationToken);
+                await _client.DeleteMessageAsync(hostOptions.QueueUrl, message.ReceiptHandle, cancellationToken);
             }
             catch (AmazonSQSException ex) when (ex.ErrorCode?.Contains("NonExistentQueue", StringComparison.InvariantCultureIgnoreCase) ?? false || ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
@@ -39,7 +32,7 @@ namespace Dequeueable.AmazonSQS.Services.Queues
 
         public async Task<DateTimeOffset> UpdateVisibilityTimeOutAsync(Models.Message message, CancellationToken cancellationToken)
         {
-            var request = new ChangeMessageVisibilityRequest(_hostOptions.QueueUrl, message.ReceiptHandle, _hostOptions.VisibilityTimeoutInSeconds);
+            var request = new ChangeMessageVisibilityRequest(hostOptions.QueueUrl, message.ReceiptHandle, hostOptions.VisibilityTimeoutInSeconds);
             await _client.ChangeMessageVisibilityAsync(request, cancellationToken);
 
             return NextVisbileOn();
@@ -47,13 +40,13 @@ namespace Dequeueable.AmazonSQS.Services.Queues
 
         public async Task EnqueueMessageAsync(Models.Message message, CancellationToken cancellationToken)
         {
-            var request = new ChangeMessageVisibilityRequest(_hostOptions.QueueUrl, message.ReceiptHandle, 0);
+            var request = new ChangeMessageVisibilityRequest(hostOptions.QueueUrl, message.ReceiptHandle, 0);
             await _client.ChangeMessageVisibilityAsync(request, cancellationToken);
         }
 
         private DateTimeOffset NextVisbileOn()
         {
-            return DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(_hostOptions.VisibilityTimeoutInSeconds));
+            return DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(hostOptions.VisibilityTimeoutInSeconds));
         }
     }
 }

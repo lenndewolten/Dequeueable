@@ -3,24 +3,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AmazonSQS.Services.Hosts
 {
-    internal sealed class JobExecutor : IHostExecutor
+    internal sealed class JobExecutor(IQueueMessageManager queueMessageManager, IQueueMessageHandler queueMessageHandler, ILogger<JobExecutor> logger) : IHostExecutor
     {
-        private readonly IQueueMessageManager _queueMessageManager;
-        private readonly IQueueMessageHandler _queueMessageHandler;
-        private readonly ILogger<JobExecutor> _logger;
-
-        private readonly List<Task> _processing = new();
-
-        public JobExecutor(IQueueMessageManager queueMessageManager, IQueueMessageHandler queueMessageHandler, ILogger<JobExecutor> logger)
-        {
-            _queueMessageManager = queueMessageManager;
-            _queueMessageHandler = queueMessageHandler;
-            _logger = logger;
-        }
+        private readonly List<Task> _processing = [];
 
         public async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var messages = await _queueMessageManager.RetrieveMessagesAsync(cancellationToken: cancellationToken);
+            var messages = await queueMessageManager.RetrieveMessagesAsync(cancellationToken: cancellationToken);
             var messagesFound = messages.Length > 0;
             if (messagesFound)
             {
@@ -28,7 +17,7 @@ namespace Dequeueable.AmazonSQS.Services.Hosts
             }
             else
             {
-                _logger.LogDebug("No messages found");
+                logger.LogDebug("No messages found");
             }
 
             return;
@@ -38,7 +27,7 @@ namespace Dequeueable.AmazonSQS.Services.Hosts
         {
             foreach (var message in messages)
             {
-                var task = _queueMessageHandler.HandleAsync(message, cancellationToken);
+                var task = queueMessageHandler.HandleAsync(message, cancellationToken);
                 _processing.Add(task);
             }
 

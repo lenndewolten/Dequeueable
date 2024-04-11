@@ -15,6 +15,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
+            var timeProvider = TimeProvider.System;
 
             queueMessageExecutorMock.Setup(e => e.ExecuteAsync(message, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
             queueMessageManagerMock.Setup(m => m.DeleteMessageAsync(message, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
@@ -27,7 +28,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
                 null,
                 It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)));
 
-            var sut = new QueueMessageHandler(queueMessageManagerMock.Object, queueMessageExecutorMock.Object, loggerMock.Object);
+            var sut = new QueueMessageHandler(queueMessageManagerMock.Object, queueMessageExecutorMock.Object, timeProvider, loggerMock.Object);
 
             // Act
             await sut.HandleAsync(message, CancellationToken.None);
@@ -46,6 +47,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
+            var timeProvider = TimeProvider.System;
 
             queueMessageExecutorMock.Setup(e => e.ExecuteAsync(message, It.IsAny<CancellationToken>())).Returns(Task.Delay(TimeSpan.FromSeconds(60)));
             queueMessageManagerMock.Setup(m => m.UpdateVisibilityTimeOutAsync(message, It.IsAny<CancellationToken>())).ThrowsAsync(exception);
@@ -59,7 +61,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
                 It.IsAny<Exception>(),
                 It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)));
 
-            var sut = new QueueMessageHandler(queueMessageManagerMock.Object, queueMessageExecutorMock.Object, loggerMock.Object)
+            var sut = new QueueMessageHandler(queueMessageManagerMock.Object, queueMessageExecutorMock.Object, timeProvider, loggerMock.Object)
             {
                 MinimalVisibilityTimeoutDelay = TimeSpan.Zero
             };

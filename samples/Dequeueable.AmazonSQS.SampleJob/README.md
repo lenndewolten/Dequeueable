@@ -3,44 +3,34 @@
 ## Docker
 
 ### Build
+
 ```
 docker build -t <yourtagname> -f samples/Dequeueable.AmazonSQS.SampleJob/deployment/Dockerfile .
 ```
+
 Image stats:
+
 ```
-docker images -f reference=lenndewolten/dequeueable:aws-sqs-samplejob-v1 
+docker images -f reference=lenndewolten/dequeueable:aws-sqs-samplejob-v1
 
 > REPOSITORY                 TAG                    IMAGE ID       CREATED              SIZE
 > lenndewolten/dequeueable   aws-sqs-samplejob-v1   7cfdf41b4bbb   About a minute ago   84.2MB
 ```
 
-```
-docker scan lenndewolten/dequeueable:aws-sqs-samplejob-v1 
-
-> Testing lenndewolten/dequeueable:aws-sqs-samplejob-v1...
-> 
-> Organization:      lenndewolten
-> Package manager:   apk
-> Project name:      docker-image|lenndewolten/dequeueable
-> Docker image:      lenndewolten/dequeueable:aws-sqs-samplejob-v1
-> Platform:          linux/amd64
-> Base image:        alpine:3.17.3
-> Licenses:          enabled
-> 
-> ✔ Tested 25 dependencies for known issues, no vulnerable paths found.
-```
-
 ## Kubernetes
 
 ### Deployment
+
 This sample is using [KEDA](https://keda.sh/) to automatically schedule the jobs based on the messages on the queue
 
 ```
 kubectl apply -f scaledjob.yaml
 ```
 
-####  **Magic!**
+#### **Magic!**
+
 After a message is added to the queue:
+
 ```
 kubectl get pods
 
@@ -56,8 +46,9 @@ kubectl get pods
 ```
 
 Logs when when four messages are handled:
+
 ```
-kubectl logs pods/queuejob-consumer-m8zpl-jpqws 
+kubectl logs pods/queuejob-consumer-m8zpl-jpqws
 
 > info: Microsoft.Hosting.Lifetime[0]
 >       Application started. Press Ctrl+C to shut down.

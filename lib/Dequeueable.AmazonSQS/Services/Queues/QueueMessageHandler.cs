@@ -5,32 +5,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AmazonSQS.Services.Queues
 {
-    internal sealed class QueueMessageHandler : IQueueMessageHandler
+    internal sealed class QueueMessageHandler(IQueueMessageManager queueMessageManager, IQueueMessageExecutor executor, TimeProvider timeProvider, ILogger<QueueMessageHandler> logger) : IQueueMessageHandler
     {
-        private readonly ILogger<QueueMessageHandler> _logger;
-        private readonly IQueueMessageManager _queueMessageManager;
-        private readonly IQueueMessageExecutor _executor;
-
         internal TimeSpan MinimalVisibilityTimeoutDelay { get; set; } = TimeSpan.FromSeconds(15);
-
-        public QueueMessageHandler(IQueueMessageManager queueMessageManager, IQueueMessageExecutor executor, ILogger<QueueMessageHandler> logger)
-        {
-            _logger = logger;
-            _queueMessageManager = queueMessageManager;
-            _executor = executor;
-        }
 
         public async Task HandleAsync(Message message, CancellationToken cancellationToken)
         {
             try
             {
                 await HandleMessageAsync(message, cancellationToken);
-                _logger.LogInformation("Executed message with id '{MessageId}' (Succeeded)", message.MessageId);
-                await _queueMessageManager.DeleteMessageAsync(message, cancellationToken);
+                logger.LogInformation("Executed message with id '{MessageId}' (Succeeded)", message.MessageId);
+                await queueMessageManager.DeleteMessageAsync(message, cancellationToken);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while executing the queue message with id '{MessageId}'", message.MessageId);
+                logger.LogError(ex, "An error occurred while executing the queue message with id '{MessageId}'", message.MessageId);
                 await HandleException(message, cancellationToken);
             }
         }
@@ -46,18 +35,17 @@ namespace Dequeueable.AmazonSQS.Services.Queues
         private async Task ExecuteMessageAsync(Message message, TaskCompletionSource taskCompletionSource, CancellationToken cancellationToken)
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            using var timer = new VisibilityTimeoutTimer(_queueMessageManager, new LinearDelayStrategy(MinimalVisibilityTimeoutDelay));
+            await using var timer = new VisibilityTimeoutTimer(queueMessageManager, timeProvider, new LinearDelayStrategy(MinimalVisibilityTimeoutDelay));
 
             timer.Start(message, onFaultedAction: () =>
             {
                 cts.Cancel();
-                taskCompletionSource.TrySetException(new Exception($"Unable to update the visibilty timeout for message with id '{message.MessageId}'. Invisibility cannot be guaranteed."));
+                taskCompletionSource.TrySetException(new VisibilityTimeoutException($"Unable to update the visibilty timeout for message with id '{message.MessageId}'. Invisibility cannot be guaranteed."));
             });
 
             try
             {
-                await _executor.ExecuteAsync(message, cts.Token);
-                timer.Stop();
+                await executor.ExecuteAsync(message, cts.Token);
                 taskCompletionSource.TrySetResult();
             }
             catch (Exception ex)
@@ -68,7 +56,7 @@ namespace Dequeueable.AmazonSQS.Services.Queues
 
         private Task HandleException(Message message, CancellationToken cancellationToken)
         {
-            return _queueMessageManager.EnqueueMessageAsync(message, cancellationToken);
+            return queueMessageManager.EnqueueMessageAsync(message, cancellationToken);
         }
     }
 }

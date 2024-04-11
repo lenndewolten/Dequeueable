@@ -3,14 +3,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AmazonSQS.SampleListener.Functions
 {
-    internal class TestFunction : IAmazonSQSFunction
+    internal class TestFunction(ILogger<TestFunction> logger) : IAmazonSQSFunction
     {
-        private readonly ILogger<TestFunction> _logger;
-
-        public TestFunction(ILogger<TestFunction> logger)
-        {
-            _logger = logger;
-        }
+        private readonly ILogger<TestFunction> _logger = logger;
 
         public Task ExecuteAsync(Message message, CancellationToken cancellationToken)
         {
