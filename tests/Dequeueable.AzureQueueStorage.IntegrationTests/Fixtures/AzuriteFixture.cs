@@ -1,7 +1,7 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
 
 namespace Dequeueable.AzureQueueStorage.IntegrationTests.Fixtures
 {
@@ -52,7 +52,7 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Fixtures
 
         public string ConnectionString => $"DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:{BlobPort}/devstoreaccount1;QueueEndpoint=http://127.0.0.1:{QueuePort}/devstoreaccount1;TableEndpoint=http://127.0.0.1:{TablePort}/devstoreaccount1;";
 
-        private IDockerContainer _testcontainersBuilder => new TestcontainersBuilder<TestcontainersContainer>()
+        private IContainer ContainerBuilder => new ContainerBuilder()
                  .WithImage("mcr.microsoft.com/azure-storage/azurite")
                  .WithPortBinding(BlobPort, 10000)
                  .WithPortBinding(QueuePort, 10001)
@@ -63,12 +63,12 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Fixtures
 
         public async Task InitializeAsync()
         {
-            await _testcontainersBuilder.StartAsync();
+            await ContainerBuilder.StartAsync();
         }
 
         public Task DisposeAsync()
         {
-            return _testcontainersBuilder.DisposeAsync().AsTask();
+            return ContainerBuilder.DisposeAsync().AsTask();
         }
 
         private static readonly IPEndPoint _defaultLoopbackEndpoint = new(IPAddress.Loopback, port: 0);

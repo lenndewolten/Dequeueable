@@ -14,7 +14,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Extentions
         [InlineData('3')]
         [InlineData(true)]
         [InlineData(null)]
-        public void Given_a_Message_when_GetValueByPropertyName_is_called_with_different_values_then_the_value_is_returned_from_the_parsed_body(object propertyValue)
+        public void Given_a_Message_when_GetValueByPropertyName_is_called_with_different_values_then_the_value_is_returned_from_the_parsed_body(object? propertyValue)
         {
             // Arrange
             var propertyName = "MyProperty";

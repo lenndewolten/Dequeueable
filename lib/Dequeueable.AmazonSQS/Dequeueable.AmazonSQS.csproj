@@ -19,10 +19,10 @@
   </PropertyGroup>
 	
   <ItemGroup>
-    <PackageReference Include="AWSSDK.SQS" Version="3.7.100.62" />
-	<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-	<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="6.0.0" />
-	<PackageReference Include="System.Memory.Data" Version="1.0.2" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.7.300.73" />
+	<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0" />
+	<PackageReference Include="System.Memory.Data" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
   	<InternalsVisibleTo Include="$(AssemblyName).UnitTests" />
