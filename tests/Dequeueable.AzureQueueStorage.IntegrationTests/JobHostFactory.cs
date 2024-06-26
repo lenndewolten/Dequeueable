@@ -8,7 +8,7 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
     public class JobHostFactory<TFunction>
         where TFunction : class, IAzureQueueFunction
     {
-        public readonly IHostBuilder HostBuilder;
+        private readonly IHostBuilder _hostBuilder;
         private readonly Action<Configurations.HostOptions>? _options;
 
         public JobHostFactory(Action<Configurations.HostOptions>? overrideOptions = null, Action<Configurations.SingletonHostOptions>? singletonHostOptions = null)
@@ -18,7 +18,7 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
                 _options += overrideOptions;
             }
 
-            HostBuilder = Host.CreateDefaultBuilder()
+            _hostBuilder = Host.CreateDefaultBuilder()
                 .ConfigureServices(services =>
                 {
                     var hostBuilder = services.AddAzureQueueStorageServices<TestFunction>()
@@ -35,13 +35,13 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
 
         public IHostBuilder ConfigureTestServices(Action<IServiceCollection> services)
         {
-            HostBuilder.ConfigureServices(services);
-            return HostBuilder;
+            _hostBuilder.ConfigureServices(services);
+            return _hostBuilder;
         }
 
         public Services.Hosts.IHostExecutor Build()
         {
-            var host = HostBuilder.Build();
+            var host = _hostBuilder.Build();
             return host.Services.GetRequiredService<Services.Hosts.IHostExecutor>();
         }
     }

@@ -5,30 +5,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AzureQueueStorage.Services.Queues
 {
-    internal sealed class QueueClientProvider : IQueueClientProvider
+    internal sealed class QueueClientProvider(
+        IQueueClientFactory factory,
+        IHostOptions options,
+        ILogger<QueueClientProvider> logger) : IQueueClientProvider
     {
-        private readonly IHostOptions _options;
-        private readonly IQueueClientFactory _factory;
-        private readonly ILogger<QueueClientProvider> _logger;
-
-        public QueueClientProvider(
-            IQueueClientFactory factory,
-            IHostOptions options,
-            ILogger<QueueClientProvider> logger)
-        {
-            _options = options;
-            _factory = factory;
-            _logger = logger;
-        }
-
         public QueueClient GetQueue()
         {
-            return Get(_options.QueueName);
+            return Get(options.QueueName);
         }
 
         public QueueClient GetPoisonQueue()
         {
-            return Get(_options.PoisonQueueName);
+            return Get(options.PoisonQueueName);
         }
 
         private QueueClient Get(string queueName)
@@ -38,21 +27,21 @@ namespace Dequeueable.AzureQueueStorage.Services.Queues
                 throw new ArgumentException($"'{nameof(queueName)}' cannot be null or whitespace.", nameof(queueName));
             }
 
-            if (_options.AuthenticationScheme is not null)
+            if (options.AuthenticationScheme is not null)
             {
-                _logger.LogDebug("Authenticate the QueueClient through Active Directory");
+                logger.LogDebug("Authenticate the QueueClient through Active Directory");
 
-                var uri = BuildUri(_options.QueueUriFormat, _options.AccountName, queueName);
-                return _factory.Create(uri, _options.AuthenticationScheme, _options.QueueClientOptions);
+                var uri = BuildUri(options.QueueUriFormat, options.AccountName, queueName);
+                return factory.Create(uri, options.AuthenticationScheme, options.QueueClientOptions);
             }
 
-            if (string.IsNullOrWhiteSpace(_options.ConnectionString))
+            if (string.IsNullOrWhiteSpace(options.ConnectionString))
             {
                 throw new InvalidOperationException("No AuthenticationScheme or ConnectionString supplied. Make sure that it is defined in the app settings");
             }
 
-            _logger.LogDebug("Authenticate the QueueClient through the ConnectionString");
-            return _factory.Create(_options.ConnectionString, queueName, _options.QueueClientOptions);
+            logger.LogDebug("Authenticate the QueueClient through the ConnectionString");
+            return factory.Create(options.ConnectionString, queueName, options.QueueClientOptions);
         }
 
         private Uri BuildUri(string? uriFormat, string? accountName, string queueName)
@@ -75,7 +64,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Queues
             }
             catch (UriFormatException)
             {
-                _logger.LogError("Invalid Uri: The Queue Uri could not be parsed. Format: '{Uri}'", uriFormat);
+                logger.LogError("Invalid Uri: The Queue Uri could not be parsed. Format: '{Uri}'", uriFormat);
                 throw;
             }
         }

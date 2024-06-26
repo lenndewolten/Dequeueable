@@ -1,7 +1,7 @@
-﻿using System.Net.Sockets;
-using System.Net;
+﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
-using DotNet.Testcontainers.Builders;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Dequeueable.AmazonSQS.IntegrationTests.Fixtures
 {
@@ -24,7 +24,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Fixtures
 
         public string SQSURL => $"http://localhost:{Port}";
 
-        private IDockerContainer _testcontainersBuilder => new TestcontainersBuilder<TestcontainersContainer>()
+        private IContainer ContainersBuilder => new ContainerBuilder()
                  .WithImage("localstack/localstack")
                  .WithPortBinding(Port, 4566)
                  .WithCleanUp(true)
@@ -33,12 +33,12 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Fixtures
 
         public async Task InitializeAsync()
         {
-            await _testcontainersBuilder.StartAsync();
+            await ContainersBuilder.StartAsync();
         }
 
         public Task DisposeAsync()
         {
-            return _testcontainersBuilder.DisposeAsync().AsTask();
+            return ContainersBuilder.DisposeAsync().AsTask();
         }
 
         private static readonly IPEndPoint _defaultLoopbackEndpoint = new(IPAddress.Loopback, port: 0);

@@ -20,6 +20,6 @@
         /// <summary>
         /// A list of attributes that need to be returned along with each message <see cref="Amazon.SQS.Model.Message.Attributes"/>.
         /// </summary>
-        List<string> AttributeNames { get; set; }
+        IEnumerable<string> AttributeNames { get; set; }
     }
 }

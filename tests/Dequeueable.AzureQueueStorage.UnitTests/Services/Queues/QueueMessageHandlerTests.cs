@@ -1,6 +1,5 @@
 ﻿using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Services.Queues;
-using Dequeueable.AzureQueueStorage.Services.Singleton;
 using Dequeueable.AzureQueueStorage.UnitTests.TestDataBuilders;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -18,6 +17,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var options = new HostOptions();
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
+            var timeProvider = TimeProvider.System;
 
             queueMessageExecutorMock.Setup(e => e.ExecuteAsync(message, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
             queueMessageManagerMock.Setup(m => m.DeleteMessageAsync(message, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
@@ -30,7 +30,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
                 null,
                 It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)));
 
-            var sut = new QueueMessageHandler(queueMessageExecutorMock.Object, queueMessageManagerMock.Object, loggerMock.Object, options);
+            var sut = new QueueMessageHandler(queueMessageExecutorMock.Object, queueMessageManagerMock.Object, timeProvider, loggerMock.Object, options);
 
             // Act
             await sut.HandleAsync(message, CancellationToken.None);
@@ -50,6 +50,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var options = new HostOptions();
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
+            var timeProvider = TimeProvider.System;
 
             queueMessageExecutorMock.Setup(e => e.ExecuteAsync(message, It.IsAny<CancellationToken>())).ThrowsAsync(exception);
             queueMessageManagerMock.Setup(m => m.EnqueueMessageAsync(message, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
@@ -62,7 +63,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
                 It.IsAny<Exception>(),
                 It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)));
 
-            var sut = new QueueMessageHandler(queueMessageExecutorMock.Object, queueMessageManagerMock.Object, loggerMock.Object, options);
+            var sut = new QueueMessageHandler(queueMessageExecutorMock.Object, queueMessageManagerMock.Object, timeProvider, loggerMock.Object, options);
 
             // Act
             await sut.HandleAsync(message, CancellationToken.None);
@@ -82,6 +83,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var options = new HostOptions { MaxDequeueCount = message.DequeueCount };
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
+            var timeProvider = TimeProvider.System;
 
             queueMessageExecutorMock.Setup(e => e.ExecuteAsync(message, It.IsAny<CancellationToken>())).ThrowsAsync(exception);
             queueMessageManagerMock.Setup(m => m.MoveToPoisonQueueAsync(message, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask).Verifiable();
@@ -94,7 +96,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
                 It.IsAny<Exception>(),
                 It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)));
 
-            var sut = new QueueMessageHandler(queueMessageExecutorMock.Object, queueMessageManagerMock.Object, loggerMock.Object, options);
+            var sut = new QueueMessageHandler(queueMessageExecutorMock.Object, queueMessageManagerMock.Object, timeProvider, loggerMock.Object, options);
 
             // Act
             await sut.HandleAsync(message, CancellationToken.None);
@@ -114,6 +116,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var options = new HostOptions { MaxDequeueCount = message.DequeueCount + 2 };
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
+            var timeProvider = TimeProvider.System;
 
             queueMessageExecutorMock.Setup(e => e.ExecuteAsync(message, It.IsAny<CancellationToken>())).Returns(Task.Delay(TimeSpan.FromSeconds(60)));
             queueMessageManagerMock.Setup(m => m.UpdateVisibilityTimeOutAsync(message, It.IsAny<CancellationToken>())).ThrowsAsync(exception);
@@ -124,10 +127,10 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
                 It.Is<LogLevel>(l => l == LogLevel.Error),
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains($"An error occurred while executing the queue message with id '{message.MessageId}'")),
-                It.IsAny<SingletonException>(),
+                It.IsAny<VisibilityTimeoutException>(),
                 It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)));
 
-            var sut = new QueueMessageHandler(queueMessageExecutorMock.Object, queueMessageManagerMock.Object, loggerMock.Object, options)
+            var sut = new QueueMessageHandler(queueMessageExecutorMock.Object, queueMessageManagerMock.Object, timeProvider, loggerMock.Object, options)
             {
                 MinimalVisibilityTimeoutDelay = TimeSpan.Zero
             };

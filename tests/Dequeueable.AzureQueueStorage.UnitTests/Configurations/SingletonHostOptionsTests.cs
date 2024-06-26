@@ -200,7 +200,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
             result.Should().BeFalse();
         }
 
-        private static IList<ValidationResult> ValidateModel(object model)
+        private static List<ValidationResult> ValidateModel(object model)
         {
             var validationResults = new List<ValidationResult>();
             var ctx = new ValidationContext(model, null, null);

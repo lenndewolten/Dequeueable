@@ -2,18 +2,11 @@
 
 namespace Dequeueable.AzureQueueStorage.Services.Queues
 {
-    internal sealed class QueueMessageExecutor : IQueueMessageExecutor
+    internal sealed class QueueMessageExecutor(IAzureQueueFunction function) : IQueueMessageExecutor
     {
-        private readonly IAzureQueueFunction _function;
-
-        public QueueMessageExecutor(IAzureQueueFunction function)
-        {
-            _function = function;
-        }
-
         public async Task ExecuteAsync(Message message, CancellationToken cancellationToken)
         {
-            await _function.ExecuteAsync(message, cancellationToken);
+            await function.ExecuteAsync(message, cancellationToken);
         }
     }
 }

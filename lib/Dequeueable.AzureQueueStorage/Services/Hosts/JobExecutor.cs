@@ -4,26 +4,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AzureQueueStorage.Services.Hosts
 {
-    internal sealed class JobExecutor : IHostExecutor
+    internal sealed class JobExecutor(
+        IQueueMessageManager messagesManager,
+        IQueueMessageHandler queueMessageHandler,
+        ILogger<JobExecutor> logger) : IHostExecutor
     {
-        private readonly List<Task> _processing = new();
-        private readonly IQueueMessageManager _messagesManager;
-        private readonly IQueueMessageHandler _queueMessageHandler;
-        private readonly ILogger<JobExecutor> _logger;
-
-        public JobExecutor(
-            IQueueMessageManager messagesManager,
-            IQueueMessageHandler queueMessageHandler,
-            ILogger<JobExecutor> logger)
-        {
-            _messagesManager = messagesManager;
-            _queueMessageHandler = queueMessageHandler;
-            _logger = logger;
-        }
+        private readonly List<Task> _processing = [];
 
         public async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var messages = (await _messagesManager.RetrieveMessagesAsync(cancellationToken)).ToArray();
+            var messages = (await messagesManager.RetrieveMessagesAsync(cancellationToken)).ToArray();
             var messagesFound = messages.Length > 0;
             if (messagesFound)
             {
@@ -31,7 +21,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
             }
             else
             {
-                _logger.LogDebug("No messages found");
+                logger.LogDebug("No messages found");
             }
 
             return;
@@ -41,7 +31,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
         {
             foreach (var message in messages)
             {
-                var task = _queueMessageHandler.HandleAsync(message, cancellationToken);
+                var task = queueMessageHandler.HandleAsync(message, cancellationToken);
                 _processing.Add(task);
             }
 

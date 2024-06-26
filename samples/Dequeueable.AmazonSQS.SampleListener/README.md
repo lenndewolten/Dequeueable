@@ -3,33 +3,18 @@
 ## Docker
 
 ### Build
+
 ```
 docker build -t <yourtagname> -f samples/Dequeueable.AmazonSQS.SampleListener/deployment/Dockerfile .
 ```
+
 Image stats:
+
 ```
 docker images -f reference=lenndewolten/dequeueable:aws-sqs-samplelistener-v1
 
 > REPOSITORY                 TAG                         IMAGE ID       CREATED          SIZE
 > lenndewolten/dequeueable   aws-sqs-samplelistener-v1   cc5b966e169f   52 seconds ago   90.4MB
-```
-
-```
-docker scan lenndewolten/dequeueable:aws-sqs-samplelistener-v1
-
-> Testing lenndewolten/dequeueable:aws-sqs-samplelistener-v1...
-> 
-> Organization:      lenndewolten
-> Package manager:   apk
-> Project name:      docker-image|lenndewolten/dequeueable
-> Docker image:      lenndewolten/dequeueable:aws-sqs-samplelistener-v1
-> Platform:          linux/amd64
-> Base image:        alpine:3.17.3
-> Licenses:          enabled
-> 
-> ✔ Tested 25 dependencies for known issues, no vulnerable paths found.
-> 
-> According to our scan, you are currently using the most secure version of the selected base image
 ```
 
 ## Kubernetes
@@ -40,8 +25,10 @@ docker scan lenndewolten/dequeueable:aws-sqs-samplelistener-v1
 kubectl apply -f deployment.yaml
 ```
 
-####  **Magic!**
+#### **Magic!**
+
 After a message is added to the queue:
+
 ```
 kubectl get pods
 
@@ -50,6 +37,7 @@ kubectl get pods
 ```
 
 Logs when when four messages are handled:
+
 ```
 kubectl logs pods/queuelistener-deployment-75bc4b7894-gscdx
 

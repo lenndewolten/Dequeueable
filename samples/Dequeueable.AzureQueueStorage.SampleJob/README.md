@@ -3,10 +3,13 @@
 ## Docker
 
 ### Build
+
 ```
 docker build -t <yourtagname> -f samples/Dequeueable.AzureQueueStorage.SampleJob/deployment/Dockerfile .
 ```
+
 Image stats:
+
 ```
 docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplejob-v2
 
@@ -14,25 +17,10 @@ docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplejo
 > lenndewolten/dequeueable   azure-queue-storage-samplejob-v2   2709a261957e   6 minutes ago   90.8MB
 ```
 
-```
-docker scan lenndewolten/dequeueable:azure-queue-storage-samplejob-v2
-
-> Organization:      lenndewolten
-> Package manager:   apk
-> Project name:      docker-image|lenndewolten/dequeueable
-> Docker image:      lenndewolten/dequeueable:azure-queue-storage-samplejob-v2
-> Platform:          linux/amd64
-> Base image:        alpine:3.17.3
-> Licenses:          enabled
-> 
-> ✔ Tested 25 dependencies for known issues, no vulnerable paths found.
-> 
-> According to our scan, you are currently using the most secure version of the selected base image
-```
-
 ## Kubernetes
 
 ### Deployment
+
 This sample is using [KEDA](https://keda.sh/) to automatically schedule the jobs based on the messages on the queue
 
 ```
@@ -41,7 +29,8 @@ kubectl apply -f scaledjob.yaml
 ```
 
 #### **Connect to azurite**
-Get the public IP address of one of your nodes that is running a Hello World pod. How you get this address depends on how you set up your cluster. For example, if you are using Minikube or Docker Desktop, you can see the node address by running kubectl cluster-info. 
+
+Get the public IP address of one of your nodes that is running a Hello World pod. How you get this address depends on how you set up your cluster. For example, if you are using Minikube or Docker Desktop, you can see the node address by running kubectl cluster-info.
 
 ```
 kubectl cluster-info
@@ -50,7 +39,7 @@ kubectl cluster-info
 > CoreDNS is running at https://kubernetes.docker.internal:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 ```
 
-####  **Get Azurite NodePort IP**
+#### **Get Azurite NodePort IP**
 
 ```
  kubectl get svc
@@ -60,14 +49,18 @@ kubectl cluster-info
 > storage-azurite-service   NodePort    10.106.222.95   <none>        10000:32444/TCP,10001:30623/TCP,10002:32460/TCP     26s
 ```
 
-####  **Construct connection string**
+#### **Construct connection string**
+
 With the output above, the connection string would be:
+
 ```
 DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://kubernetes.docker.internal:32444/devstoreaccount1;QueueEndpoint=http://kubernetes.docker.internal:30623/devstoreaccount1;TableEndpoint=http://kubernetes.docker.internal:32460/devstoreaccount1;
 ```
 
-####  **Magic!**
+#### **Magic!**
+
 After a message is added to the queue:
+
 ```
 kubectl get pods
 
@@ -85,8 +78,9 @@ kubectl get pods
 ```
 
 Logs when when four messages are handled:
+
 ```
-kubectl logs pods/queuejob-consumer-m8zpl-jpqws 
+kubectl logs pods/queuejob-consumer-m8zpl-jpqws
 
 > info: Microsoft.Hosting.Lifetime[0]
 >       Application started. Press Ctrl+C to shut down.

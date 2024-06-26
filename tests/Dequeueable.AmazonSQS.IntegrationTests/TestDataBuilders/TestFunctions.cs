@@ -2,18 +2,11 @@
 
 namespace Dequeueable.AmazonSQS.IntegrationTests.TestDataBuilders
 {
-    public class TestFunction : IAmazonSQSFunction
+    public class TestFunction(IFakeService fakeService) : IAmazonSQSFunction
     {
-        private readonly IFakeService _fakeService;
-
-        public TestFunction(IFakeService fakeService)
-        {
-            _fakeService = fakeService;
-        }
-
         public async Task ExecuteAsync(Message message, CancellationToken cancellationToken)
         {
-            await _fakeService.Execute(message);
+            await fakeService.Execute(message);
         }
     }
 
@@ -34,7 +27,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.TestDataBuilders
         public async Task Execute(Message message)
         {
 
-            if (_lock.Wait(TimeSpan.FromMilliseconds(1)))
+            if (await _lock.WaitAsync(TimeSpan.FromMilliseconds(1)))
             {
                 await Task.Delay(10);
                 _lock.Release();

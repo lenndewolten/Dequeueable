@@ -12,6 +12,6 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
         /// </summary>
         /// <param name="blobName">The blob name used for the lease.</param>
         /// <returns></returns>
-        BlobClient Get(string blobName);
+        BlobClient GetClient(string blobName);
     }
 }

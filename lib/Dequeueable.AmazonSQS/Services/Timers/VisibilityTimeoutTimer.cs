@@ -4,77 +4,64 @@ using Dequeueable.AzureQueueStorage.Services.Timers;
 
 namespace Dequeueable.AmazonSQS.Services.Timers
 {
-    internal sealed class VisibilityTimeoutTimer : IDisposable
+    internal sealed class VisibilityTimeoutTimer(IQueueMessageManager queueMessagesManager, TimeProvider timeProvider, IDelayStrategy delayStrategy) : IAsyncDisposable
     {
-        private readonly CancellationTokenSource _cts;
-        private readonly IQueueMessageManager _queueMessagesManager;
-        private readonly IDelayStrategy _delayStrategy;
-
+        private readonly CancellationTokenSource _cts = new();
+        private Task? _backgroundThread;
         private bool _disposed;
-
-        public VisibilityTimeoutTimer(IQueueMessageManager queueMessagesManager, IDelayStrategy delayStrategy)
-        {
-            _cts = new CancellationTokenSource();
-            _queueMessagesManager = queueMessagesManager;
-            _delayStrategy = delayStrategy;
-        }
 
         public void Start(Message message, Action? onFaultedAction = null)
         {
-            StartAsync(message, _cts.Token)
-            .ContinueWith(_ =>
-            {
-                onFaultedAction?.Invoke();
-            }, TaskContinuationOptions.OnlyOnFaulted)
-            .ConfigureAwait(false);
+            _backgroundThread = TimerLoop(message, onFaultedAction);
         }
 
-        public void Stop()
+        private async Task TimerLoop(Message message, Action? onFaultedAction)
         {
-            _cts.Cancel();
-        }
-
-        private async Task StartAsync(Message message, CancellationToken cancellationToken)
-        {
-            await Task.Yield();
-            var nextVisibleOn = message.NextVisibleOn;
-
-            TaskCompletionSource<object> cancellationTaskSource = new();
-            using (cancellationToken.Register(() => cancellationTaskSource.SetCanceled()))
+            using var timer = new PeriodicTimer(delayStrategy.GetNextDelay(message.NextVisibleOn), timeProvider);
+            while (await timer.WaitForNextTickAsync(_cts.Token))
             {
-                while (!cancellationToken.IsCancellationRequested)
+                try
                 {
-                    try
-                    {
-                        nextVisibleOn = await UpdateVisbility(message, nextVisibleOn, cancellationToken);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                    }
-                    catch (Exception ex) when (ex.InnerException is OperationCanceledException)
-                    {
-                    }
+                    var nextVisibleOn = await queueMessagesManager.UpdateVisibilityTimeOutAsync(message, _cts.Token);
+                    timer.Period = delayStrategy.GetNextDelay(nextVisibleOn);
+                }
+                catch (OperationCanceledException)
+                {
+                }
+                catch (Exception ex) when (ex.InnerException is OperationCanceledException)
+                {
+                }
+                catch
+                {
+                    onFaultedAction?.Invoke();
+                    break;
                 }
             }
         }
 
-        private async Task<DateTimeOffset> UpdateVisbility(Message message, DateTimeOffset nextVisibleOn, CancellationToken cancellationToken)
+        public async ValueTask DisposeAsync()
         {
-            var delay = _delayStrategy.GetNextDelay(nextVisibleOn);
-            await Task.Delay(delay, cancellationToken);
-            nextVisibleOn = await _queueMessagesManager.UpdateVisibilityTimeOutAsync(message, cancellationToken);
-            return nextVisibleOn;
-        }
-
-        public void Dispose()
-        {
-            if (!_disposed)
+            if (_disposed)
             {
-                _cts.Cancel();
-                _cts.Dispose();
+                return;
             }
 
             _disposed = true;
+            await _cts.CancelAsync();
+
+            try
+            {
+                if (_backgroundThread is not null)
+                {
+                    await _backgroundThread;
+                }
+            }
+            catch
+            {
+                // At this point we really just want to stop extending the visibility timeout
+            }
+
+            _cts.Dispose();
         }
     }
 }

@@ -1,38 +1,26 @@
 ﻿using Dequeueable.AmazonSQS.Configurations;
 using Dequeueable.AmazonSQS.Services.Queues;
 using Dequeueable.AmazonSQS.Services.Timers;
-using Dequeueable.AzureQueueStorage.Services.Timers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AmazonSQS.Services.Hosts
 {
-    internal sealed class QueueListenerExecutor : IHostExecutor
+    internal sealed class QueueListenerExecutor(IQueueMessageManager queueMessageManager,
+        IQueueMessageHandler queueMessageHandler,
+        IOptions<ListenerHostOptions> options,
+        ILogger<QueueListenerExecutor> logger) : IHostExecutor
     {
-        private readonly IQueueMessageManager _queueMessageManager;
-        private readonly IQueueMessageHandler _queueMessageHandler;
-        private readonly ILogger<QueueListenerExecutor> _logger;
-        private readonly ListenerHostOptions _options;
-        private readonly IDelayStrategy _delayStrategy;
-        private readonly List<Task> _processing = new();
+        private readonly ListenerHostOptions _options = options.Value;
+        private readonly List<Task> _processing = [];
 
-        public QueueListenerExecutor(IQueueMessageManager queueMessageManager,
-            IQueueMessageHandler queueMessageHandler,
-            IOptions<ListenerHostOptions> options,
-            ILogger<QueueListenerExecutor> logger)
-        {
-            _queueMessageManager = queueMessageManager;
-            _queueMessageHandler = queueMessageHandler;
-            _logger = logger;
-            _options = options.Value;
-            _delayStrategy = new RandomizedExponentialDelayStrategy(TimeSpan.FromMilliseconds(_options.MinimumPollingIntervalInMilliseconds),
+        private RandomizedExponentialDelayStrategy DelayStrategy => new(TimeSpan.FromMilliseconds(_options.MinimumPollingIntervalInMilliseconds),
                 TimeSpan.FromMilliseconds(_options.MaximumPollingIntervalInMilliseconds),
                 _options.DeltaBackOff);
-        }
 
         public async Task HandleAsync(CancellationToken cancellationToken)
         {
-            var messages = await _queueMessageManager.RetrieveMessagesAsync(cancellationToken: cancellationToken);
+            var messages = await queueMessageManager.RetrieveMessagesAsync(cancellationToken: cancellationToken);
             var messagesFound = messages.Length > 0;
             if (messagesFound)
             {
@@ -40,7 +28,7 @@ namespace Dequeueable.AmazonSQS.Services.Hosts
             }
             else
             {
-                _logger.LogDebug("No messages found");
+                logger.LogDebug("No messages found");
             }
 
             await WaitForDelay(messagesFound, cancellationToken);
@@ -50,7 +38,7 @@ namespace Dequeueable.AmazonSQS.Services.Hosts
         {
             foreach (var message in messages)
             {
-                var task = _queueMessageHandler.HandleAsync(message, cancellationToken);
+                var task = queueMessageHandler.HandleAsync(message, cancellationToken);
                 _processing.Add(task);
             }
 
@@ -59,7 +47,7 @@ namespace Dequeueable.AmazonSQS.Services.Hosts
 
         private Task WaitForDelay(bool messageFound, CancellationToken cancellationToken)
         {
-            var delay = _delayStrategy.GetNextDelay(executionSucceeded: messageFound);
+            var delay = DelayStrategy.GetNextDelay(executionSucceeded: messageFound);
             return Task.Delay(delay, cancellationToken);
         }
 

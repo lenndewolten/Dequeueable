@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine as build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine as build
 WORKDIR /app
 
 COPY /samples/Dequeueable.AzureQueueStorage.SampleJob samples/consoleapp
@@ -6,14 +6,14 @@ COPY /lib lib
 COPY Directory.Build.props .
 
 WORKDIR samples/consoleapp
-RUN dotnet restore --runtime alpine-x64
+RUN dotnet restore --runtime linux-musl-x64
 RUN dotnet publish -c Release -o /app/publish \
   --no-restore \
-  --runtime alpine-x64 \
+  --runtime linux-musl-x64 \
   --self-contained true \
   /p:PublishSingleFile=true 
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:6.0-alpine AS runtime
+FROM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine AS runtime
 RUN adduser --disabled-password \
   --home /app \
   --gecos '' dotnetuser && chown -R dotnetuser /app

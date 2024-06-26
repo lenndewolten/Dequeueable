@@ -8,30 +8,23 @@ using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Configurations
 {
-    internal class HostBuilder : IDequeueableHostBuilder
+    internal class HostBuilder(IServiceCollection services) : IDequeueableHostBuilder
     {
-        private readonly IServiceCollection _services;
-
-        public HostBuilder(IServiceCollection services)
-        {
-            _services = services;
-        }
-
         public IDequeueableHostBuilder RunAsJob(Action<HostOptions>? options = null)
         {
-            _services.AddOptions<HostOptions>().BindConfiguration(HostOptions.Dequeueable)
+            services.AddOptions<HostOptions>().BindConfiguration(HostOptions.Dequeueable)
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
             if (options is not null)
             {
-                _services.Configure(options);
+                services.Configure(options);
             }
 
-            _services.AddHostedService<JobHost>();
-            _services.AddSingleton<IHostExecutor, JobExecutor>();
+            services.AddHostedService<JobHost>();
+            services.AddSingleton<IHostExecutor, JobExecutor>();
 
-            _services.TryAddSingleton<IHostOptions>(provider =>
+            services.TryAddSingleton<IHostOptions>(provider =>
             {
                 var opt = provider.GetRequiredService<IOptions<HostOptions>>();
                 return opt.Value;
@@ -42,7 +35,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
 
         public IDequeueableHostBuilder RunAsListener(Action<ListenerHostOptions>? options = null)
         {
-            _services.AddOptions<ListenerHostOptions>().BindConfiguration(HostOptions.Dequeueable)
+            services.AddOptions<ListenerHostOptions>().BindConfiguration(HostOptions.Dequeueable)
                 .Validate(ListenerHostOptions.ValidatePollingInterval, $"The '{nameof(ListenerHostOptions.MinimumPollingIntervalInMilliseconds)}' must not be greater than the '{nameof(ListenerHostOptions.MaximumPollingIntervalInMilliseconds)}'.")
                 .Validate(ListenerHostOptions.ValidateNewBatchThreshold, $"The '{nameof(ListenerHostOptions.NewBatchThreshold)}' must not be greater than the '{nameof(ListenerHostOptions.BatchSize)}'.")
                 .ValidateDataAnnotations()
@@ -50,13 +43,13 @@ namespace Dequeueable.AzureQueueStorage.Configurations
 
             if (options is not null)
             {
-                _services.Configure(options);
+                services.Configure(options);
             }
 
-            _services.AddHostedService<QueueListenerHost>();
-            _services.AddSingleton<IHostExecutor, QueueListenerExecutor>();
+            services.AddHostedService<QueueListenerHost>();
+            services.AddSingleton<IHostExecutor, QueueListenerExecutor>();
 
-            _services.TryAddSingleton<IHostOptions>(provider =>
+            services.TryAddSingleton<IHostOptions>(provider =>
             {
                 var opt = provider.GetRequiredService<IOptions<ListenerHostOptions>>();
                 return opt.Value;
@@ -67,32 +60,33 @@ namespace Dequeueable.AzureQueueStorage.Configurations
 
         public IDequeueableHostBuilder AsSingleton(Action<SingletonHostOptions>? options = null)
         {
-            _services.AddOptions<SingletonHostOptions>().BindConfiguration(SingletonHostOptions.Name)
+            services.AddOptions<SingletonHostOptions>().BindConfiguration(SingletonHostOptions.Name)
                 .Validate(SingletonHostOptions.ValidatePollingInterval, $"The '{nameof(SingletonHostOptions.MinimumPollingIntervalInSeconds)}' must not be greater than the '{nameof(SingletonHostOptions.MaximumPollingIntervalInSeconds)}'.")
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
             if (options is not null)
             {
-                _services.Configure(options);
+                services.Configure(options);
             }
 
-            _services.AddTransient<IDistributedLockManager, DistributedLockManager>();
-            _services.AddTransient<IDistributedLockManagerFactory, DistributedLockManagerFactory>();
-            _services.AddTransient<IBlobClientProvider, BlobClientProvider>();
-            _services.AddTransient<ISingletonLockManager, SingletonLockManager>();
-            _services.AddTransient<IBlobClientFactory, BlobClientFactory>();
-            _services.AddTransient<QueueMessageExecutor>();
-            _services.AddTransient<IQueueMessageExecutor>(provider =>
+            services.AddTransient<IDistributedLockManager, DistributedLockManager>();
+            services.AddTransient<IDistributedLockManagerFactory, DistributedLockManagerFactory>();
+            services.AddTransient<IBlobClientProvider, BlobClientProvider>();
+            services.AddTransient<ISingletonLockManager, SingletonLockManager>();
+            services.AddTransient<IBlobClientFactory, BlobClientFactory>();
+            services.AddTransient<QueueMessageExecutor>();
+            services.AddTransient<IQueueMessageExecutor>(provider =>
             {
                 var singletonManager = provider.GetRequiredService<ISingletonLockManager>();
                 var executor = provider.GetRequiredService<QueueMessageExecutor>();
                 var attribute = provider.GetRequiredService<IOptions<SingletonHostOptions>>();
+                var timeProvider = provider.GetRequiredService<TimeProvider>();
 
-                return new SingletonQueueMessageExecutor(singletonManager, executor, attribute);
+                return new SingletonQueueMessageExecutor(singletonManager, executor, timeProvider, attribute);
             });
 
-            _services.PostConfigure<ListenerHostOptions>(storageAccountOptions => storageAccountOptions.NewBatchThreshold = 0);
+            services.PostConfigure<ListenerHostOptions>(storageAccountOptions => storageAccountOptions.NewBatchThreshold = 0);
 
             return this;
         }

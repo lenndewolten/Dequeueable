@@ -8,6 +8,6 @@ namespace Dequeueable.AzureQueueStorage.Services.Queues
         Task EnqueueMessageAsync(Message queueMessage, CancellationToken cancellationToken);
         Task MoveToPoisonQueueAsync(Message queueMessage, CancellationToken cancellationToken);
         Task<IEnumerable<Message>> RetrieveMessagesAsync(CancellationToken cancellationToken);
-        Task<DateTimeOffset?> UpdateVisibilityTimeOutAsync(Message queueMessage, CancellationToken cancellationToken);
+        Task<DateTimeOffset> UpdateVisibilityTimeOutAsync(Message queueMessage, CancellationToken cancellationToken);
     }
 }

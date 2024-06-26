@@ -19,10 +19,7 @@ namespace Dequeueable.AmazonSQS.Services.Queues
         {
             var _lock = _locks.GetValueOrDefault(messageGroupId);
 
-            if (_lock is not null)
-            {
-                _lock.Release();
-            }
+            _lock?.Release();
         }
     }
 }

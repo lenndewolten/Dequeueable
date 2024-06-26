@@ -2,18 +2,11 @@
 
 namespace Dequeueable.AmazonSQS.Services.Queues
 {
-    internal sealed class QueueMessageExecutor : IQueueMessageExecutor
+    internal sealed class QueueMessageExecutor(IAmazonSQSFunction function) : IQueueMessageExecutor
     {
-        private readonly IAmazonSQSFunction _function;
-
-        public QueueMessageExecutor(IAmazonSQSFunction function)
-        {
-            _function = function;
-        }
-
         public Task ExecuteAsync(Message message, CancellationToken cancellationToken)
         {
-            return _function.ExecuteAsync(message, cancellationToken);
+            return function.ExecuteAsync(message, cancellationToken);
         }
     }
 }

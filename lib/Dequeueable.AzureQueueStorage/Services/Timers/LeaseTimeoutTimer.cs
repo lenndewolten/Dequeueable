@@ -2,79 +2,65 @@
 
 namespace Dequeueable.AzureQueueStorage.Services.Timers
 {
-    internal sealed class LeaseTimeoutTimer : IDisposable
+    internal sealed class LeaseTimeoutTimer(ISingletonLockManager singletonLockManager, TimeProvider timeProvider, IDelayStrategy delayStrategy) : IAsyncDisposable
     {
-        private readonly CancellationTokenSource _cts;
-        private readonly ISingletonLockManager _singletonLockManager;
-        private readonly IDelayStrategy _delayStrategy;
-
+        private readonly CancellationTokenSource _cts = new();
+        private Task? _backgroundThread;
         private bool _disposed;
-
-        public LeaseTimeoutTimer(ISingletonLockManager singletonLockManager, IDelayStrategy delayStrategy)
-        {
-            _cts = new CancellationTokenSource();
-            _singletonLockManager = singletonLockManager;
-            _delayStrategy = delayStrategy;
-        }
 
         public void Start(string leaseId, string fileName, Action? onFaultedAction = null)
         {
-            StartAsync(leaseId, fileName, _cts.Token)
-            .ContinueWith(_ =>
-            {
-                onFaultedAction?.Invoke();
-            }, TaskContinuationOptions.OnlyOnFaulted)
-            .ConfigureAwait(false);
+            _backgroundThread = TimerLoop(leaseId, fileName, onFaultedAction);
         }
 
-        public void Stop()
+        private async Task TimerLoop(string leaseId, string fileName, Action? onFaultedAction)
         {
-            _cts.Cancel();
-        }
-
-        private async Task StartAsync(string leaseId, string fileName, CancellationToken cancellationToken)
-        {
-            await Task.Yield();
-            var nextVisibleOn = DateTimeOffset.UtcNow.Add(_delayStrategy.MinimalRenewalDelay);
-
-            TaskCompletionSource<object> cancellationTaskSource = new();
-            using (cancellationToken.Register(() => cancellationTaskSource.SetCanceled()))
+            var leaseExpiresOn = timeProvider.GetUtcNow().Add(delayStrategy.MinimalRenewalDelay);
+            using var timer = new PeriodicTimer(delayStrategy.GetNextDelay(leaseExpiresOn), timeProvider);
+            while (await timer.WaitForNextTickAsync(_cts.Token))
             {
-                while (!cancellationToken.IsCancellationRequested)
+                try
                 {
-                    try
-                    {
-                        nextVisibleOn = await UpdateTimeout(leaseId, fileName, nextVisibleOn, cancellationToken);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                    }
-                    catch (Exception ex) when (ex.InnerException is OperationCanceledException)
-                    {
-                    }
+                    leaseExpiresOn = await singletonLockManager.RenewLockAsync(leaseId, fileName, _cts.Token);
+                    timer.Period = delayStrategy.GetNextDelay(leaseExpiresOn);
+                }
+                catch (OperationCanceledException)
+                {
+                }
+                catch (Exception ex) when (ex.InnerException is OperationCanceledException)
+                {
+                }
+                catch
+                {
+                    onFaultedAction?.Invoke();
+                    break;
                 }
             }
         }
 
-        private async Task<DateTimeOffset> UpdateTimeout(string leaseId, string fileName, DateTimeOffset nextVisibleOn, CancellationToken cancellationToken)
+        public async ValueTask DisposeAsync()
         {
-            var delay = _delayStrategy.GetNextDelay(nextVisibleOn);
-            await Task.Delay(delay, cancellationToken);
-
-            nextVisibleOn = await _singletonLockManager.RenewLockAsync(leaseId, fileName, cancellationToken);
-
-            return nextVisibleOn;
-        }
-
-        public void Dispose()
-        {
-            if (!_disposed)
+            if (_disposed)
             {
-                _cts.Cancel();
-                _cts.Dispose();
+                return;
             }
 
             _disposed = true;
+            await _cts.CancelAsync();
+
+            try
+            {
+                if (_backgroundThread is not null)
+                {
+                    await _backgroundThread;
+                }
+            }
+            catch
+            {
+                // At this point we really just want to stop extending the visibility timeout
+            }
+
+            _cts.Dispose();
         }
     }
 }

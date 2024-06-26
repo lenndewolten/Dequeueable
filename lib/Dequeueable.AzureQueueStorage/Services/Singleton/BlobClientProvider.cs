@@ -6,42 +6,31 @@ using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Services.Singleton
 {
-    internal sealed class BlobClientProvider : IBlobClientProvider
+    internal sealed class BlobClientProvider(
+        IBlobClientFactory factory,
+        IHostOptions options,
+        IOptions<SingletonHostOptions> singletonHostOptions,
+        ILogger<BlobClientProvider> logger) : IBlobClientProvider
     {
-        private readonly IHostOptions _options;
-        private readonly SingletonHostOptions _singletonHostOptions;
-        private readonly IBlobClientFactory _factory;
-        private readonly ILogger<BlobClientProvider> _logger;
+        private readonly SingletonHostOptions _singletonHostOptions = singletonHostOptions.Value;
 
-        public BlobClientProvider(
-            IBlobClientFactory factory,
-            IHostOptions options,
-            IOptions<SingletonHostOptions> singletonHostOptions,
-            ILogger<BlobClientProvider> logger)
+        public BlobClient GetClient(string fileName)
         {
-            _options = options;
-            _singletonHostOptions = singletonHostOptions.Value;
-            _factory = factory;
-            _logger = logger;
-        }
-
-        public BlobClient Get(string fileName)
-        {
-            if (_options.AuthenticationScheme is not null)
+            if (options.AuthenticationScheme is not null)
             {
-                _logger.LogDebug("Authenticate the BlobClient through Active Directory");
+                logger.LogDebug("Authenticate the BlobClient through Active Directory");
 
-                var uri = BuildUri(_singletonHostOptions.BlobUriFormat, _options.AccountName, _singletonHostOptions.ContainerName, fileName);
-                return _factory.Create(uri, _options.AuthenticationScheme);
+                var uri = BuildUri(_singletonHostOptions.BlobUriFormat, options.AccountName, _singletonHostOptions.ContainerName, fileName);
+                return factory.Create(uri, options.AuthenticationScheme);
             }
 
-            if (string.IsNullOrWhiteSpace(_options.ConnectionString))
+            if (string.IsNullOrWhiteSpace(options.ConnectionString))
             {
                 throw new InvalidOperationException("No AuthenticationScheme or ConnectionString supplied. Make sure that it is defined in the app settings");
             }
 
-            _logger.LogDebug("Authenticate the BlobClient through the ConnectionString");
-            return _factory.Create(_options.ConnectionString, _singletonHostOptions.ContainerName, fileName);
+            logger.LogDebug("Authenticate the BlobClient through the ConnectionString");
+            return factory.Create(options.ConnectionString, _singletonHostOptions.ContainerName, fileName);
         }
 
         private Uri BuildUri(string? uriFormat, string? accountName, string containerName, string fileName)
@@ -65,7 +54,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
             }
             catch (UriFormatException)
             {
-                _logger.LogError("Invalid Uri: The Blob Uri could not be parsed. Format: '{Uri}'", uriFormat);
+                logger.LogError("Invalid Uri: The Blob Uri could not be parsed. Format: '{Uri}'", uriFormat);
                 throw;
             }
         }

@@ -8,7 +8,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests
     public class ListenerHostFactory<TFunction>
         where TFunction : class, IAmazonSQSFunction
     {
-        public readonly IHostBuilder HostBuilder;
+        private readonly IHostBuilder _hostBuilder;
         private readonly Action<Configurations.ListenerHostOptions>? _options;
 
         public ListenerHostFactory(Action<Configurations.ListenerHostOptions>? overrideOptions = null, bool runAsSingleton = false)
@@ -18,7 +18,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests
                 _options += overrideOptions;
             }
 
-            HostBuilder = Host.CreateDefaultBuilder()
+            _hostBuilder = Host.CreateDefaultBuilder()
                 .ConfigureServices(services =>
                 {
                     var hostBuilder = services.AddAmazonSQSServices<TestFunction>()
@@ -35,13 +35,13 @@ namespace Dequeueable.AmazonSQS.IntegrationTests
 
         public IHostBuilder ConfigureTestServices(Action<IServiceCollection> services)
         {
-            HostBuilder.ConfigureServices(services);
-            return HostBuilder;
+            _hostBuilder.ConfigureServices(services);
+            return _hostBuilder;
         }
 
         public Services.Hosts.IHostExecutor Build()
         {
-            var host = HostBuilder.Build();
+            var host = _hostBuilder.Build();
             return host.Services.GetRequiredService<Services.Hosts.IHostExecutor>();
         }
     }

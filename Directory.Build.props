@@ -1,7 +1,21 @@
 <Project>
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<AnalysisMode>All</AnalysisMode>
+		<NuGetAuditLevel>moderate</NuGetAuditLevel>
+
+		<NoWarn>
+			CA1031; <!-- Do not catch general exception types -->
+			CA1056; <!-- URI properties should not be strings -->
+			CA1812; <!-- Avoid uninstantiated internal classes -->
+			CA1848; <!-- Use the LoggerMessage delegates -->
+			CA2007; <!-- Do not directly await a Task -->
+			CA2227; <!-- Collection properties should be read only -->
+		</NoWarn>
     </PropertyGroup>
 </Project>

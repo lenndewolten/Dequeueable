@@ -35,7 +35,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
-            sut.Get(fileName);
+            sut.GetClient(fileName);
 
             // Assert
             factoryMock.Verify();
@@ -74,7 +74,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
-            sut.Get(fileName);
+            sut.GetClient(fileName);
 
             // Assert
             factoryMock.Verify();
@@ -113,7 +113,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
-            sut.Get(fileName);
+            sut.GetClient(fileName);
 
             // Assert
             factoryMock.Verify();
@@ -148,7 +148,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
-            Action act = () => sut.Get(fileName);
+            Action act = () => sut.GetClient(fileName);
 
             // Assert
             act.Should().ThrowExactly<UriFormatException>();
@@ -184,7 +184,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var sut = new BlobClientProvider(factoryMock.Object, options, singletonHostOptionsMock.Object, loggerMock.Object);
 
             // Act
-            Action act = () => sut.Get(fileName);
+            Action act = () => sut.GetClient(fileName);
 
             // Assert
             act.Should().ThrowExactly<InvalidOperationException>().WithMessage("No AuthenticationScheme or ConnectionString supplied. Make sure that it is defined in the app settings");

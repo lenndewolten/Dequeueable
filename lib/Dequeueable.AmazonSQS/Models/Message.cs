@@ -33,7 +33,7 @@
         /// <summary>
         /// A list of attributes that need to be returned along with each message <see cref="Amazon.SQS.Model.Message.Attributes"/>.
         /// </summary>
-        public Dictionary<string, string> Attributes { get; } = new();
+        public Dictionary<string, string> Attributes { get; } = [];
 
         /// <summary>
         /// Creates an instance of the queue message.
