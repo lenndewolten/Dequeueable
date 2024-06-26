@@ -12,7 +12,7 @@ namespace Dequeueable.AmazonSQS.Services.Queues
 
         public async Task<Models.Message[]> RetrieveMessagesAsync(CancellationToken cancellationToken = default)
         {
-            var request = new ReceiveMessageRequest { QueueUrl = hostOptions.QueueUrl, MaxNumberOfMessages = hostOptions.BatchSize, VisibilityTimeout = hostOptions.VisibilityTimeoutInSeconds, AttributeNames = hostOptions.AttributeNames };
+            var request = new ReceiveMessageRequest { QueueUrl = hostOptions.QueueUrl, MaxNumberOfMessages = hostOptions.BatchSize, VisibilityTimeout = hostOptions.VisibilityTimeoutInSeconds, MessageSystemAttributeNames = hostOptions.AttributeNames.ToList() };
             var res = await _client.ReceiveMessageAsync(request, cancellationToken);
 
             var nextVisbileOn = NextVisbileOn();

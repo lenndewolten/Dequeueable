@@ -38,8 +38,8 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             // Arrange
             var messages = new List<SendMessageBatchRequestEntry>
             {
-                new SendMessageBatchRequestEntry("1", "body1"){MessageGroupId ="1"},
-                new SendMessageBatchRequestEntry("2", "body2"){MessageGroupId ="1"}
+                new("1", "body1"){MessageGroupId ="1"},
+                new("2", "body2"){MessageGroupId ="1"}
             };
             var response = await _client.SendMessageBatchAsync(new SendMessageBatchRequest
             {
@@ -88,8 +88,8 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             // Arrange
             var messages = new List<SendMessageBatchRequestEntry>
             {
-                new SendMessageBatchRequestEntry("1", "body1"){MessageGroupId ="1"},
-                new SendMessageBatchRequestEntry("2", "body2"){MessageGroupId ="1"}
+                new("1", "body1"){MessageGroupId ="1"},
+                new("2", "body2"){MessageGroupId ="1"}
             };
             var response = await _client.SendMessageBatchAsync(new SendMessageBatchRequest
             {

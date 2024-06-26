@@ -28,7 +28,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>();
 
             singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
-            blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
+            blobClientProviderMock.Setup(c => c.GetClient(fileName)).Returns(blobClientFake.Object);
             distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, singletonHostOptions, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
             loggerMock.Setup(
                 x => x.Log(
@@ -66,7 +66,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>();
 
             singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
-            blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
+            blobClientProviderMock.Setup(c => c.GetClient(fileName)).Returns(blobClientFake.Object);
             distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, singletonHostOptions, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
             loggerMock.Setup(
                 x => x.Log(
@@ -105,7 +105,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Singleton
             var blobClientFake = new Mock<BlobClient>();
 
             singletonHostOptionsMock.Setup(o => o.Value).Returns(singletonHostOptions);
-            blobClientProviderMock.Setup(c => c.Get(fileName)).Returns(blobClientFake.Object);
+            blobClientProviderMock.Setup(c => c.GetClient(fileName)).Returns(blobClientFake.Object);
             distributedLockManagerFactoryMock.Setup(f => f.Create(blobClientFake.Object, singletonHostOptions, loggerMock.Object)).Returns(distributedLockManagerMock.Object);
             distributedLockManagerMock.SetupSequence(m => m.AcquireAsync(CancellationToken.None))
                 .ReturnsAsync((string?)null)

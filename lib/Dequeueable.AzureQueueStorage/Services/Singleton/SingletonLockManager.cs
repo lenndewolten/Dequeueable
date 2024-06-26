@@ -13,7 +13,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
     {
         public async Task<string> AquireLockAsync(string fileName, CancellationToken cancellationToken)
         {
-            var blobClient = blobClientProvider.Get(fileName);
+            var blobClient = blobClientProvider.GetClient(fileName);
             var lockManager = distributedLockManagerFactory.Create(blobClient, singletonHostOptions.Value, logger);
 
             var leaseId = await AcquireLockAsync(singletonHostOptions.Value, lockManager, cancellationToken);
@@ -25,7 +25,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
 
         public async Task<DateTimeOffset> RenewLockAsync(string leaseId, string fileName, CancellationToken cancellationToken)
         {
-            var blobClient = blobClientProvider.Get(fileName);
+            var blobClient = blobClientProvider.GetClient(fileName);
             var lockManager = distributedLockManagerFactory.Create(blobClient, singletonHostOptions.Value, logger);
 
             var nextVisibileOn = await lockManager.RenewAsync(leaseId, cancellationToken);
@@ -36,7 +36,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
 
         public Task ReleaseLockAsync(string leaseId, string fileName, CancellationToken cancellationToken)
         {
-            var blobClient = blobClientProvider.Get(fileName);
+            var blobClient = blobClientProvider.GetClient(fileName);
             var lockManager = distributedLockManagerFactory.Create(blobClient, singletonHostOptions.Value, logger);
 
             return lockManager.ReleaseAsync(leaseId, cancellationToken);

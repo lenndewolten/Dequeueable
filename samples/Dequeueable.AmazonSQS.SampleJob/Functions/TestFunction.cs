@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AmazonSQS.SampleJob.Functions
 {
-    internal class TestFunction(ILogger<TestFunction> logger) : IAmazonSQSFunction
+    internal sealed class TestFunction(ILogger<TestFunction> logger) : IAmazonSQSFunction
     {
         public Task ExecuteAsync(Message message, CancellationToken cancellationToken)
         {

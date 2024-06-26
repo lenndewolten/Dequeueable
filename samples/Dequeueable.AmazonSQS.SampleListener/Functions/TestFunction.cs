@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AmazonSQS.SampleListener.Functions
 {
-    internal class TestFunction(ILogger<TestFunction> logger) : IAmazonSQSFunction
+    internal sealed class TestFunction(ILogger<TestFunction> logger) : IAmazonSQSFunction
     {
         private readonly ILogger<TestFunction> _logger = logger;
 

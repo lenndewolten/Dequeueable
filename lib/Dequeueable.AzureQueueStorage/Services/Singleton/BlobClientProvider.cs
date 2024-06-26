@@ -14,7 +14,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Singleton
     {
         private readonly SingletonHostOptions _singletonHostOptions = singletonHostOptions.Value;
 
-        public BlobClient Get(string fileName)
+        public BlobClient GetClient(string fileName)
         {
             if (options.AuthenticationScheme is not null)
             {

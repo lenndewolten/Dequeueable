@@ -31,7 +31,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Queues
         private Task HandleMessageAsync(Message message, CancellationToken cancellationToken)
         {
             var taskCompletionSource = new TaskCompletionSource();
-            var run = Task.Factory.StartNew(() => ExecuteMessageAsync(message, taskCompletionSource, cancellationToken));
+            var run = Task.Factory.StartNew(() => ExecuteMessageAsync(message, taskCompletionSource, cancellationToken), CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
 
             return taskCompletionSource.Task;
         }

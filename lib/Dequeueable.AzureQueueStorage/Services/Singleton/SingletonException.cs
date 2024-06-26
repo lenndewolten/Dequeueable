@@ -6,6 +6,13 @@
     public class SingletonException : Exception
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="SingletonException"/> class.
+        /// </summary>
+        public SingletonException()
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SingletonException"/> class with a specified error message.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>

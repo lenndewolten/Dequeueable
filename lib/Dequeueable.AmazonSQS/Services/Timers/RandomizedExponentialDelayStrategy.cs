@@ -52,7 +52,9 @@ namespace Dequeueable.AmazonSQS.Services.Timers
                 if (_backoffExponent > 0)
                 {
                     _random ??= new Random();
+#pragma warning disable CA5394 // Do not use insecure randomness
                     var randomIncrementMsec = (double)_random.Next(100 - _randomizationFactor, 100 + _randomizationFactor) / 100;
+#pragma warning restore CA5394 // Do not use insecure randomness
                     var incrementMsec = randomIncrementMsec *
                         Math.Pow(2.0, _backoffExponent - 1) *
                         _deltaBackoff.TotalMilliseconds;

@@ -7,7 +7,7 @@ namespace Dequeueable.AmazonSQS.Configurations
     /// </summary>
     public class HostOptions : IHostOptions
     {
-        private List<string> _attributeNames = new();
+        private IEnumerable<string> _attributeNames = Enumerable.Empty<string>();
 
         /// <summary>
         /// Constant string used to bind the appsettings.*.json
@@ -37,12 +37,12 @@ namespace Dequeueable.AmazonSQS.Configurations
         /// <summary>
         /// A list of attributes that need to be returned along with each message <see cref="Amazon.SQS.Model.Message.Attributes"/>.
         /// </summary>
-        public List<string> AttributeNames
+        public IEnumerable<string> AttributeNames
         {
             get => _attributeNames.Distinct().ToList();
             set
             {
-                _attributeNames = value ?? new();
+                _attributeNames = value ?? Enumerable.Empty<string>();
             }
         }
     }

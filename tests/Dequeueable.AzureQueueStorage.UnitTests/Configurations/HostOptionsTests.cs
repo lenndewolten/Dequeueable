@@ -134,7 +134,6 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
             result.Should().Contain(e => e.ErrorMessage!.Contains("Value for MaxDequeueCount must be between 0 and 20."));
         }
 
-
         [Fact]
         public void Given_a_HostOptions_when_VisibilityTimeoutInSeconds_is_within_range_then_the_validation_result_are_empty()
         {
@@ -167,7 +166,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
             result.Should().Contain(e => e.ErrorMessage!.Contains("Value for VisibilityTimeoutInSeconds must not be negative or zero"));
         }
 
-        private static IList<ValidationResult> ValidateModel(object model)
+        private static List<ValidationResult> ValidateModel(object model)
         {
             var validationResults = new List<ValidationResult>();
             var ctx = new ValidationContext(model, null, null);

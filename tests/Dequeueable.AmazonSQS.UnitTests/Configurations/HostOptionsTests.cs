@@ -86,8 +86,6 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
             result.Should().NotContain(e => e.MemberNames!.Contains("BatchSize"));
         }
 
-
-
         [Fact]
         public void Given_a_HostOptions_when_VisibilityTimeoutInSeconds_is_zero_then_the_validation_result_contains_the_correct_error_message()
         {
@@ -136,7 +134,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
             result.Should().NotContain(e => e.MemberNames!.Contains("VisibilityTimeoutInSeconds"));
         }
 
-        private IList<ValidationResult> ValidateModel(object model)
+        private static List<ValidationResult> ValidateModel(object model)
         {
             var validationResults = new List<ValidationResult>();
             var ctx = new ValidationContext(model, null, null);

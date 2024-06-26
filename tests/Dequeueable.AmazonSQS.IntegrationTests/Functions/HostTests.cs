@@ -27,9 +27,10 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             _queueUrl = res.QueueUrl;
         }
 
-        public Task DisposeAsync()
+        public async Task DisposeAsync()
         {
-            return _client.DeleteQueueAsync(_queueUrl);
+            await _client.DeleteQueueAsync(_queueUrl);
+            _client.Dispose();
         }
 
         [Fact]
@@ -38,8 +39,8 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             // Arrange
             var messages = new List<SendMessageBatchRequestEntry>
             {
-                new SendMessageBatchRequestEntry("1", "body1"),
-                new SendMessageBatchRequestEntry("2", "body2")
+                new("1", "body1"),
+                new("2", "body2")
             };
             await _client.SendMessageBatchAsync(new SendMessageBatchRequest
             {
@@ -87,8 +88,8 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
             // Arrange
             var messages = new List<SendMessageBatchRequestEntry>
             {
-                new SendMessageBatchRequestEntry("1", "body1"),
-                new SendMessageBatchRequestEntry("2", "body2")
+                new("1", "body1"),
+                new("2", "body2")
             };
             await _client.SendMessageBatchAsync(new SendMessageBatchRequest
             {

@@ -15,7 +15,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
 {
     public class HostBuilderTests
     {
-        private class TestFunction : IAmazonSQSFunction
+        private sealed class TestFunction : IAmazonSQSFunction
         {
             public Task ExecuteAsync(Message message, CancellationToken cancellationToken)
             {

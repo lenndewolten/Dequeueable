@@ -13,7 +13,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
 {
     public class HostBuilderTests
     {
-        private class TestFunction : IAzureQueueFunction
+        private sealed class TestFunction : IAzureQueueFunction
         {
             public Task ExecuteAsync(Message message, CancellationToken cancellationToken)
             {
