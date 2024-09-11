@@ -16,7 +16,7 @@ namespace Dequeueable.UnitTests.Configurations
             .ConfigureServices(services =>
             {
                 services
-                .RegisterDequeueableServices<TestMessage>()
+                .AddDequeueableServices<TestMessage>()
                 .WithQueueMessageManager<TestQueueMessageManager>()
                 .WithQueueMessageHandler<TestQueueMessageHandler>()
                 .AsJob();
@@ -37,7 +37,7 @@ namespace Dequeueable.UnitTests.Configurations
             .ConfigureServices(services =>
             {
                 services
-                .RegisterDequeueableServices<TestMessage>()
+                .AddDequeueableServices<TestMessage>()
                 .WithQueueMessageManager<TestQueueMessageManager>()
                 .WithQueueMessageHandler<TestQueueMessageHandler>()
                 .AsListener<TestListenerHostOptions>();

@@ -8,15 +8,6 @@
 docker build -t <yourtagname> -f samples/Dequeueable.AzureQueueStorage.SampleJob/deployment/Dockerfile .
 ```
 
-Image stats:
-
-```
-docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplejob-v2
-
-> REPOSITORY                 TAG                                IMAGE ID       CREATED         SIZE
-> lenndewolten/dequeueable   azure-queue-storage-samplejob-v2   2709a261957e   6 minutes ago   90.8MB
-```
-
 ## Kubernetes
 
 ### Deployment
@@ -30,7 +21,7 @@ kubectl apply -f scaledjob.yaml
 
 #### **Connect to azurite**
 
-Get the public IP address of one of your nodes that is running a Hello World pod. How you get this address depends on how you set up your cluster. For example, if you are using Minikube or Docker Desktop, you can see the node address by running kubectl cluster-info.
+Get the public IP address of one of your nodes that is running a the pod. How you get this address depends on how you set up your cluster. For example, if you are using Minikube or Docker Desktop, you can see the node address by running kubectl cluster-info.
 
 ```
 kubectl cluster-info

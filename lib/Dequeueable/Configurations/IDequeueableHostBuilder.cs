@@ -14,6 +14,14 @@ namespace Dequeueable.Configurations
         /// <summary>
         /// Configures the dequeueable host as a listener with the specified options.
         /// </summary>
+        /// /// <returns>
+        /// Returns an <see cref="IServiceCollection"/> to allow further service configuration.
+        /// </returns>
+        IServiceCollection AsListener(Action<ListenerHostOptions>? options = null);
+
+        /// <summary>
+        /// Configures the dequeueable host as a listener with the specified options.
+        /// </summary>
         /// <typeparam name="TOptions">
         /// The type of the options that implement <see cref="IListenerHostOptions"/>. These options define the configuration for the listener.
         /// </typeparam>

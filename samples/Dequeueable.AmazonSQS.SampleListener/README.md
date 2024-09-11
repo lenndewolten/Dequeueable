@@ -8,15 +8,6 @@
 docker build -t <yourtagname> -f samples/Dequeueable.AmazonSQS.SampleListener/deployment/Dockerfile .
 ```
 
-Image stats:
-
-```
-docker images -f reference=lenndewolten/dequeueable:aws-sqs-samplelistener-v1
-
-> REPOSITORY                 TAG                         IMAGE ID       CREATED          SIZE
-> lenndewolten/dequeueable   aws-sqs-samplelistener-v1   cc5b966e169f   52 seconds ago   90.4MB
-```
-
 ## Kubernetes
 
 ### Deployment

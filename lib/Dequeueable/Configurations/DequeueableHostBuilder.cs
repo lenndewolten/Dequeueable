@@ -6,6 +6,18 @@ namespace Dequeueable.Configurations
 {
     internal sealed class DequeueableHostBuilder<TMessage>(IServiceCollection services) : IDequeueableHostBuilder<TMessage> where TMessage : class, IQueueMessage
     {
+        public IServiceCollection AsListener(Action<ListenerHostOptions>? options = null)
+        {
+            services.AddOptions<ListenerHostOptions>()
+                .Configure(options ?? (opt => { }))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+            RegisterListenerServices<ListenerHostOptions>();
+
+            return services;
+        }
+
         public IServiceCollection AsListener<TOptions>(Action<TOptions>? options = null)
             where TOptions : class, IListenerHostOptions
         {

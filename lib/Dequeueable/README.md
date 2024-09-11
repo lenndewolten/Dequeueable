@@ -19,7 +19,7 @@ This framework can run as a **listener** or **job**:
 Scaffold a new project, you can either use a console or web app.
 
 1. Add a Message class that implements the `IQueueMessage`.
-2. Add `.RegisterDequeueableServices<MyMessage>` in the DI container.
+2. Add `.AddDequeueableServices<MyMessage>` in the DI container.
 3. Add the job or listener services:
    - Add `AsJob` in the DI container of your app to run the host as a job.
    - Add `AsListener` in the DI container of your app to run the app as a back ground listener.
@@ -28,7 +28,7 @@ Scaffold a new project, you can either use a console or web app.
 await Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        services.RegisterDequeueableServices<MyMessage>()
+        services.AddDequeueableServices<MyMessage>()
            .WithQueueMessageManager<QueueMessageManager>()
            .WithQueueMessageHandler<QueueMessageHandler>()
            .AsJob();
@@ -45,7 +45,7 @@ You can configure the host via the `IOptions` pattern during registration.
 await Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        services.RegisterDequeueableServices<MyMessage>()
+        services.AddDequeueableServices<MyMessage>()
            .WithQueueMessageManager<QueueMessageManager>()
            .WithQueueMessageHandler<QueueMessageHandler>()
            .AsListener<MyOptions>();

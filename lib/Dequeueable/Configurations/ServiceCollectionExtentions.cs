@@ -21,7 +21,7 @@ namespace Dequeueable.Configurations
         /// <returns>
         /// Returns an <see cref="IDequeueableBuilder{TMessage}"/> that can be used to further configure the dequeueable services.
         /// </returns>
-        public static IDequeueableBuilder<TMessage> RegisterDequeueableServices<TMessage>(this IServiceCollection services) where TMessage : class, IQueueMessage
+        public static IDequeueableBuilder<TMessage> AddDequeueableServices<TMessage>(this IServiceCollection services) where TMessage : class, IQueueMessage
         {
             services.TryAddSingleton(TimeProvider.System);
 

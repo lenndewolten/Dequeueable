@@ -8,15 +8,6 @@
 docker build -t <yourtagname> -f samples/Dequeueable.AzureQueueStorage.SampleListener/deployment/Dockerfile .
 ```
 
-Image stats:
-
-```
-docker images -f reference=lenndewolten/dequeueable:azure-queue-storage-samplelistener-v2
-
-> REPOSITORY                 TAG                                     IMAGE ID       CREATED          SIZE
-> lenndewolten/dequeueable   azure-queue-storage-samplelistener-v2   26a4b226e4b8   46 seconds ago   92.6MB
-```
-
 ## Kubernetes
 
 ### Deployment

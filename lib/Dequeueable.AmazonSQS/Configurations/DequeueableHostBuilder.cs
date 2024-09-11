@@ -20,7 +20,7 @@ namespace Dequeueable.AmazonSQS.Configurations
                 services.Configure(options);
             }
 
-            services.RegisterDequeueableServices<Message>()
+            services.AddDequeueableServices<Message>()
                 .WithQueueMessageManager<QueueMessageManager>()
                 .WithQueueMessageHandler<QueueMessageHandler>()
                 .AsJob();
@@ -47,7 +47,7 @@ namespace Dequeueable.AmazonSQS.Configurations
                 services.Configure(options);
             }
 
-            services.RegisterDequeueableServices<Message>()
+            services.AddDequeueableServices<Message>()
                 .WithQueueMessageManager<QueueMessageManager>()
                 .WithQueueMessageHandler<QueueMessageHandler>()
                 .AsListener(options);

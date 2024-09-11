@@ -8,15 +8,6 @@
 docker build -t <yourtagname> -f samples/Dequeueable.AmazonSQS.SampleJob/deployment/Dockerfile .
 ```
 
-Image stats:
-
-```
-docker images -f reference=lenndewolten/dequeueable:aws-sqs-samplejob-v1
-
-> REPOSITORY                 TAG                    IMAGE ID       CREATED              SIZE
-> lenndewolten/dequeueable   aws-sqs-samplejob-v1   7cfdf41b4bbb   About a minute ago   84.2MB
-```
-
 ## Kubernetes
 
 ### Deployment

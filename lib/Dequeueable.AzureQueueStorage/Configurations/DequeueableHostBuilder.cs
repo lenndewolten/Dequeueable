@@ -21,7 +21,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
                 services.Configure(options);
             }
 
-            services.RegisterDequeueableServices<Message>()
+            services.AddDequeueableServices<Message>()
                 .WithQueueMessageManager<QueueMessageManager>()
                 .WithQueueMessageHandler<QueueMessageHandler>()
                 .AsJob();
@@ -49,7 +49,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
                 services.Configure(options);
             }
 
-            services.RegisterDequeueableServices<Message>()
+            services.AddDequeueableServices<Message>()
                 .WithQueueMessageManager<QueueMessageManager>()
                 .WithQueueMessageHandler<QueueMessageHandler>()
                 .AsListener(options);
