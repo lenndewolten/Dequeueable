@@ -12,7 +12,7 @@ using Moq;
 
 namespace Dequeueable.AmazonSQS.UnitTests.Configurations
 {
-    public class HostBuilderTests
+    public class DequeueableHostBuilderTests
     {
         private sealed class TestFunction : IAmazonSQSFunction
         {
@@ -23,7 +23,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_RunAsJob_is_called_then_the_Host_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_RunAsJob_is_called_then_the_Host_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -49,7 +49,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_RunAsJob_is_called_then_IHostOptions_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_RunAsJob_is_called_then_IHostOptions_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -71,7 +71,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_RunAsListener_is_called_then_the_Host_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_RunAsListener_is_called_then_the_Host_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -98,7 +98,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_RunAsListener_is_called_then_IHostOptions_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_RunAsListener_is_called_then_IHostOptions_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -120,7 +120,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_AsSingleton_is_called_then_IQueueMessageExecutor_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_AsSingleton_is_called_then_IQueueMessageExecutor_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -128,6 +128,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
             {
                 services
                 .AddAmazonSQSServices<TestFunction>()
+                .RunAsJob()
                 .AsSingleton();
             });
 
@@ -139,7 +140,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_AsSingleton_is_called_then_HostOptions_AttributeNames_contains_MessageGroupId()
+        public void Given_a_DequeueableHostBuilder_when_AsSingleton_is_called_then_HostOptions_AttributeNames_contains_MessageGroupId()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -163,7 +164,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_AsSingleton_is_called_then_ListenerHostOptions_AttributeNames_contains_MessageGroupId()
+        public void Given_a_DequeueableHostBuilder_when_AsSingleton_is_called_then_ListenerHostOptions_AttributeNames_contains_MessageGroupId()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -187,7 +188,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_AsSingleton_is_called_then_ListenerHostOptions_NewBatchThreshold_is_zero()
+        public void Given_a_DequeueableHostBuilder_when_AsSingleton_is_called_then_ListenerHostOptions_NewBatchThreshold_is_zero()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()

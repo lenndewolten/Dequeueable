@@ -28,7 +28,7 @@ namespace Dequeueable.AmazonSQS.Extentions
             services.AddTransient<IAmazonSQSFunction, TFunction>();
             services.TryAddSingleton(TimeProvider.System);
 
-            return new HostBuilder(services);
+            return new DequeueableHostBuilder(services);
         }
     }
 }

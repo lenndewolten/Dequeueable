@@ -7,9 +7,9 @@ using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AmazonSQS.Configurations
 {
-    internal class HostBuilder(IServiceCollection services) : IDequeueableHostBuilder
+    internal sealed class DequeueableHostBuilder(IServiceCollection services) : IDequeueableHostBuilder
     {
-        public IDequeueableHostBuilder RunAsJob(Action<HostOptions>? options = null)
+        public IDequeueableSingletonHostBuilder RunAsJob(Action<HostOptions>? options = null)
         {
             services.AddOptions<HostOptions>().BindConfiguration(HostOptions.Dequeueable)
                 .ValidateDataAnnotations()
@@ -31,10 +31,10 @@ namespace Dequeueable.AmazonSQS.Configurations
                 return opt.Value;
             });
 
-            return this;
+            return new DequeueableSingletonHostBuilder(services);
         }
 
-        public IDequeueableHostBuilder RunAsListener(Action<ListenerHostOptions>? options = null)
+        public IDequeueableSingletonHostBuilder RunAsListener(Action<ListenerHostOptions>? options = null)
         {
             services.AddOptions<ListenerHostOptions>().BindConfiguration(HostOptions.Dequeueable)
                 .Validate(ListenerHostOptions.ValidatePollingInterval, $"The '{nameof(ListenerHostOptions.MinimumPollingIntervalInMilliseconds)}' must not be greater than the '{nameof(ListenerHostOptions.MaximumPollingIntervalInMilliseconds)}'.")
@@ -58,26 +58,7 @@ namespace Dequeueable.AmazonSQS.Configurations
                 return opt.Value;
             });
 
-            return this;
-        }
-
-        public IDequeueableHostBuilder AsSingleton()
-        {
-            services.AddTransient<SingletonManager>();
-            services.AddTransient<QueueMessageExecutor>();
-            services.AddTransient<IQueueMessageExecutor>(provider =>
-            {
-                var singletonManager = provider.GetRequiredService<SingletonManager>();
-                var executor = provider.GetRequiredService<QueueMessageExecutor>();
-
-                return new SingletonQueueMessageExecutor(executor, singletonManager);
-            });
-
-            services.PostConfigure<HostOptions>(options => options.AttributeNames = [.. options.AttributeNames, .. new List<string> { "MessageGroupId" }]);
-            services.PostConfigure<ListenerHostOptions>(options => options.AttributeNames = [.. options.AttributeNames, .. new List<string> { "MessageGroupId" }]);
-            services.PostConfigure<ListenerHostOptions>(options => options.NewBatchThreshold = 0);
-
-            return this;
+            return new DequeueableSingletonHostBuilder(services);
         }
     }
 }
