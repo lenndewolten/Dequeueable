@@ -21,16 +21,12 @@ namespace Dequeueable.AzureQueueStorage.Extentions
         public static IDequeueableHostBuilder AddAzureQueueStorageServices<TFunction>(this IServiceCollection services)
             where TFunction : class, IAzureQueueFunction
         {
-
-            //services.AddSingleton<IQueueMessageManager, QueueMessageManager>();
-            //services.AddTransient<IQueueMessageHandler, QueueMessageHandler>();
             services.AddTransient<IQueueMessageExecutor, QueueMessageExecutor>();
             services.AddTransient<IQueueClientFactory, QueueClientFactory>();
             services.AddTransient<IAzureQueueFunction, TFunction>();
             services.TryAddTransient<IQueueClientProvider, QueueClientProvider>();
-            services.TryAddSingleton(TimeProvider.System);
 
-            return new HostBuilder(services);
+            return new DequeueableHostBuilder(services);
         }
     }
 }
