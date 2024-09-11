@@ -20,25 +20,7 @@ namespace Dequeueable.Queues
         /// <returns>A <see cref="Task"/> representing the asynchronous delete operation.</returns>
         Task DeleteMessageAsync(TMessage queueMessage, CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Asynchronously enqueues the specified message to the queue.
-        /// </summary>
-        /// <param name="queueMessage">The message to enqueue.</param>
-        /// <param name="cancellationToken">
-        /// A <see cref="CancellationToken"/> that can be used to cancel the operation.
-        /// </param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous enqueue operation.</returns>
-        Task EnqueueMessageAsync(TMessage queueMessage, CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Asynchronously moves the specified message to a poison queue.
-        /// </summary>
-        /// <param name="queueMessage">The message to move to the poison queue.</param>
-        /// <param name="cancellationToken">
-        /// A <see cref="CancellationToken"/> that can be used to cancel the operation.
-        /// </param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous move operation.</returns>
-        Task MoveToPoisonQueueAsync(TMessage queueMessage, CancellationToken cancellationToken);
 
         /// <summary>
         /// Asynchronously retrieves messages from the queue.

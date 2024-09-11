@@ -2,12 +2,11 @@
 using Amazon.SQS.Model;
 using Dequeueable.AmazonSQS.Configurations;
 using Dequeueable.AmazonSQS.Factories;
-using Dequeueable.Queues;
 
 namespace Dequeueable.AmazonSQS.Services.Queues
 {
     internal sealed class QueueMessageManager(IAmazonSQSClientFactory amazonSQSClientFactory,
-        IHostOptions hostOptions) : IQueueMessageManager<Models.Message>
+        IHostOptions hostOptions) : IQueueMessageManager
     {
         private readonly AmazonSQSClient _client = amazonSQSClientFactory.Create();
 
@@ -48,12 +47,6 @@ namespace Dequeueable.AmazonSQS.Services.Queues
         private DateTimeOffset NextVisbileOn()
         {
             return DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(hostOptions.VisibilityTimeoutInSeconds));
-        }
-
-        // TODO
-        public Task MoveToPoisonQueueAsync(Models.Message queueMessage, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
         }
     }
 }

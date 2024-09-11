@@ -1,7 +1,5 @@
-﻿using Dequeueable.AmazonSQS.Models;
-using Dequeueable.AmazonSQS.Services.Queues;
+﻿using Dequeueable.AmazonSQS.Services.Queues;
 using Dequeueable.AmazonSQS.UnitTests.TestDataBuilders;
-using Dequeueable.Queues;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -14,7 +12,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
         {
             // Arrange
             var message = new MessageTestDataBuilder().Build();
-            var queueMessageManagerMock = new Mock<IQueueMessageManager<Message>>(MockBehavior.Strict);
+            var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
             var timeProvider = TimeProvider.System;
@@ -46,7 +44,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             // Arrange
             var exception = new Exception("test");
             var message = new MessageTestDataBuilder().WithNextVisibileOn(DateTimeOffset.UtcNow.AddSeconds(2)).Build();
-            var queueMessageManagerMock = new Mock<IQueueMessageManager<Message>>(MockBehavior.Strict);
+            var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
             var timeProvider = TimeProvider.System;

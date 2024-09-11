@@ -7,7 +7,7 @@ using Dequeueable.Queues;
 
 namespace Dequeueable.AzureQueueStorage.Services.Queues
 {
-    internal sealed class QueueMessageManager(IQueueClientProvider queueClientProvider, IHostOptions options) : IQueueMessageManager<Message>
+    internal sealed class QueueMessageManager(IQueueClientProvider queueClientProvider, IHostOptions options) : IQueueMessageManager
     {
         private readonly QueueClient _queueClient = queueClientProvider.GetQueue();
         private readonly QueueClient _poisonQueueClient = queueClientProvider.GetPoisonQueue();

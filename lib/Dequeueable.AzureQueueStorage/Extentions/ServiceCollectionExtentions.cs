@@ -22,6 +22,7 @@ namespace Dequeueable.AzureQueueStorage.Extentions
             where TFunction : class, IAzureQueueFunction
         {
             services.AddTransient<IQueueMessageExecutor, QueueMessageExecutor>();
+            services.AddTransient<IQueueMessageManager, QueueMessageManager>();
             services.AddTransient<IQueueClientFactory, QueueClientFactory>();
             services.AddTransient<IAzureQueueFunction, TFunction>();
             services.TryAddTransient<IQueueClientProvider, QueueClientProvider>();

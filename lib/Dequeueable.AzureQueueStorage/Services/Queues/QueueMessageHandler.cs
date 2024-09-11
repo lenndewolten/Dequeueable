@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace Dequeueable.AzureQueueStorage.Services.Queues
 {
     internal sealed class QueueMessageHandler(IQueueMessageExecutor queueMessageExecutor,
-        IQueueMessageManager<Message> queueMessageManager,
+        IQueueMessageManager queueMessageManager,
         TimeProvider timeProvider,
         ILogger<QueueMessageHandler> logger,
         IHostOptions options) : IQueueMessageHandler<Message>

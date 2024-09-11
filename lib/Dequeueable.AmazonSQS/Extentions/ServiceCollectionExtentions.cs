@@ -24,6 +24,7 @@ namespace Dequeueable.AmazonSQS.Extentions
             services.TryAddSingleton<IAmazonSQSClientFactory, AmazonSQSClientFactory>();
             services.AddTransient<IAmazonSQSFunction, TFunction>();
 
+            services.AddTransient<IQueueMessageManager, QueueMessageManager>();
             services.AddTransient<IQueueMessageExecutor, QueueMessageExecutor>();
             services.AddTransient<IAmazonSQSFunction, TFunction>();
             services.TryAddSingleton(TimeProvider.System);

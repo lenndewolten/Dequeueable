@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AmazonSQS.Services.Queues
 {
-    internal sealed class QueueMessageHandler(IQueueMessageManager<Message> queueMessageManager, IQueueMessageExecutor executor, TimeProvider timeProvider, ILogger<QueueMessageHandler> logger) : IQueueMessageHandler<Message>
+    internal sealed class QueueMessageHandler(IQueueMessageManager queueMessageManager, IQueueMessageExecutor executor, TimeProvider timeProvider, ILogger<QueueMessageHandler> logger) : IQueueMessageHandler<Message>
     {
         internal TimeSpan MinimalVisibilityTimeoutDelay { get; set; } = TimeSpan.FromSeconds(15);
 
