@@ -1,9 +1,11 @@
-﻿namespace Dequeueable.AmazonSQS.Models
+﻿using Dequeueable.Models;
+
+namespace Dequeueable.AmazonSQS.Models
 {
     /// <summary>
     /// Queue message retrieved from the qeueue.
     /// </summary>
-    public class Message
+    public class Message : IQueueMessage
     {
         /// <summary>
         /// The unqiue id of the message

@@ -1,11 +1,11 @@
 ﻿using Dequeueable.AmazonSQS.Models;
-using Dequeueable.AmazonSQS.Services.Timers;
-using Dequeueable.AzureQueueStorage.Services.Timers;
+using Dequeueable.Queues;
+using Dequeueable.Timers;
 using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AmazonSQS.Services.Queues
 {
-    internal sealed class QueueMessageHandler(IQueueMessageManager queueMessageManager, IQueueMessageExecutor executor, TimeProvider timeProvider, ILogger<QueueMessageHandler> logger) : IQueueMessageHandler
+    internal sealed class QueueMessageHandler(IQueueMessageManager<Message> queueMessageManager, IQueueMessageExecutor executor, TimeProvider timeProvider, ILogger<QueueMessageHandler> logger) : IQueueMessageHandler<Message>
     {
         internal TimeSpan MinimalVisibilityTimeoutDelay { get; set; } = TimeSpan.FromSeconds(15);
 
@@ -35,7 +35,7 @@ namespace Dequeueable.AmazonSQS.Services.Queues
         private async Task ExecuteMessageAsync(Message message, TaskCompletionSource taskCompletionSource, CancellationToken cancellationToken)
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            await using var timer = new VisibilityTimeoutTimer(queueMessageManager, timeProvider, new LinearDelayStrategy(MinimalVisibilityTimeoutDelay));
+            await using var timer = new VisibilityTimeoutTimer<Message>(queueMessageManager, timeProvider, new LinearDelayStrategy(MinimalVisibilityTimeoutDelay));
 
             timer.Start(message, onFaultedAction: () =>
             {

@@ -36,7 +36,7 @@
 
         public TimeSpan MinimalRenewalDelay { get => _minimumInterval; set { _minimumInterval = value; } }
 
-        public TimeSpan GetNextDelay(DateTimeOffset? _ = null, bool? executionSucceeded = null)
+        public TimeSpan GetNextDelay(DateTimeOffset? nextVisibleOn = null, bool? executionSucceeded = null)
         {
             if (executionSucceeded == true)
             {

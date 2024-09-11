@@ -1,21 +1,23 @@
-﻿using Dequeueable.AmazonSQS.Models;
-using Dequeueable.AmazonSQS.Services.Queues;
-using Dequeueable.AzureQueueStorage.Services.Timers;
+﻿using Dequeueable.Models;
+using Dequeueable.Queues;
 
-namespace Dequeueable.AmazonSQS.Services.Timers
+namespace Dequeueable.Timers
 {
-    internal sealed class VisibilityTimeoutTimer(IQueueMessageManager queueMessagesManager, TimeProvider timeProvider, IDelayStrategy delayStrategy) : IAsyncDisposable
+    public sealed class VisibilityTimeoutTimer<TMessage>(IQueueMessageManager<TMessage> queueMessagesManager, TimeProvider timeProvider, IDelayStrategy delayStrategy) : IAsyncDisposable
+        where TMessage : class, IQueueMessage
     {
         private readonly CancellationTokenSource _cts = new();
         private Task? _backgroundThread;
         private bool _disposed;
 
-        public void Start(Message message, Action? onFaultedAction = null)
+        public void Start(TMessage message, Action? onFaultedAction = null)
         {
+            ArgumentNullException.ThrowIfNull(message);
+
             _backgroundThread = TimerLoop(message, onFaultedAction);
         }
 
-        private async Task TimerLoop(Message message, Action? onFaultedAction)
+        private async Task TimerLoop(TMessage message, Action? onFaultedAction)
         {
             using var timer = new PeriodicTimer(delayStrategy.GetNextDelay(message.NextVisibleOn), timeProvider);
             while (await timer.WaitForNextTickAsync(_cts.Token))

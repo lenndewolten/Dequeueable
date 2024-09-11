@@ -18,7 +18,7 @@ namespace Dequeueable.AmazonSQS.IntegrationTests.Functions
         public HostTests(LocalStackFixture localStackFixture)
         {
             _localStackFixture = localStackFixture;
-            _client = new AmazonSQSClient("dummy", "dummy", new AmazonSQSConfig { ServiceURL = _localStackFixture.SQSURL });
+            _client = new AmazonSQSClient("dummy", "dummy", new AmazonSQSConfig { ServiceURL = _localStackFixture.SQSURL, });
         }
 
         public async Task InitializeAsync()

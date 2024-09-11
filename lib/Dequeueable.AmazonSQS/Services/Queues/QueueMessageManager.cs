@@ -2,21 +2,22 @@
 using Amazon.SQS.Model;
 using Dequeueable.AmazonSQS.Configurations;
 using Dequeueable.AmazonSQS.Factories;
+using Dequeueable.Queues;
 
 namespace Dequeueable.AmazonSQS.Services.Queues
 {
     internal sealed class QueueMessageManager(IAmazonSQSClientFactory amazonSQSClientFactory,
-        IHostOptions hostOptions) : IQueueMessageManager
+        IHostOptions hostOptions) : IQueueMessageManager<Models.Message>
     {
         private readonly AmazonSQSClient _client = amazonSQSClientFactory.Create();
 
-        public async Task<Models.Message[]> RetrieveMessagesAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Models.Message>> RetrieveMessagesAsync(CancellationToken cancellationToken = default)
         {
             var request = new ReceiveMessageRequest { QueueUrl = hostOptions.QueueUrl, MaxNumberOfMessages = hostOptions.BatchSize, VisibilityTimeout = hostOptions.VisibilityTimeoutInSeconds, MessageSystemAttributeNames = hostOptions.AttributeNames.ToList() };
             var res = await _client.ReceiveMessageAsync(request, cancellationToken);
 
             var nextVisbileOn = NextVisbileOn();
-            return res.Messages.Select(m => new Models.Message(m.MessageId, m.ReceiptHandle, nextVisbileOn, BinaryData.FromString(m.Body ?? string.Empty), m.Attributes)).ToArray();
+            return res.Messages.Select(m => new Models.Message(m.MessageId, m.ReceiptHandle, nextVisbileOn, BinaryData.FromString(m.Body ?? string.Empty), m.Attributes));
         }
 
         public async Task DeleteMessageAsync(Models.Message message, CancellationToken cancellationToken)
@@ -47,6 +48,12 @@ namespace Dequeueable.AmazonSQS.Services.Queues
         private DateTimeOffset NextVisbileOn()
         {
             return DateTimeOffset.UtcNow.Add(TimeSpan.FromSeconds(hostOptions.VisibilityTimeoutInSeconds));
+        }
+
+        // TODO
+        public Task MoveToPoisonQueueAsync(Models.Message queueMessage, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

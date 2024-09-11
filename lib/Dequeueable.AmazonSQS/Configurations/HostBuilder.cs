@@ -1,5 +1,6 @@
-﻿using Dequeueable.AmazonSQS.Services.Hosts;
+﻿using Dequeueable.AmazonSQS.Models;
 using Dequeueable.AmazonSQS.Services.Queues;
+using Dequeueable.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -19,8 +20,10 @@ namespace Dequeueable.AmazonSQS.Configurations
                 services.Configure(options);
             }
 
-            services.AddHostedService<JobHost>();
-            services.AddSingleton<IHostExecutor, JobExecutor>();
+            services.RegisterDequeueableServices<Message>()
+                .WithQueueMessageManager<QueueMessageManager>()
+                .WithQueueMessageHandler<QueueMessageHandler>()
+                .AsJob();
 
             services.TryAddSingleton<IHostOptions>(provider =>
             {
@@ -44,8 +47,10 @@ namespace Dequeueable.AmazonSQS.Configurations
                 services.Configure(options);
             }
 
-            services.AddHostedService<QueueListenerHost>();
-            services.AddSingleton<IHostExecutor, QueueListenerExecutor>();
+            services.RegisterDequeueableServices<Message>()
+                .WithQueueMessageManager<QueueMessageManager>()
+                .WithQueueMessageHandler<QueueMessageHandler>()
+                .AsListener(options);
 
             services.TryAddSingleton<IHostOptions>(provider =>
             {

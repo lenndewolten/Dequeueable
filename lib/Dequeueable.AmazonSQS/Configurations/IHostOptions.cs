@@ -1,4 +1,7 @@
-﻿namespace Dequeueable.AmazonSQS.Configurations
+﻿using Amazon.Runtime;
+using Amazon.SQS;
+
+namespace Dequeueable.AmazonSQS.Configurations
 {
     /// <summary>
     /// Use the IHostOptions to configure the settings of the host
@@ -17,6 +20,10 @@
         /// The URL of the Amazon SQS queue from which messages are received.
         /// </summary>
         string QueueUrl { get; set; }
+
+        AmazonSQSConfig? AmazonSQSConfig { get; set; }
+        AWSCredentials? AWSCredentials { get; set; }
+
         /// <summary>
         /// A list of attributes that need to be returned along with each message <see cref="Amazon.SQS.Model.Message.Attributes"/>.
         /// </summary>

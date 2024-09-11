@@ -1,6 +1,5 @@
 ﻿using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Models;
-using Dequeueable.AzureQueueStorage.Services.Timers;
 using Dequeueable.Queues;
 using Dequeueable.Timers;
 using Microsoft.Extensions.Logging;
@@ -41,7 +40,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Queues
         private async Task ExecuteMessageAsync(Message message, TaskCompletionSource taskCompletionSource, CancellationToken cancellationToken)
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            await using var timer = new VisibilityTimeoutTimer(queueMessageManager, timeProvider, new LinearDelayStrategy(MinimalVisibilityTimeoutDelay));
+            await using var timer = new VisibilityTimeoutTimer<Message>(queueMessageManager, timeProvider, new LinearDelayStrategy(MinimalVisibilityTimeoutDelay));
 
             timer.Start(message, onFaultedAction: () =>
             {

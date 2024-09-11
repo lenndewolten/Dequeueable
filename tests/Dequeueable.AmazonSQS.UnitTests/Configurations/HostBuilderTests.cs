@@ -3,7 +3,6 @@ using Dequeueable.AmazonSQS.Configurations;
 using Dequeueable.AmazonSQS.Extentions;
 using Dequeueable.AmazonSQS.Factories;
 using Dequeueable.AmazonSQS.Models;
-using Dequeueable.AmazonSQS.Services.Hosts;
 using Dequeueable.AmazonSQS.Services.Queues;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,7 +45,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
             var host = hostBuilder.Build();
 
             // Assert
-            host.Services.GetRequiredService<IHostedService>().Should().BeOfType<JobHost>();
+            host.Services.GetRequiredService<IHostedService>().GetType().Name.Should().Be("JobHost");
         }
 
         [Fact]
@@ -94,7 +93,8 @@ namespace Dequeueable.AmazonSQS.UnitTests.Configurations
             var host = hostBuilder.Build();
 
             // Assert
-            host.Services.GetRequiredService<IHostedService>().Should().BeOfType<QueueListenerHost>();
+
+            host.Services.GetRequiredService<IHostedService>().GetType().Name.Should().Be("QueueListenerHost");
         }
 
         [Fact]
