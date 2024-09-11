@@ -1,4 +1,5 @@
-﻿using Dequeueable.Queues;
+﻿using Dequeueable.Models;
+using Dequeueable.Queues;
 using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.Hosts
@@ -7,7 +8,7 @@ namespace Dequeueable.Hosts
         IQueueMessageManager<TMessage> messagesManager,
         IQueueMessageHandler<TMessage> queueMessageHandler,
         ILogger<JobExecutor<TMessage>> logger) : IHostExecutor
-        where TMessage : class
+        where TMessage : class, IQueueMessage
     {
         private readonly List<Task> _processing = [];
 

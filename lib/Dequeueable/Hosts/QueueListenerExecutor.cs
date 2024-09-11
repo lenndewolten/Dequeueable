@@ -1,4 +1,5 @@
 ﻿using Dequeueable.Configurations;
+using Dequeueable.Models;
 using Dequeueable.Queues;
 using Dequeueable.Timers;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ namespace Dequeueable.Hosts
         IQueueMessageHandler<TMessage> queueMessageHandler,
         ILogger<QueueListenerExecutor<TMessage, TOptions>> logger,
         IOptions<TOptions> options) : IHostExecutor
-            where TMessage : class
+            where TMessage : class, IQueueMessage
             where TOptions : class, IListenerHostOptions
     {
 

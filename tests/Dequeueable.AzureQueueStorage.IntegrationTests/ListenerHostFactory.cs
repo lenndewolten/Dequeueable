@@ -1,5 +1,6 @@
 ﻿using Dequeueable.AzureQueueStorage.Extentions;
 using Dequeueable.AzureQueueStorage.IntegrationTests.TestDataBuilders;
+using Dequeueable.Hosts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -42,10 +43,10 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests
             return _hostBuilder;
         }
 
-        public Services.Hosts.IHostExecutor Build()
+        public IHostExecutor Build()
         {
             var host = _hostBuilder.Build();
-            return host.Services.GetRequiredService<Services.Hosts.IHostExecutor>();
+            return host.Services.GetRequiredService<IHostExecutor>();
         }
     }
 }

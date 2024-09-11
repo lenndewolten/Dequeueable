@@ -1,4 +1,6 @@
-﻿namespace Dequeueable.AzureQueueStorage.Models
+﻿using Dequeueable.Models;
+
+namespace Dequeueable.AzureQueueStorage.Models
 {
     /// <summary>
     /// Queue message retrieved from the qeueue.
@@ -11,7 +13,7 @@
     /// <param name="dequeueCount">The Dequeue count of the queue message.</param>
     /// <param name="nextVisibleOn"> <see cref="DateTimeOffset"/> of the queue message when it is visibile again for other clients.</param>
     /// <param name="body"><see cref="BinaryData"/> of the body.</param>
-    public class Message(string messageId, string popReceipt, long dequeueCount, DateTimeOffset? nextVisibleOn, BinaryData body)
+    public class Message(string messageId, string popReceipt, long dequeueCount, DateTimeOffset nextVisibleOn, BinaryData body) : IQueueMessage
     {
         /// <summary>
         /// The unqiue id of the message
@@ -31,7 +33,7 @@
         /// <summary>
         /// <see cref="DateTimeOffset"/> of the queue message when it is visibile again for other clients.
         /// </summary>
-        public DateTimeOffset? NextVisibleOn { get; } = nextVisibleOn;
+        public DateTimeOffset NextVisibleOn { get; } = nextVisibleOn;
 
         /// <summary>
         /// <see cref="BinaryData"/> of the body.

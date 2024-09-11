@@ -1,4 +1,5 @@
 ﻿using Dequeueable.AzureQueueStorage.Services.Singleton;
+using Dequeueable.Timers;
 
 namespace Dequeueable.AzureQueueStorage.Services.Timers
 {

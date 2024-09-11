@@ -1,6 +1,6 @@
 ﻿using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Factories;
-using Dequeueable.AzureQueueStorage.Services.Timers;
+using Dequeueable.Timers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

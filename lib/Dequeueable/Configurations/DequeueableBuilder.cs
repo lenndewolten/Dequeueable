@@ -1,17 +1,18 @@
 ﻿using Dequeueable.Hosts;
+using Dequeueable.Models;
 using Dequeueable.Queues;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Dequeueable.Configurations
 {
-    public interface IDequeueableBuilder<TMessage> where TMessage : class
+    public interface IDequeueableBuilder<TMessage> where TMessage : class, IQueueMessage
     {
         IQueueMessageHandlerBuilder<TMessage> WithQueueMessageManager<TImplementation>()
             where TImplementation : class, IQueueMessageManager<TMessage>;
     }
 
-    internal sealed class DequeueableBuilder<TMessage>(IServiceCollection services) : IDequeueableBuilder<TMessage> where TMessage : class
+    internal sealed class DequeueableBuilder<TMessage>(IServiceCollection services) : IDequeueableBuilder<TMessage> where TMessage : class, IQueueMessage
     {
         public IQueueMessageHandlerBuilder<TMessage> WithQueueMessageManager<TImplementation>()
             where TImplementation : class, IQueueMessageManager<TMessage>
@@ -21,13 +22,13 @@ namespace Dequeueable.Configurations
         }
     }
 
-    public interface IQueueMessageHandlerBuilder<TMessage> where TMessage : class
+    public interface IQueueMessageHandlerBuilder<TMessage> where TMessage : class, IQueueMessage
     {
         IDequeueableHostBuilder<TMessage> WithQueueMessageHandler<TImplementation>()
             where TImplementation : class, IQueueMessageHandler<TMessage>;
     }
 
-    internal sealed class QueueMessageHandlerBuilder<TMessage>(IServiceCollection services) : IQueueMessageHandlerBuilder<TMessage> where TMessage : class
+    internal sealed class QueueMessageHandlerBuilder<TMessage>(IServiceCollection services) : IQueueMessageHandlerBuilder<TMessage> where TMessage : class, IQueueMessage
     {
         public IDequeueableHostBuilder<TMessage> WithQueueMessageHandler<TImplementation>()
             where TImplementation : class, IQueueMessageHandler<TMessage>
@@ -37,7 +38,7 @@ namespace Dequeueable.Configurations
         }
     }
 
-    public interface IDequeueableHostBuilder<TMessage> where TMessage : class
+    public interface IDequeueableHostBuilder<TMessage> where TMessage : class, IQueueMessage
     {
         IServiceCollection AsListener<TOptions>(Action<TOptions>? options = null)
             where TOptions : class, IListenerHostOptions;
@@ -49,7 +50,7 @@ namespace Dequeueable.Configurations
         IServiceCollection AsJob();
     }
 
-    internal sealed class DequeueableHostBuilder<TMessage>(IServiceCollection services) : IDequeueableHostBuilder<TMessage> where TMessage : class
+    internal sealed class DequeueableHostBuilder<TMessage>(IServiceCollection services) : IDequeueableHostBuilder<TMessage> where TMessage : class, IQueueMessage
     {
         public IServiceCollection AsListener<TOptions>(Action<TOptions>? options = null)
             where TOptions : class, IListenerHostOptions
@@ -98,7 +99,7 @@ namespace Dequeueable.Configurations
 
     public static class ServiceCollectionExtentions
     {
-        public static IDequeueableBuilder<TMessage> RegisterDequeueableServices<TMessage>(this IServiceCollection services) where TMessage : class
+        public static IDequeueableBuilder<TMessage> RegisterDequeueableServices<TMessage>(this IServiceCollection services) where TMessage : class, IQueueMessage
         {
             services.TryAddSingleton(TimeProvider.System);
 

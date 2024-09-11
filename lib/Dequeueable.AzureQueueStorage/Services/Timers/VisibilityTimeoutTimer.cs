@@ -1,5 +1,6 @@
 ﻿using Dequeueable.AzureQueueStorage.Models;
 using Dequeueable.Queues;
+using Dequeueable.Timers;
 
 namespace Dequeueable.AzureQueueStorage.Services.Timers
 {
@@ -11,11 +12,6 @@ namespace Dequeueable.AzureQueueStorage.Services.Timers
 
         public void Start(Message message, Action? onFaultedAction = null)
         {
-            if (message.NextVisibleOn is null)
-            {
-                return;
-            }
-
             _backgroundThread = TimerLoop(message, onFaultedAction);
         }
 

@@ -38,6 +38,7 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             // Arrange
             var factory = new JobHostFactory<TestFunction>(opt =>
             {
+                opt.BatchSize = 2;
                 opt.ConnectionString = _azuriteFixture.ConnectionString;
                 opt.QueueName = _queueName;
             });

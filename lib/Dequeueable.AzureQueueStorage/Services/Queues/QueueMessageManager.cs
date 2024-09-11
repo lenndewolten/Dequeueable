@@ -14,23 +14,24 @@ namespace Dequeueable.AzureQueueStorage.Services.Queues
 
         public async Task<IEnumerable<Message>> RetrieveMessagesAsync(CancellationToken cancellationToken)
         {
+            var visibilityTimeout = TimeSpan.FromSeconds(options.VisibilityTimeoutInSeconds);
             try
             {
-                var response = await _queueClient.ReceiveMessagesAsync(maxMessages: options.BatchSize, visibilityTimeout: TimeSpan.FromSeconds(options.VisibilityTimeoutInSeconds), cancellationToken);
-                return response.Value.Select(m => new Message(m.MessageId, m.PopReceipt, m.DequeueCount, m.NextVisibleOn, m.Body));
+                var response = await _queueClient.ReceiveMessagesAsync(maxMessages: options.BatchSize, visibilityTimeout: visibilityTimeout, cancellationToken);
+                return response.Value.Select(m => new Message(m.MessageId, m.PopReceipt, m.DequeueCount, m.NextVisibleOn ?? DateTimeOffset.UtcNow.Add(visibilityTimeout), m.Body));
             }
             catch (RequestFailedException exception) when (exception.Status == 404)
             {
                 await CreateQueue(_queueClient, cancellationToken);
-                var response = await _queueClient.ReceiveMessagesAsync(maxMessages: options.BatchSize, visibilityTimeout: TimeSpan.FromSeconds(options.VisibilityTimeoutInSeconds), cancellationToken);
-                return response.Value.Select(m => new Message(m.MessageId, m.PopReceipt, m.DequeueCount, m.NextVisibleOn, m.Body));
+                var response = await _queueClient.ReceiveMessagesAsync(maxMessages: options.BatchSize, visibilityTimeout: visibilityTimeout, cancellationToken);
+                return response.Value.Select(m => new Message(m.MessageId, m.PopReceipt, m.DequeueCount, m.NextVisibleOn ?? DateTimeOffset.UtcNow.Add(visibilityTimeout), m.Body));
             }
         }
 
         public async Task<DateTimeOffset> UpdateVisibilityTimeOutAsync(Message queueMessage, CancellationToken cancellationToken)
         {
             var retryInterval = TimeSpan.FromSeconds(5);
-            var retryDeadline = queueMessage.NextVisibleOn.HasValue ? queueMessage.NextVisibleOn.Value.Add(retryInterval) : DateTimeOffset.UtcNow;
+            var retryDeadline = queueMessage.NextVisibleOn;
 
             do
             {

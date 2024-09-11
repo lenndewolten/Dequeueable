@@ -1,6 +1,8 @@
 ﻿using Dequeueable.AzureQueueStorage.Configurations;
+using Dequeueable.AzureQueueStorage.Models;
 using Dequeueable.AzureQueueStorage.Services.Queues;
 using Dequeueable.AzureQueueStorage.UnitTests.TestDataBuilders;
+using Dequeueable.Queues;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -13,7 +15,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
         {
             // Arrange
             var message = new MessageTestDataBuilder().Build();
-            var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
+            var queueMessageManagerMock = new Mock<IQueueMessageManager<Message>>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var options = new HostOptions();
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
@@ -46,7 +48,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
             // Arrange
             var exception = new Exception("test");
             var message = new MessageTestDataBuilder().WithDequeueCount(1).Build();
-            var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
+            var queueMessageManagerMock = new Mock<IQueueMessageManager<Message>>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var options = new HostOptions();
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
@@ -79,7 +81,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
             // Arrange
             var exception = new Exception("test");
             var message = new MessageTestDataBuilder().WithDequeueCount(3).Build();
-            var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
+            var queueMessageManagerMock = new Mock<IQueueMessageManager<Message>>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var options = new HostOptions { MaxDequeueCount = message.DequeueCount };
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);
@@ -112,7 +114,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Services.Queues
             // Arrange
             var exception = new Exception("test");
             var message = new MessageTestDataBuilder().WithNextVisibileOn(DateTimeOffset.UtcNow.AddSeconds(2)).WithDequeueCount(2).Build();
-            var queueMessageManagerMock = new Mock<IQueueMessageManager>(MockBehavior.Strict);
+            var queueMessageManagerMock = new Mock<IQueueMessageManager<Message>>(MockBehavior.Strict);
             var queueMessageExecutorMock = new Mock<IQueueMessageExecutor>(MockBehavior.Strict);
             var options = new HostOptions { MaxDequeueCount = message.DequeueCount + 2 };
             var loggerMock = new Mock<ILogger<QueueMessageHandler>>(MockBehavior.Strict);

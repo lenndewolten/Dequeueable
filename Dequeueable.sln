@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dequeueable", "lib\Dequeueable\Dequeueable.csproj", "{607C2ABB-DD72-45F5-9DF3-2FC19D136873}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dequeueable.UnitTests", "tests\Dequeueable.UnitTests\Dequeueable.UnitTests.csproj", "{4BF5F6F8-6A82-49EF-BFC6-25B0DA935D69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +86,10 @@ Global
 		{607C2ABB-DD72-45F5-9DF3-2FC19D136873}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{607C2ABB-DD72-45F5-9DF3-2FC19D136873}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{607C2ABB-DD72-45F5-9DF3-2FC19D136873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BF5F6F8-6A82-49EF-BFC6-25B0DA935D69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BF5F6F8-6A82-49EF-BFC6-25B0DA935D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BF5F6F8-6A82-49EF-BFC6-25B0DA935D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BF5F6F8-6A82-49EF-BFC6-25B0DA935D69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{8EBE6EF9-3A32-4C5D-B617-D231CCDC332D} = {F6808A89-2B57-49B1-9D5C-E4ACE0CEC44A}
 		{3B23FE9B-4AEC-4EF0-8B7C-7A14F36B09DF} = {BF8F3BFE-5BF7-472E-A8B5-6F9957FDE3C0}
 		{70FB0E93-C10E-45CB-8E82-5C1370B92CE2} = {BF8F3BFE-5BF7-472E-A8B5-6F9957FDE3C0}
+		{4BF5F6F8-6A82-49EF-BFC6-25B0DA935D69} = {BF8F3BFE-5BF7-472E-A8B5-6F9957FDE3C0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FA24EF80-390F-45DE-B60C-2632F0952E02}

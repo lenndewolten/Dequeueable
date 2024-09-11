@@ -1,29 +1,26 @@
-﻿using Dequeueable.AzureQueueStorage.Models;
+﻿using Dequeueable.UnitTests.Configurations;
 
-namespace Dequeueable.AzureQueueStorage.UnitTests.TestDataBuilders
+namespace Dequeueable.UnitTests.TestDataBuilders
 {
     public class MessageTestDataBuilder
     {
         private string _messageId = "some id";
-        private readonly string _popReceipt = "some pop";
-        private long _dequeueCount = 5;
         private DateTimeOffset _nextVisibileOn = DateTimeOffset.UtcNow.AddMinutes(1);
         private BinaryData _body = BinaryData.FromString("test body");
 
-        public Message Build()
+        public TestMessage Build()
         {
-            return new Message(_messageId, _popReceipt, _dequeueCount, _nextVisibileOn, _body);
+            return new TestMessage
+            {
+                MessageId = _messageId,
+                NextVisibleOn = _nextVisibileOn,
+                Body = _body
+            };
         }
 
         public MessageTestDataBuilder WithmessageId(string messageId)
         {
             _messageId = messageId;
-            return this;
-        }
-
-        public MessageTestDataBuilder WithDequeueCount(int dequeueCount)
-        {
-            _dequeueCount = dequeueCount;
             return this;
         }
 

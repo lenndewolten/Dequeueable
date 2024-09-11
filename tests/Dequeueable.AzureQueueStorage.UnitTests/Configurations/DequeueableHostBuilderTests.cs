@@ -1,7 +1,6 @@
 ﻿using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Extentions;
 using Dequeueable.AzureQueueStorage.Models;
-using Dequeueable.AzureQueueStorage.Services.Hosts;
 using Dequeueable.AzureQueueStorage.Services.Queues;
 using Dequeueable.AzureQueueStorage.Services.Singleton;
 using FluentAssertions;
@@ -11,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
 {
-    public class HostBuilderTests
+    public class DequeueableHostBuilderTests
     {
         private sealed class TestFunction : IAzureQueueFunction
         {
@@ -22,7 +21,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_RunAsJob_is_called_then_the_Host_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_RunAsJob_is_called_then_the_Host_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -41,11 +40,11 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
             var host = hostBuilder.Build();
 
             // Assert
-            host.Services.GetRequiredService<IHostedService>().Should().BeOfType<JobHost>();
+            host.Services.GetRequiredService<IHostedService>().GetType().Name.Should().Be("JobHost");
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_RunAsJob_is_called_then_IHostOptions_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_RunAsJob_is_called_then_IHostOptions_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -68,7 +67,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_RunAsListener_is_called_then_the_Host_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_RunAsListener_is_called_then_the_Host_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -87,11 +86,11 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
             var host = hostBuilder.Build();
 
             // Assert
-            host.Services.GetRequiredService<IHostedService>().Should().BeOfType<QueueListenerHost>();
+            host.Services.GetRequiredService<IHostedService>().GetType().Name.Should().Be("QueueListenerHost");
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_RunAsListener_is_called_then_IHostOptions_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_RunAsListener_is_called_then_IHostOptions_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -114,7 +113,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_AsSingleton_is_called_then_IQueueMessageExecutor_is_registered_correctly()
+        public void Given_a_DequeueableHostBuilder_when_AsSingleton_is_called_then_IQueueMessageExecutor_is_registered_correctly()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()
@@ -138,7 +137,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.Configurations
         }
 
         [Fact]
-        public void Given_a_HostBuilder_when_AsSingleton_is_called_then_ListenerHostOptions_NewBatchThreshold_is_zero()
+        public void Given_a_DequeueableHostBuilder_when_AsSingleton_is_called_then_ListenerHostOptions_NewBatchThreshold_is_zero()
         {
             // Arrange
             var hostBuilder = Host.CreateDefaultBuilder()

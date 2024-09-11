@@ -3,6 +3,7 @@ using Dequeueable.AzureQueueStorage.Extentions;
 using Dequeueable.AzureQueueStorage.Models;
 using Dequeueable.AzureQueueStorage.Services.Queues;
 using Dequeueable.AzureQueueStorage.Services.Timers;
+using Dequeueable.Timers;
 using Microsoft.Extensions.Options;
 
 namespace Dequeueable.AzureQueueStorage.Services.Singleton

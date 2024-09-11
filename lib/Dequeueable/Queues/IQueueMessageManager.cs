@@ -1,6 +1,8 @@
-﻿namespace Dequeueable.Queues
+﻿using Dequeueable.Models;
+
+namespace Dequeueable.Queues
 {
-    public interface IQueueMessageManager<TMessage> where TMessage : class
+    public interface IQueueMessageManager<TMessage> where TMessage : class, IQueueMessage
     {
         Task DeleteMessageAsync(TMessage queueMessage, CancellationToken cancellationToken);
         Task EnqueueMessageAsync(TMessage queueMessage, CancellationToken cancellationToken);

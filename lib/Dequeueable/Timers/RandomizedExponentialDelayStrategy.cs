@@ -1,6 +1,6 @@
 ﻿namespace Dequeueable.Timers
 {
-    internal sealed class RandomizedExponentialDelayStrategy : IDelayStrategy
+    public sealed class RandomizedExponentialDelayStrategy : IDelayStrategy
     {
         private const int _randomizationFactor = 20;
         private TimeSpan _minimumInterval;
