@@ -1,4 +1,4 @@
-﻿namespace Dequeueable.AmazonSQS.Services.Queues
+﻿namespace Dequeueable.Queues
 {
     /// <summary>
     /// Represents an exception that occurs when there is an issue with setting the visibility timeout for a queue message.

@@ -36,8 +36,17 @@ namespace Dequeueable.AmazonSQS.Configurations
         ErrorMessage = "Value for {0} must be between {1} and {2}.")]
         public int VisibilityTimeoutInSeconds { get; set; } = 300;
 
-        public virtual AmazonSQSConfig? AmazonSQSConfig { get; set; }
-        public virtual AWSCredentials? AWSCredentials { get; set; }
+        /// <summary>
+        /// Optional configuration settings for the Amazon SQS client.
+        /// Use this property to customize the SQS client's behavior, such as setting the service URL, region, or other configurations.
+        /// </summary>
+        public AmazonSQSConfig? AmazonSQSConfig { get; set; }
+
+        /// <summary>
+        /// AWS credentials used to authenticate requests to Amazon SQS.
+        /// There are several ways to provide AWSCredentials. Use this property to explicitly set the credentials in code if not using environment variables, IAM roles, or other automatic methods.
+        /// </summary>
+        public AWSCredentials? AWSCredentials { get; set; }
 
         /// <summary>
         /// A list of attributes that need to be returned along with each message <see cref="Amazon.SQS.Model.Message.Attributes"/>.
