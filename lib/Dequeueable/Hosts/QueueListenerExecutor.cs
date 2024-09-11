@@ -1,17 +1,18 @@
-﻿using Dequeueable.AzureQueueStorage.Configurations;
-using Dequeueable.AzureQueueStorage.Models;
-using Dequeueable.AzureQueueStorage.Services.Queues;
-using Dequeueable.AzureQueueStorage.Services.Timers;
+﻿using Dequeueable.Configurations;
+using Dequeueable.Queues;
+using Dequeueable.Timers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Dequeueable.AzureQueueStorage.Services.Hosts
+namespace Dequeueable.Hosts
 {
-    internal sealed class QueueListenerExecutor(
-        IQueueMessageManager messagesManager,
-        IQueueMessageHandler queueMessageHandler,
-        IOptions<ListenerHostOptions> options,
-        ILogger<QueueListenerExecutor> logger) : IHostExecutor
+    internal sealed class QueueListenerExecutor<TMessage, TOptions>(
+        IQueueMessageManager<TMessage> messagesManager,
+        IQueueMessageHandler<TMessage> queueMessageHandler,
+        ILogger<QueueListenerExecutor<TMessage, TOptions>> logger,
+        IOptions<TOptions> options) : IHostExecutor
+            where TMessage : class
+            where TOptions : class, IListenerHostOptions
     {
 
         private RandomizedExponentialDelayStrategy DelayStrategy => new(TimeSpan.FromMilliseconds(_options.MinimumPollingIntervalInMilliseconds),
@@ -19,7 +20,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
                 _options.DeltaBackOff);
 
         private readonly List<Task> _processing = [];
-        private readonly ListenerHostOptions _options = options.Value;
+        private readonly TOptions _options = options.Value;
 
         public async Task HandleAsync(CancellationToken cancellationToken)
         {
@@ -37,7 +38,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
             await WaitForDelay(messagesFound, cancellationToken);
         }
 
-        private Task HandleMessages(Message[] messages, CancellationToken cancellationToken)
+        private Task HandleMessages(TMessage[] messages, CancellationToken cancellationToken)
         {
             foreach (var message in messages)
             {

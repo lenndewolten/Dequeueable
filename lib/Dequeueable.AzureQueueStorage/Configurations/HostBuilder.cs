@@ -1,7 +1,8 @@
 ﻿using Dequeueable.AzureQueueStorage.Factories;
-using Dequeueable.AzureQueueStorage.Services.Hosts;
+using Dequeueable.AzureQueueStorage.Models;
 using Dequeueable.AzureQueueStorage.Services.Queues;
 using Dequeueable.AzureQueueStorage.Services.Singleton;
+using Dequeueable.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -21,8 +22,10 @@ namespace Dequeueable.AzureQueueStorage.Configurations
                 services.Configure(options);
             }
 
-            services.AddHostedService<JobHost>();
-            services.AddSingleton<IHostExecutor, JobExecutor>();
+            services.RegisterDequeueableServices<Message>()
+                .WithQueueMessageManager<QueueMessageManager>()
+                .WithQueueMessageHandler<QueueMessageHandler>()
+                .AsJob();
 
             services.TryAddSingleton<IHostOptions>(provider =>
             {
@@ -46,8 +49,10 @@ namespace Dequeueable.AzureQueueStorage.Configurations
                 services.Configure(options);
             }
 
-            services.AddHostedService<QueueListenerHost>();
-            services.AddSingleton<IHostExecutor, QueueListenerExecutor>();
+            services.RegisterDequeueableServices<Message>()
+                .WithQueueMessageManager<QueueMessageManager>()
+                .WithQueueMessageHandler<QueueMessageHandler>()
+                .AsListener(options);
 
             services.TryAddSingleton<IHostOptions>(provider =>
             {

@@ -1,13 +1,13 @@
-﻿using Dequeueable.AzureQueueStorage.Models;
-using Dequeueable.AzureQueueStorage.Services.Queues;
+﻿using Dequeueable.Queues;
 using Microsoft.Extensions.Logging;
 
-namespace Dequeueable.AzureQueueStorage.Services.Hosts
+namespace Dequeueable.Hosts
 {
-    internal sealed class JobExecutor(
-        IQueueMessageManager messagesManager,
-        IQueueMessageHandler queueMessageHandler,
-        ILogger<JobExecutor> logger) : IHostExecutor
+    internal sealed class JobExecutor<TMessage>(
+        IQueueMessageManager<TMessage> messagesManager,
+        IQueueMessageHandler<TMessage> queueMessageHandler,
+        ILogger<JobExecutor<TMessage>> logger) : IHostExecutor
+        where TMessage : class
     {
         private readonly List<Task> _processing = [];
 
@@ -27,7 +27,7 @@ namespace Dequeueable.AzureQueueStorage.Services.Hosts
             return;
         }
 
-        private Task HandleMessages(Message[] messages, CancellationToken cancellationToken)
+        private Task HandleMessages(TMessage[] messages, CancellationToken cancellationToken)
         {
             foreach (var message in messages)
             {

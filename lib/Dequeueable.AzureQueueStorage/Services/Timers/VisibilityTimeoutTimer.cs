@@ -1,9 +1,9 @@
 ﻿using Dequeueable.AzureQueueStorage.Models;
-using Dequeueable.AzureQueueStorage.Services.Queues;
+using Dequeueable.Queues;
 
 namespace Dequeueable.AzureQueueStorage.Services.Timers
 {
-    internal sealed class VisibilityTimeoutTimer(IQueueMessageManager queueMessagesManager, TimeProvider timeProvider, IDelayStrategy delayStrategy) : IAsyncDisposable
+    internal sealed class VisibilityTimeoutTimer(IQueueMessageManager<Message> queueMessagesManager, TimeProvider timeProvider, IDelayStrategy delayStrategy) : IAsyncDisposable
     {
         private readonly CancellationTokenSource _cts = new();
         private Task? _backgroundThread;

@@ -3,10 +3,11 @@ using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
 using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Models;
+using Dequeueable.Queues;
 
 namespace Dequeueable.AzureQueueStorage.Services.Queues
 {
-    internal sealed class QueueMessageManager(IQueueClientProvider queueClientProvider, IHostOptions options) : IQueueMessageManager
+    internal sealed class QueueMessageManager(IQueueClientProvider queueClientProvider, IHostOptions options) : IQueueMessageManager<Message>
     {
         private readonly QueueClient _queueClient = queueClientProvider.GetQueue();
         private readonly QueueClient _poisonQueueClient = queueClientProvider.GetPoisonQueue();

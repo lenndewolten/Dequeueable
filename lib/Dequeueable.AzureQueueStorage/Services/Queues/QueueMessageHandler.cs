@@ -1,15 +1,16 @@
 ﻿using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Models;
 using Dequeueable.AzureQueueStorage.Services.Timers;
+using Dequeueable.Queues;
 using Microsoft.Extensions.Logging;
 
 namespace Dequeueable.AzureQueueStorage.Services.Queues
 {
     internal sealed class QueueMessageHandler(IQueueMessageExecutor queueMessageExecutor,
-        IQueueMessageManager queueMessageManager,
+        IQueueMessageManager<Message> queueMessageManager,
         TimeProvider timeProvider,
         ILogger<QueueMessageHandler> logger,
-        IHostOptions options) : IQueueMessageHandler
+        IHostOptions options) : IQueueMessageHandler<Message>
     {
         internal TimeSpan MinimalVisibilityTimeoutDelay { get; set; } = TimeSpan.FromSeconds(15);
 

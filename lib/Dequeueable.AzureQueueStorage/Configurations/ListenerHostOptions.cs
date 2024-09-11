@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Dequeueable.Configurations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dequeueable.AzureQueueStorage.Configurations
 {
     /// <summary>
     /// Host options to configure the settings of the host and it's queue listeners
     /// </summary>
-    public class ListenerHostOptions : HostOptions
+    public class ListenerHostOptions : HostOptions, IListenerHostOptions
     {
         private int? _newBatchThreshold;
 
@@ -37,6 +38,12 @@ namespace Dequeueable.AzureQueueStorage.Configurations
         /// The delta used to randomize the polling interval.
         /// </summary>
         public TimeSpan? DeltaBackOff { get; set; }
+
+        /// <summary>
+        /// The maximum number of messages processed in parallel.
+        /// </summary>
+        [Range(1, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+        public override int BatchSize { get; set; } = 16;
 
         internal static bool ValidatePollingInterval(ListenerHostOptions options)
         {
