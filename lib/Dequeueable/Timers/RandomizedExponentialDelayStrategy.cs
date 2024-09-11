@@ -1,5 +1,8 @@
 ﻿namespace Dequeueable.Timers
 {
+    /// <summary>
+    /// Implements a delay strategy that uses exponential backoff with randomization for retry attempts.
+    /// </summary>
     public sealed class RandomizedExponentialDelayStrategy : IDelayStrategy
     {
         private const int _randomizationFactor = 20;
@@ -11,6 +14,20 @@
         private uint _backoffExponent;
         private Random? _random;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RandomizedExponentialDelayStrategy"/> class.
+        /// </summary>
+        /// <param name="minimumInterval">The minimum delay interval between retries.</param>
+        /// <param name="maximumInterval">The maximum delay interval between retries.</param>
+        /// <param name="deltaBackoff">
+        /// The increment added to the delay on each retry attempt. Defaults to <paramref name="minimumInterval"/>.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown if <paramref name="minimumInterval"/> or <paramref name="maximumInterval"/> is negative.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown if <paramref name="minimumInterval"/> is greater than <paramref name="maximumInterval"/>.
+        /// </exception>
         public RandomizedExponentialDelayStrategy(TimeSpan minimumInterval, TimeSpan maximumInterval, TimeSpan? deltaBackoff = null)
         {
             if (minimumInterval.Ticks < 0)
@@ -34,8 +51,19 @@
             _deltaBackoff = deltaBackoff ?? minimumInterval;
         }
 
+        /// <summary>
+        /// Gets or sets the minimum delay interval between retries.
+        /// </summary>
         public TimeSpan MinimalRenewalDelay { get => _minimumInterval; set { _minimumInterval = value; } }
 
+        /// <summary>
+        /// Calculates the next delay interval based on the previous execution result.
+        /// </summary>
+        /// <param name="nextVisibleOn">Optional parameter indicating when the message will be visible next.</param>
+        /// <param name="executionSucceeded">
+        /// Indicates whether the last execution was successful. If true, the delay resets to the minimum interval.
+        /// </param>
+        /// <returns>The next delay interval to be used before retrying.</returns>
         public TimeSpan GetNextDelay(DateTimeOffset? nextVisibleOn = null, bool? executionSucceeded = null)
         {
             if (executionSucceeded == true)

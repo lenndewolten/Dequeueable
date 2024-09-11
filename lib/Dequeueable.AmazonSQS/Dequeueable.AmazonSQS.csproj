@@ -7,7 +7,7 @@
   	<PackageTags>Amazon;AWS;Simple Queue Service;SQS;Queues;Queue;QueueMessage;QueueMessages;Message;Events;Event</PackageTags>
   	<Title>Dequeueable for AWS Simple Queue Service library</Title>
   	<Description>
-		This client library simplifies dequeuing queue messages from Amazon Simple Queue Service. It makes it easy to retrieve messages from the queue: dequeueing, exception handling and distributed singleton are handled for you.
+		This client library simplifies dequeuing queue messages from Amazon Simple Queue Service. It streamlines message retrieval, handles exceptions gracefully, and supports distributed singleton patterns, allowing you to focus on your core business logic rather than the intricacies of queue management.
 	</Description>
   	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   	<PackageReadmeFile>./README.md</PackageReadmeFile>

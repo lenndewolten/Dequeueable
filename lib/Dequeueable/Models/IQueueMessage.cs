@@ -1,5 +1,8 @@
 ﻿namespace Dequeueable.Models
 {
+    /// <summary>
+    /// Represents a queue message with essential properties that all messages must implement.
+    /// </summary>
     public interface IQueueMessage
     {
         /// <summary>

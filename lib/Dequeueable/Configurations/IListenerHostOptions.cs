@@ -1,5 +1,8 @@
 ﻿namespace Dequeueable.Configurations
 {
+    /// <summary>
+    /// Host options to configure the settings of the host and it's queue listeners
+    /// </summary>
     public interface IListenerHostOptions
     {
         /// <summary>
