@@ -16,17 +16,19 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "8.x.x"
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
       - name: Materialize Signing Key
         id: write_sign_key_file
         uses: timheuer/base64-to-file@v1
         with:
           fileName: "Dequeueable.snk"
+          fileDir: ${{ github.workspace }}
           encodedString: ${{ secrets.SIGNING_KEY }}
       - name: Install dependencies
         run: dotnet restore
       - name: Build
         run: dotnet build --configuration Release --no-restore
-        env:
-          DOTNET_BUILD_ARGS: --property:AssemblyOriginatorKeyFile=${{ steps.write_sign_key_file.outputs.filePath }} --property:SignAssembly=true
       - name: Test
         run: dotnet test --no-restore --verbosity minimal
