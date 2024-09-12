@@ -7,7 +7,7 @@ namespace Dequeueable.AzureQueueStorage.UnitTests.TestDataBuilders
         private string _messageId = "some id";
         private readonly string _popReceipt = "some pop";
         private long _dequeueCount = 5;
-        private DateTimeOffset? _nextVisibileOn = DateTimeOffset.UtcNow.AddMinutes(1);
+        private DateTimeOffset _nextVisibileOn = DateTimeOffset.UtcNow.AddMinutes(1);
         private BinaryData _body = BinaryData.FromString("test body");
 
         public Message Build()

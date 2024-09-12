@@ -1,13 +1,10 @@
-﻿
-using Dequeueable.AmazonSQS.Models;
+﻿using Dequeueable.AmazonSQS.Models;
+using Dequeueable.Queues;
 
 namespace Dequeueable.AmazonSQS.Services.Queues
 {
-    internal interface IQueueMessageManager
+    internal interface IQueueMessageManager : IQueueMessageManager<Message>
     {
-        Task DeleteMessageAsync(Message message, CancellationToken cancellationToken);
-        Task EnqueueMessageAsync(Message message, CancellationToken cancellationToken);
-        Task<Message[]> RetrieveMessagesAsync(CancellationToken cancellationToken = default);
-        Task<DateTimeOffset> UpdateVisibilityTimeOutAsync(Message message, CancellationToken cancellationToken);
+        Task EnqueueMessageAsync(Message queueMessage, CancellationToken cancellationToken);
     }
 }

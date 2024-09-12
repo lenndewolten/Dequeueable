@@ -57,7 +57,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
         /// The maximum number of messages processed in parallel.
         /// </summary>
         [Range(1, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-        public int BatchSize { get; set; } = 16;
+        public virtual int BatchSize { get; set; } = 1;
 
         /// <summary>
         /// Max dequeue count before moving to the poison queue. 

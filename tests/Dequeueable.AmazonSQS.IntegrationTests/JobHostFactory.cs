@@ -1,5 +1,6 @@
 ﻿using Dequeueable.AmazonSQS.Extentions;
 using Dequeueable.AmazonSQS.IntegrationTests.TestDataBuilders;
+using Dequeueable.Hosts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -39,10 +40,10 @@ namespace Dequeueable.AmazonSQS.IntegrationTests
             return _hostBuilder;
         }
 
-        public Services.Hosts.IHostExecutor Build()
+        public IHostExecutor Build()
         {
             var host = _hostBuilder.Build();
-            return host.Services.GetRequiredService<Services.Hosts.IHostExecutor>();
+            return host.Services.GetRequiredService<IHostExecutor>();
         }
     }
 }

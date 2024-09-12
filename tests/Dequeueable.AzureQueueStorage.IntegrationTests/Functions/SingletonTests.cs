@@ -48,6 +48,8 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             {
                 opt.ContainerName = containerName;
                 opt.Scope = scope;
+                opt.MaximumPollingIntervalInSeconds = 1;
+                opt.MinimumPollingIntervalInSeconds = 1;
             });
 
             var fakeServiceMock = new Mock<IFakeService>();
@@ -86,6 +88,7 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             var containerName = "joblock";
             var factory = new JobHostFactory<TestFunction>(opt =>
             {
+                opt.BatchSize = 2;
                 opt.ConnectionString = _azuriteFixture.ConnectionString;
                 opt.QueueName = _queueName;
                 opt.MaxDequeueCount = 5;
@@ -93,6 +96,8 @@ namespace Dequeueable.AzureQueueStorage.IntegrationTests.Functions
             {
                 opt.ContainerName = containerName;
                 opt.Scope = scope;
+                opt.MaximumPollingIntervalInSeconds = 1;
+                opt.MinimumPollingIntervalInSeconds = 1;
             });
 
             var fakeServiceMock = new Mock<IFakeService>();

@@ -1,6 +1,7 @@
 ﻿using Dequeueable.AzureQueueStorage.Configurations;
 using Dequeueable.AzureQueueStorage.Services.Queues;
 using Dequeueable.AzureQueueStorage.UnitTests.TestDataBuilders;
+using Dequeueable.Queues;
 using Microsoft.Extensions.Logging;
 using Moq;
 

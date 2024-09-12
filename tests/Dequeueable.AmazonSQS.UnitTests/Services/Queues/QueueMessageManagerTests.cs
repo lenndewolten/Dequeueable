@@ -20,7 +20,7 @@ namespace Dequeueable.AmazonSQS.UnitTests.Services.Queues
             var clientFake = new Mock<AmazonSQSClient>("TESTKEY", "TESTSECRET", Amazon.RegionEndpoint.EUCentral1); ;
             var fakeResponse = new ReceiveMessageResponse
             {
-                Messages = new List<Message> { new Message() }
+                Messages = [new()]
             };
 
             clientFake.Setup(r => r.ReceiveMessageAsync(It.IsAny<ReceiveMessageRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(fakeResponse);

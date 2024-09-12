@@ -1,16 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Dequeueable.Configurations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dequeueable.AmazonSQS.Configurations
 {
     /// <summary>
     /// HostOptions to configure the settings of the host
     /// </summary>
-    public class ListenerHostOptions : HostOptions
+    public class ListenerHostOptions : HostOptions, IListenerHostOptions
     {
+        private int? _newBatchThreshold;
+
         /// <summary>
         /// The threshold at which a new batch of messages will be fetched.
         /// </summary>
-        public int? NewBatchThreshold { get; set; }
+        public int NewBatchThreshold
+        {
+            get => _newBatchThreshold ?? Convert.ToInt32(Math.Ceiling(BatchSize / (double)2));
+            set
+            {
+                _newBatchThreshold = value;
+            }
+        }
 
         /// <summary>
         /// The minimum polling interval to check the queue for new messages.
@@ -35,7 +45,7 @@ namespace Dequeueable.AmazonSQS.Configurations
         }
         internal static bool ValidateNewBatchThreshold(ListenerHostOptions options)
         {
-            return options.NewBatchThreshold is null || options.NewBatchThreshold <= options.BatchSize;
+            return options._newBatchThreshold is null || options.NewBatchThreshold <= options.BatchSize;
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Dequeueable.AzureQueueStorage.Configurations
 
         internal static bool ValidatePollingInterval(SingletonHostOptions options)
         {
-            return options.MinimumPollingIntervalInSeconds < options.MaximumPollingIntervalInSeconds;
+            return options.MinimumPollingIntervalInSeconds <= options.MaximumPollingIntervalInSeconds;
         }
     }
 }

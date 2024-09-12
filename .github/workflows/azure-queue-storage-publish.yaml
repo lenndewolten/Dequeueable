@@ -30,12 +30,18 @@ jobs:
           echo "dotnet version ${DOTNET_VERSION}"
         env:
           DOTNET_VERSION: ${{ vars.DOTNET_VERSION }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "6.x.x"
-
+          dotnet-version: "8.x.x"
+      - name: Materialize Signing Key
+        id: write_sign_key_file
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: "Dequeueable.snk"
+          fileDir: ${{ github.workspace }}
+          encodedString: ${{ secrets.SIGNING_KEY }}
       - name: Install dependencies
         run: dotnet restore
       - name: Build

@@ -21,16 +21,15 @@ namespace Dequeueable.AmazonSQS.Extentions
         public static IDequeueableHostBuilder AddAmazonSQSServices<TFunction>(this IServiceCollection services)
            where TFunction : class, IAmazonSQSFunction
         {
-            services.AddSingleton<IQueueMessageManager, QueueMessageManager>();
             services.TryAddSingleton<IAmazonSQSClientFactory, AmazonSQSClientFactory>();
-            services.AddTransient<IQueueMessageHandler, QueueMessageHandler>();
             services.AddTransient<IAmazonSQSFunction, TFunction>();
 
+            services.AddTransient<IQueueMessageManager, QueueMessageManager>();
             services.AddTransient<IQueueMessageExecutor, QueueMessageExecutor>();
             services.AddTransient<IAmazonSQSFunction, TFunction>();
             services.TryAddSingleton(TimeProvider.System);
 
-            return new HostBuilder(services);
+            return new DequeueableHostBuilder(services);
         }
     }
 }

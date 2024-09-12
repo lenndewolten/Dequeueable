@@ -1,0 +1,28 @@
+on:
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.x.x"
+      - name: Materialize Signing Key
+        id: write_sign_key_file
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: "Dequeueable.snk"
+          fileDir: ${{ github.workspace }}
+          encodedString: ${{ secrets.SIGNING_KEY }}
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Test
+        run: dotnet test --no-restore --verbosity minimal
