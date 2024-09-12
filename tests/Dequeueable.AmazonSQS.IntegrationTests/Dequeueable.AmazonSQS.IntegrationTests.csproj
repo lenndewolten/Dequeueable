@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+	  
+	<AssemblyOriginatorKeyFile>../../Dequeueable.snk</AssemblyOriginatorKeyFile>
+	<SignAssembly>true</SignAssembly>
+	  
 	<NoWarn>
 		CA1001; <!-- Types that own disposable fields should be disposable -->
 		CA1707; <!-- Identifiers should not contain underscores -->

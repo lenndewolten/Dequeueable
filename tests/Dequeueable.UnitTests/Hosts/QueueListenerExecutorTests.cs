@@ -49,14 +49,19 @@ namespace Dequeueable.UnitTests.Hosts
             var queueMessageHandlerMock = new Mock<IQueueMessageHandler<TestMessage>>(MockBehavior.Strict);
             var options = new TestListenerHostOptions { MinimumPollingIntervalInMilliseconds = 0, MaximumPollingIntervalInMilliseconds = 1 };
             var optionsMock = new Mock<IOptions<TestListenerHostOptions>>(MockBehavior.Strict);
-            var loggerMock = new Mock<ILogger<QueueListenerExecutor<TestMessage, TestListenerHostOptions>>>(MockBehavior.Strict);
+            //var loggerMock = new Mock<ILogger<QueueListenerExecutor<TestMessage, TestListenerHostOptions>>>(MockBehavior.Strict);
+
+            using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
+            .SetMinimumLevel(LogLevel.Error));
+
+            var loggerMock = loggerFactory.CreateLogger<QueueListenerExecutor<TestMessage, TestListenerHostOptions>>();
 
             queueMessageManagerMock.Setup(m => m.RetrieveMessagesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(messages);
             optionsMock.SetupGet(o => o.Value).Returns(options);
 
             queueMessageHandlerMock.Setup(h => h.HandleAsync(It.Is<TestMessage>(m => messages.Any(ma => ma.MessageId == m.MessageId)), CancellationToken.None)).Returns(Task.CompletedTask);
 
-            var sut = new QueueListenerExecutor<TestMessage, TestListenerHostOptions>(queueMessageManagerMock.Object, queueMessageHandlerMock.Object, loggerMock.Object, optionsMock.Object);
+            var sut = new QueueListenerExecutor<TestMessage, TestListenerHostOptions>(queueMessageManagerMock.Object, queueMessageHandlerMock.Object, loggerMock, optionsMock.Object);
 
             // Act
             await sut.HandleAsync(CancellationToken.None);

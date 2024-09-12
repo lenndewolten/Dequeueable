@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+	  
+	<AssemblyOriginatorKeyFile>../../Dequeueable.snk</AssemblyOriginatorKeyFile>
+	<SignAssembly>true</SignAssembly>
+	  
 	<NoWarn>
 		CA1707; <!-- Identifiers should not contain underscores -->
 		CA1812; <!-- Avoid uninstantiated internal classes -->

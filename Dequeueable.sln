@@ -32,11 +32,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dequeueable", "lib\Dequeueable\Dequeueable.csproj", "{607C2ABB-DD72-45F5-9DF3-2FC19D136873}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dequeueable", "lib\Dequeueable\Dequeueable.csproj", "{607C2ABB-DD72-45F5-9DF3-2FC19D136873}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dequeueable.UnitTests", "tests\Dequeueable.UnitTests\Dequeueable.UnitTests.csproj", "{4BF5F6F8-6A82-49EF-BFC6-25B0DA935D69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dequeueable.UnitTests", "tests\Dequeueable.UnitTests\Dequeueable.UnitTests.csproj", "{4BF5F6F8-6A82-49EF-BFC6-25B0DA935D69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dequeueable.SampleJob", "samples\Dequeueable.SampleJob\Dequeueable.SampleJob.csproj", "{4DD8D05B-9CBE-41BF-9CFC-CBB1ACBE9E9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dequeueable.SampleJob", "samples\Dequeueable.SampleJob\Dequeueable.SampleJob.csproj", "{4DD8D05B-9CBE-41BF-9CFC-CBB1ACBE9E9A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dequeueable.SampleListener", "samples\Dequeueable.SampleListener\Dequeueable.SampleListener.csproj", "{5B372D85-5458-4376-BCD1-97548DD161A0}"
 EndProject

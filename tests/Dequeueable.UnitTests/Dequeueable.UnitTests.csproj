@@ -3,6 +3,9 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+
+	<AssemblyOriginatorKeyFile>../../Dequeueable.snk</AssemblyOriginatorKeyFile>
+	<SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
