@@ -27,7 +27,6 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
         env:
-          SignAssembly: true
-          AssemblyOriginatorKeyFile: ${{ steps.write_sign_key_file.outputs.filePath }}
+          DOTNET_BUILD_ARGS: --property:AssemblyOriginatorKeyFile=${{ steps.write_sign_key_file.outputs.filePath }} --property:SignAssembly=true
       - name: Test
         run: dotnet test --no-restore --verbosity minimal
